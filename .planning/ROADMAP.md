@@ -1,8 +1,9 @@
 # Roadmap: Fair Haven Tax Assessment Analysis
 
 **Created:** 2026-04-28
-**Granularity:** coarse (3 phases)
-**Coverage:** 21/21 v1 requirements mapped
+**Last revised:** 2026-04-29 (inserted Phase 1.5 + Bloustein historical addition)
+**Granularity:** coarse (4 phases including 1.5)
+**Coverage:** 26/26 v1 requirements mapped (added DATA-05..09)
 **MVP Decision Gate:** After Phase 3 ships, evaluate Berry shift magnitude + CDF gap test result to decide v2 go/no-go.
 
 ## Core Value
@@ -11,7 +12,8 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
 
 ## Phases
 
-- [ ] **Phase 1: Data Foundation** - Acquire and persist three green-tier datasets (NJGIN parcels/MOD-IV, DLGS rate tables, DOT SR1A sales) with validated parcel universe and reconciled sales
+- [x] **Phase 1: Data Foundation** - Acquire and persist three green-tier datasets (NJGIN parcels/MOD-IV, DLGS rate tables, DOT SR1A sales) with validated parcel universe and reconciled sales
+- [ ] **Phase 1.5: OPRS Comprehensive Collection** - Cache full OPRS Property Record Card data (m4 + per-sale sr + prc PDF + ch75 PDF + taxlist PDF) and Bloustein 1989-2025 historical for all class-2 parcels. Unlocks bedrooms/bathrooms/condition for the hedonic and 37-year per-parcel assessment time series for the CDF gap test.
 - [ ] **Phase 2: Statistical Pipeline** - Hedonic OLS + Berry tax-shift + IAAO CDF gap test producing per-parcel delta_dollars and TRUE/FALSE chasing verdict
 - [ ] **Phase 3: Public Artifact and Legal Compliance** - GeoJSON + Leaflet map + white paper shipped under Daniel's Law Redactor registration
 
@@ -30,9 +32,24 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
 - [x] 01-01-PLAN.md — Project skeleton + raw acquisition (uv project, package layout, three acquire scripts, manifest helper, per-year SR1A YAML mappers)
 - [x] 01-02-PLAN.md — Ingest, validate, persist, reconcile (NJGIN parcels GeoParquet, DLGS constants extraction, SR1A parser + rejections, last-sale resolution + MOD-IV reconciliation, ±5% validation gate)
 
+### Phase 1.5: OPRS Comprehensive Collection (+ Bloustein historical)
+**Goal**: A complete per-parcel cache of Monmouth OPRS Property Record Card data — basic PRC summary, per-sale detail for every recorded sale, official PRC PDF (with bedrooms/bathrooms/condition/sketch), Chapter 75 annual notice PDF, and current-year tax-list PDF — for all 2,061 class-2 Fair Haven parcels. Plus the full Rutgers Bloustein MOD-IV historical CSV series 1989-2025 (per-parcel year-by-year assessment time series with sale_assessment per recorded sale). Unlocks the hedonic feature set the original spec assumed and provides a 37-year longitudinal record for the CDF gap test.
+**Depends on**: Phase 1
+**Requirements**: DATA-05, DATA-06, DATA-07, DATA-08, DATA-09
+**Success Criteria** (what must be TRUE):
+  1. `data/raw/oprs_prc/<pams_pin>/m4.html` cached for all 2,061 class-2 parcels with content-validated block/lot match
+  2. `data/raw/oprs_prc/<pams_pin>/sr_<ssi>.html` cached for every sale ssi enumerated from each parcel's m4 (or `.no_sale` marker for ssis that legitimately return empty)
+  3. `data/raw/oprs_prc/<pams_pin>/prc.pdf` cached with HTTP-header strip (response body slice from `%PDF` marker) — bedroom/bathroom/condition data extractable
+  4. `data/raw/oprs_prc/<pams_pin>/ch75.pdf` and `data/raw/oprs_prc/<pams_pin>/taxlist_<year>.pdf` cached as valid PDF v1.4 documents
+  5. `data/raw/bloustein_modiv/<date>/mod_iv_{1989..2025}.csv` cached with row counts ≥ 2,000 each (37 files, no partial downloads)
+  6. Parser produces `data/processed/prc.parquet` joining all OPRS components by PAMS_PIN with bedrooms, bathrooms, room_count, kitchens, livable_area, condition, quality_grade, foundation, exterior, roof, heating, AC, sewer, fireplaces, garage_sqft, porch_sqft, eff_age — every field the Phase 2 hedonic needs
+  7. Bloustein loader produces `data/processed/modiv_history.parquet` with one row per (parcel_pin, year) and includes `sale_assessment` for parcels that sold that year (the gold-standard input for the CDF gap test)
+**Plans**: TBD
+**Notes**: Tier-C OPRS endpoints (tax appeals, deed images, tax maps, etc.) are explicitly out of scope — see `.planning/deferred/oprs-tier-c.md`.
+
 ### Phase 2: Statistical Pipeline
 **Goal**: A reproducible Python pipeline that produces per-parcel `delta_dollars`, IAAO ratio-study diagnostics by tenure cohort, and a TRUE/FALSE CDF gap test verdict on Fair Haven sales 2018-2025.
-**Depends on**: Phase 1
+**Depends on**: Phase 1, Phase 1.5
 **Requirements**: MODEL-01, MODEL-02, MODEL-03, CALC-01, CALC-02, CALC-03, TEST-01
 **Success Criteria** (what must be TRUE):
   1. Hedonic OLS fit on 2023-2025 arms-length sales reports R² ≥ 0.7 with HC3 robust SEs and k-means neighborhood fixed effects (k ∈ {5..8})
@@ -59,9 +76,10 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Foundation | 0/2 | Not started | - |
-| 2. Statistical Pipeline | 0/? | Not started | - |
-| 3. Public Artifact and Legal Compliance | 0/? | Not started | - |
+| 1. Data Foundation | 2/2 | Complete | 2026-04-29 |
+| 1.5. OPRS Comprehensive Collection | 0/? | In planning | - |
+| 2. Statistical Pipeline | 0/? | Blocked on 1.5 | - |
+| 3. Public Artifact and Legal Compliance | 0/? | Blocked on 2 | - |
 
 ## Dependencies
 
@@ -86,9 +104,10 @@ v2 requirements (DEMO-*, REG-*, BOE-*, EXT-*, PUB-*) are out of scope for this r
 
 ## Coverage Validation
 
-All 21 v1 requirements map to exactly one phase:
+All 26 v1 requirements map to exactly one phase:
 
 - **Phase 1** (6): DATA-01, DATA-02, DATA-03, DATA-04, STORE-01, STORE-02
+- **Phase 1.5** (5): DATA-05, DATA-06, DATA-07, DATA-08, DATA-09
 - **Phase 2** (7): MODEL-01, MODEL-02, MODEL-03, CALC-01, CALC-02, CALC-03, TEST-01
 - **Phase 3** (8): OUT-01, OUT-02, OUT-03, OUT-04, OUT-05, LEGAL-01, LEGAL-02, LEGAL-03
 

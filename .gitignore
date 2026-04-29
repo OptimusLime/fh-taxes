@@ -20,3 +20,9 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Local-only OPRS sample artifacts (contain owner names from real Fair Haven parcels;
+# keep on disk for parser development, never commit to public repo)
+docs/specs/.local_samples/
+temporary_scripts/**/*.html
+temporary_scripts/**/*.pdf

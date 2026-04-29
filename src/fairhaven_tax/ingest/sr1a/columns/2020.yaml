@@ -1,0 +1,28 @@
+# SR1A 2020 column mapping → canonical sales schema (D-17).
+# Plan 2 verifies these against the actual downloaded file; unknown columns
+# are dropped to rejections.parquet with reason="unmapped_column".
+year: 2020
+# actual_column_name: canonical_field
+mapping:
+  DISTRICT: district
+  BLOCK: block
+  LOT: lot
+  QUALIFIER: qualifier
+  PROPERTY_CLASS: property_class
+  SALE_DATE: sale_date
+  SALE_PRICE: sale_price
+  NU_CODE: nu_code
+  DEED_BOOK: deed_book
+  DEED_PAGE: deed_page
+  # Post-Daniel's Law NJ DOT redacted grantor/grantee:
+  GRANTOR_REDACTED: grantor_redacted
+# Type coercions applied after rename
+types:
+  sale_date: date           # MM/DD/YYYY in source
+  sale_price: decimal       # may have leading $ and commas
+  nu_code: string_zfill_2   # "7" -> "07"
+  district: string_zfill_2  # Fair Haven = "14"
+  property_class: string    # "2" residential
+# PAMS_PIN derivation: f"{district}_{block}_{lot}_{qualifier or ''}"
+# (NJ DOT does not publish the joined PAMS_PIN directly in SR1A.)
+pams_pin_format: "{district}_{block}_{lot}_{qualifier}"

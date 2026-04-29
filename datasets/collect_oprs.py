@@ -2,28 +2,38 @@
 
 Replaces ad-hoc OPRS scrapers. Designed for the operational pattern:
     1. Connect to VPN exit IP A
-    2. uv run python datasets/collect_oprs.py --batch 500 --rate 2.0
-    3. Script processes 500 requests, exits cleanly with status
+    2. uv run python datasets/collect_oprs.py --batch 500 --rate 2.0 [--mode comprehensive]
+    3. Script processes up to N requests, exits cleanly with status
     4. Connect to VPN exit IP B
-    5. Run again — resumes from cache, processes next 500
+    5. Run again — resumes from cache, processes next N
     6. Repeat until --status reports complete
+
+Per-parcel processing:
+    For each parcel (sorted ascending PAMS_PIN order):
+      1. Fetch m4.html (the full PRC summary with hist=1) if not cached.
+         m4 always fetched regardless of mode — it's the index of the parcel.
+      2. If --mode comprehensive: parse m4.html for sale serial numbers (ssi
+         values), then fetch one sr.html per ssi (sr_{ssi}.html in the cache).
+         Each sale gets its own file. Captures grantor/grantee, REMARKS,
+         family-sale flag, assessor sales-ratio per individual sale.
+
+    Each parcel completes fully before moving to the next, so partial caches
+    always represent contiguous fully-resolved parcels (handy for inspecting
+    progress mid-run).
 
 Key properties:
     - Idempotent: never re-fetches a component already cached. Re-running
       with --mode comprehensive after a --mode basic run only fetches the
-      missing-mode components.
+      missing sr_{ssi}.html files.
     - Atomic writes: components write to .tmp sibling, rename on success.
-      Interrupted writes leave NO incomplete cache files.
-    - Order: parcels processed in deterministic sorted order so resume works.
-    - Auto-abort: monitors HTTP-error rate over a sliding window. If it
-      crosses the threshold, exits with a clear "VPN may be blocked" message
-      so the user can swap and restart.
-
-Modes:
-    basic         — 1 m4.cgi (with hist=1) per parcel. Captures sqft, year built,
-                    style, sales summary, 8-year assessment history.
-    comprehensive — basic + 1 sr.cgi per known historical sale (covers grantor/
-                    grantee + family-sale flag + assessor REMARKS).
+      Interrupted writes leave NO incomplete files.
+    - Content validation: rejects empty-form responses (200 OK + ~13 KB
+      blank PRC template) — confirms the requested block AND lot integers
+      are actually rendered in the page body.
+    - Order: parcels in sorted PAMS_PIN order; ssis within a parcel in
+      ascending numeric order. Deterministic, resumable.
+    - Auto-abort: rolling error rate over a sliding window of recent
+      requests. Trips with a clear "switch VPN" message if exceeded.
 
 Usage:
     uv run python datasets/collect_oprs.py --status
@@ -60,14 +70,12 @@ SR_BASE = "https://tax1.co.monmouth.nj.us/cgi-bin/sr.cgi"
 
 DISTRICT = "1314"  # Fair Haven NJGIN code
 
-# Each parcel produces these component files in the output dir:
-#   {pams_pin}/m4.html      — m4.cgi&hist=1 response (basic + comprehensive)
-#   {pams_pin}/sr.html      — sr.cgi response (comprehensive only; per parcel,
-#                              not per sale — sr.cgi shows the most recent
-#                              recorded sale by default)
 COMPONENT_M4 = "m4.html"
-COMPONENT_SR = "sr.html"
 
+
+# ----------------------------------------------------------------------------
+# Config / state
+# ----------------------------------------------------------------------------
 
 @dataclass
 class Config:
@@ -77,9 +85,9 @@ class Config:
     batch_size: int
     rate_per_second: float
     jitter_pct: float
-    max_error_rate: float   # e.g. 0.10 = 10%
-    error_window: int       # number of recent requests to consider
-    error_min_samples: int  # don't trip the abort until at least this many requests
+    max_error_rate: float
+    error_window: int
+    error_min_samples: int
     max_retries: int
 
 
@@ -88,25 +96,17 @@ class RunState:
     requests_done: int = 0
     cache_hits: int = 0
     fetched_ok: int = 0
+    fetched_no_sale: int = 0
     fetched_fail: int = 0
-    retried: int = 0
+    parcels_completed: int = 0
     aborted: bool = False
     abort_reason: str | None = None
     recent_errors: deque = field(default_factory=lambda: deque(maxlen=200))
 
 
 # ----------------------------------------------------------------------------
-# Parcel ID encoding for OPRS deep-link URLs
+# PAMS_PIN ↔ OPRS URL encoding
 # ----------------------------------------------------------------------------
-
-def _pad(s: str, width: int) -> str:
-    """Right-justify in a width-N field, padded with leading zeros if numeric,
-    otherwise spaces — matches the OPRS l02 token convention."""
-    s = (s or "").strip()
-    if s.replace(".", "").isdigit():
-        return s.zfill(width)
-    return s.rjust(width)
-
 
 def _split_block_lot(value: str) -> tuple[str, str]:
     """'77.01' → ('77', '01'); '15' → ('15', '')."""
@@ -117,37 +117,33 @@ def _split_block_lot(value: str) -> tuple[str, str]:
 
 
 def encode_l02(block: str, lot: str, qualifier: str = "") -> str:
-    """Encode (block, lot, qualifier) → OPRS l02 URL parameter.
+    """Encode (block, lot, qualifier) → 28-char OPRS l02 URL parameter.
 
-    Format (28 chars total):
-        DDDD BBBBB SSSS LLLLL XXXX QQQQQ M
+    Format: DDDD BBBBB SSSS LLLLL XXXX QQQQQ M
         district(4) + block_base(5) + block_suffix(4) + lot_base(5) +
-        lot_suffix(4) + qualifier(5) + 'M'  =  4+5+4+5+4+5+1 = 28 chars
+        lot_suffix(4) + qualifier(5) + 'M'  =  28 chars
 
     Block/lot bases zero-pad-LEFT; suffixes RIGHT-justify with underscore
-    fill (e.g. lot_suffix "02" → "__02"). Verified against live samples:
+    fill. Verified against live samples:
         '131400003____00033_________M'  (block=3 lot=33, no suffixes/qual)
         '131400077____00080__02_____M'  (block=77 lot=80.02)
     """
     block_base, block_suffix = _split_block_lot(block)
     lot_base, lot_suffix = _split_block_lot(lot)
-
     parts = [
-        DISTRICT,                               # 4
-        block_base.zfill(5),                    # 5
-        (block_suffix or "").rjust(4, "_"),     # 4 (right-justified per live samples)
-        lot_base.zfill(5),                      # 5
-        (lot_suffix or "").rjust(4, "_"),       # 4 (right-justified)
-        (qualifier or "").ljust(5, "_"),        # 5 (qualifiers tend to be alphanumeric, left-justified)
+        DISTRICT,
+        block_base.zfill(5),
+        (block_suffix or "").rjust(4, "_"),
+        lot_base.zfill(5),
+        (lot_suffix or "").rjust(4, "_"),
+        (qualifier or "").ljust(5, "_"),
         "M",
     ]
     return "".join(parts)
 
 
 def parse_pams_pin(pin: str) -> tuple[str, str, str]:
-    """Inverse of canonical PAMS_PIN — return (block, lot, qualifier).
-    PIN is '1314_BLOCK_LOT' or '1314_BLOCK_LOT_QUAL'.
-    """
+    """'1314_BLOCK_LOT' or '1314_BLOCK_LOT_QUAL' → (block, lot, qualifier)."""
     parts = pin.split("_")
     if len(parts) == 3:
         return parts[1], parts[2], ""
@@ -158,33 +154,60 @@ def parse_pams_pin(pin: str) -> tuple[str, str, str]:
 
 # ----------------------------------------------------------------------------
 # Cache layout
+#
+# Each parcel gets its own subdirectory under output_root, e.g.
+#     data/raw/oprs_prc/1314_3_33/
+#         m4.html              — the m4.cgi summary
+#         sr_1331.html         — sr.cgi for sale serial 1331
+#         sr_1549.html         — etc.
+#         sr_1549.html.no_sale — marker for ssis that legitimately return empty
+#
+# Markers exist so we don't refetch known-empty results across batches.
 # ----------------------------------------------------------------------------
 
 def parcel_dir(output_root: Path, pams_pin: str) -> Path:
     return output_root / pams_pin
 
 
-def required_components(mode: str) -> list[str]:
-    if mode == "basic":
-        return [COMPONENT_M4]
-    if mode == "comprehensive":
-        return [COMPONENT_M4, COMPONENT_SR]
-    raise ValueError(f"unknown mode: {mode!r}")
-
-
 def is_cached(output_root: Path, pams_pin: str, component: str) -> bool:
-    """A component is 'cached' if either the real file exists OR a '.no_sale'
-    marker exists (sr.cgi only — for parcels with no recorded sale, an empty
-    response is a legitimate outcome and we don't want to refetch every run)."""
+    """A component is satisfied if either the real file (>200 bytes) or a
+    .no_sale marker exists."""
     base = parcel_dir(output_root, pams_pin) / component
-    if base.exists() and base.stat().st_size > 100:
+    if base.exists() and base.stat().st_size > 200:
         return True
     marker = base.with_suffix(base.suffix + ".no_sale")
     return marker.exists()
 
 
+def sr_component_name(ssi: str) -> str:
+    return f"sr_{ssi}.html"
+
+
 # ----------------------------------------------------------------------------
-# HTTP fetch with atomic write
+# Parsing m4 to discover ssi values for sales
+# ----------------------------------------------------------------------------
+
+_SSI_RE = re.compile(r'sr\.cgi\?[^"\']*?ssi=(\d+)[^"\']*?block=(\d+)[^"\']*?lot=(\d+)')
+
+
+def extract_ssis_from_m4(m4_html: str) -> list[str]:
+    """Pull the list of sale-detail serial numbers from an m4.html page.
+
+    Each historical sale has a 'More Info' link of the form
+        sr.cgi?&district=1314&ms_user=&ssi=NNNN&block=B&lot=L&qual=...
+    Returns ssi values in document order (which matches sale-history order
+    in the rendered page) and de-duplicates while preserving order.
+    """
+    seen: list[str] = []
+    for m in _SSI_RE.finditer(m4_html):
+        ssi = m.group(1)
+        if ssi not in seen:
+            seen.append(ssi)
+    return seen
+
+
+# ----------------------------------------------------------------------------
+# HTTP fetch + atomic write + content validation
 # ----------------------------------------------------------------------------
 
 def _new_session() -> requests.Session:
@@ -202,17 +225,12 @@ def _fetch(session: requests.Session, url: str, timeout: int = 30) -> tuple[int,
     try:
         r = session.get(url, timeout=timeout)
         return r.status_code, r.content
-    except requests.RequestException as e:
+    except requests.RequestException:
         return 0, None
 
 
-def _write_atomic(path: Path, data: bytes, min_size: int = 200) -> bool:
-    """Write data to path via .tmp sibling. Returns True only if size meets
-    the minimum sanity threshold AND rename succeeds. Otherwise leaves no
-    file behind."""
+def _write_atomic(path: Path, data: bytes) -> bool:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if len(data) < min_size:
-        return False
     tmp = path.with_suffix(path.suffix + ".tmp")
     try:
         with open(tmp, "wb") as f:
@@ -225,47 +243,27 @@ def _write_atomic(path: Path, data: bytes, min_size: int = 200) -> bool:
 
 
 def _is_empty_sr_template(flat: str) -> bool:
-    """sr.cgi returns a structurally identical 'no sale on record' page when
-    the parcel has never sold. Detectable by the absence of any deed/price
-    data (Date is just '//', BOOK/PAGE/PRICE rows are blank). Pre-flattened
-    text input."""
-    # The empty template has '// //' where the dates would be, and
-    # 'GRANTOR &nbsp GRANTEE' with no actual names between them.
-    # Crude but reliable signal: literal '// //' substring (date placeholder).
-    return " // // " in flat or " // // MONMOUTH" in flat
+    """sr.cgi returns a structurally identical 'no detail on record' page
+    when the requested ssi has no associated sale. Detect via the date
+    placeholder ' // // ' that only appears in the empty form."""
+    return " // // " in flat
 
 
-def _validate_response(component: str, body: bytes, block: str, lot: str) -> tuple[bool, str]:
-    """Confirm response actually contains the requested parcel's data.
-
-    OPRS returns 200 OK with an EMPTY-form template (~13 KB) when the URL
-    is malformed or the parcel doesn't exist — visually a real PRC, but
-    every value field blank. Detect by requiring the requested block AND
-    lot values to appear inside the rendered Block:/Lot: rows.
-    """
+def _validate(component: str, body: bytes, block: str, lot: str) -> tuple[bool, str]:
+    """Confirm the response actually contains the requested parcel's data.
+    Returns (ok, status_tag). Special status_tag='no_sale' for empty sr."""
     if not body or len(body) < 500:
         return False, f"too_small:{len(body) if body else 0}"
     text = body.decode("latin-1", errors="replace")
-    # Strip tags + collapse whitespace so we can match across the messy
-    # OPRS markup (each value is wrapped in <font color=FIREBRICK> inside
-    # its own <td>, with </font> </td> blocks between label and value).
     flat = re.sub(r"<[^>]+>", " ", text)
     flat = re.sub(r"&nbsp;|&amp;", " ", flat)
     flat = re.sub(r"\s+", " ", flat)
     block_int = block.lstrip("0").split(".")[0] or "0"
     lot_int = lot.lstrip("0").split(".")[0] or "0"
-    # m4.cgi renders "Block: 3" / "Lot: 33"; sr.cgi renders "BLOCK 3" / "LOT 33"
-    # — both use the integer, no leading-zero. Accept colon as optional.
-    block_match = re.search(
-        rf"\bBlock:?\s+{re.escape(block_int)}(?:\.\d+)?\b", flat, re.IGNORECASE
-    )
-    lot_match = re.search(
-        rf"\bLot:?\s+{re.escape(lot_int)}(?:\.\d+)?\b", flat, re.IGNORECASE
-    )
+    block_match = re.search(rf"\bBlock:?\s+{re.escape(block_int)}(?:\.\d+)?\b", flat, re.IGNORECASE)
+    lot_match = re.search(rf"\bLot:?\s+{re.escape(lot_int)}(?:\.\d+)?\b", flat, re.IGNORECASE)
     if not block_match or not lot_match:
-        # For sr.cgi, an empty body is a legitimate "no sale on record" outcome,
-        # not an error — the parcel exists but has never been sold.
-        if component == COMPONENT_SR and _is_empty_sr_template(flat):
+        if component.startswith("sr_") and _is_empty_sr_template(flat):
             return False, "no_sale"
         if not block_match:
             return False, f"empty_form:block_missing:{block_int}"
@@ -273,26 +271,28 @@ def _validate_response(component: str, body: bytes, block: str, lot: str) -> tup
     return True, "ok"
 
 
-def fetch_component(
-    session: requests.Session, pams_pin: str, component: str, output_root: Path,
-    max_retries: int,
-) -> tuple[bool, str]:
-    """Fetch one component, atomic-write to cache. Returns (ok, status_string).
-
-    status_string is a short tag for logging: 'cached', 'ok', 'http_404',
-    'empty_form:...', 'network_err', etc.
-    """
-    if is_cached(output_root, pams_pin, component):
-        return True, "cached"
-
-    block, lot, qualifier = parse_pams_pin(pams_pin)
+def _build_url(component: str, block: str, lot: str, qualifier: str, ssi: str | None) -> str:
     if component == COMPONENT_M4:
         l02 = encode_l02(block, lot, qualifier)
-        url = f"{M4_BASE}?district={DISTRICT}&l02={l02}&hist=1"
-    elif component == COMPONENT_SR:
-        url = f"{SR_BASE}?&district={DISTRICT}&ms_user=&ssi=1331&block={block}&lot={lot}&qual={qualifier}"
-    else:
-        return False, f"unknown_component:{component}"
+        return f"{M4_BASE}?district={DISTRICT}&l02={l02}&hist=1"
+    if component.startswith("sr_") and ssi:
+        return f"{SR_BASE}?&district={DISTRICT}&ms_user=&ssi={ssi}&block={block}&lot={lot}&qual={qualifier}"
+    raise ValueError(f"can't build URL for component {component!r} ssi={ssi!r}")
+
+
+def fetch_component(
+    session: requests.Session,
+    pams_pin: str,
+    component: str,
+    output_root: Path,
+    max_retries: int,
+    ssi: str | None = None,
+) -> tuple[bool, str]:
+    """Fetch one component, atomic-write to cache. Returns (ok, status_string)."""
+    if is_cached(output_root, pams_pin, component):
+        return True, "cached"
+    block, lot, qualifier = parse_pams_pin(pams_pin)
+    url = _build_url(component, block, lot, qualifier, ssi)
 
     last_status = "no_attempt"
     for attempt in range(max_retries):
@@ -305,12 +305,11 @@ def fetch_component(
             last_status = f"http_{status_code}"
             time.sleep(1.0 + attempt)
             continue
-        valid, vstatus = _validate_response(component, body, block, lot)
+        valid, vstatus = _validate(component, body, block, lot)
         if vstatus == "no_sale":
-            # Legitimate outcome — write a small marker so we never re-fetch.
             marker = parcel_dir(output_root, pams_pin) / (component + ".no_sale")
             marker.parent.mkdir(parents=True, exist_ok=True)
-            marker.write_bytes(b"no_sale_on_record\n")
+            marker.write_bytes(b"no_detail_on_record\n")
             return True, "no_sale"
         if not valid:
             last_status = vstatus
@@ -326,12 +325,10 @@ def fetch_component(
 
 
 # ----------------------------------------------------------------------------
-# Workload planning
+# Workload
 # ----------------------------------------------------------------------------
 
 def load_parcel_ids(parcels_path: Path) -> list[str]:
-    """Load PAMS_PINs from a parquet, parquet of geopandas, csv, or json file.
-    Sorted ascending so resume order is deterministic."""
     suffix = parcels_path.suffix.lower()
     if suffix == ".parquet":
         try:
@@ -356,31 +353,42 @@ def load_parcel_ids(parcels_path: Path) -> list[str]:
     return sorted(set(ids))
 
 
-def plan_batch(
-    parcel_ids: list[str], cfg: Config
-) -> tuple[list[tuple[str, str]], dict[str, int]]:
-    """Walk parcels in order; emit (pams_pin, component) pairs for missing
-    components, up to batch_size. Returns (work_items, summary)."""
-    components = required_components(cfg.mode)
-    work: list[tuple[str, str]] = []
-    summary = {"parcels_total": len(parcel_ids), "missing_components": 0,
-               "fully_cached_parcels": 0}
-    for pin in parcel_ids:
-        all_cached = True
-        for comp in components:
-            if is_cached(cfg.output_root, pin, comp):
-                continue
-            all_cached = False
-            summary["missing_components"] += 1
-            if len(work) < cfg.batch_size:
-                work.append((pin, comp))
-        if all_cached:
-            summary["fully_cached_parcels"] += 1
-    return work, summary
+def parcel_needed_components(
+    output_root: Path, pams_pin: str, mode: str
+) -> list[tuple[str, str | None]]:
+    """Return list of (component, ssi) tuples this parcel still needs.
+
+    For comprehensive mode, sr components are only listed if m4 is already
+    cached (since we need m4 to discover ssi values). If m4 isn't cached,
+    only m4 is listed and the next batch will discover ssis after fetching it.
+    """
+    needed: list[tuple[str, str | None]] = []
+    if not is_cached(output_root, pams_pin, COMPONENT_M4):
+        needed.append((COMPONENT_M4, None))
+        if mode == "basic":
+            return needed
+        # We can't enumerate ssis until m4 is on disk; the inline run loop
+        # will append sr work right after the m4 fetch succeeds.
+        return needed
+
+    if mode != "comprehensive":
+        return needed
+
+    # m4 is cached — read it and enumerate ssis
+    m4_path = parcel_dir(output_root, pams_pin) / COMPONENT_M4
+    try:
+        text = m4_path.read_text(errors="replace")
+    except OSError:
+        return needed
+    for ssi in extract_ssis_from_m4(text):
+        comp = sr_component_name(ssi)
+        if not is_cached(output_root, pams_pin, comp):
+            needed.append((comp, ssi))
+    return needed
 
 
 # ----------------------------------------------------------------------------
-# Run loop with error-rate monitoring
+# Run loop with rolling error-rate abort
 # ----------------------------------------------------------------------------
 
 def _sleep_pacing(rate: float, jitter_pct: float) -> None:
@@ -391,30 +399,26 @@ def _sleep_pacing(rate: float, jitter_pct: float) -> None:
 
 
 def _check_abort(state: RunState, cfg: Config) -> tuple[bool, str | None]:
-    """Return (should_abort, reason). Computes rolling error rate over the
-    most recent error_window samples and trips if it exceeds max_error_rate
-    after error_min_samples have been seen."""
     if cfg.error_window <= 0 or cfg.max_error_rate <= 0:
         return False, None
     samples = list(state.recent_errors)
     if len(samples) < cfg.error_min_samples:
         return False, None
-    window = samples[-cfg.error_window:] if len(samples) >= cfg.error_window else samples
-    error_count = sum(1 for ok in window if not ok)
-    rate = error_count / len(window)
+    window = samples[-cfg.error_window:]
+    err = sum(1 for ok in window if not ok)
+    rate = err / len(window)
     if rate > cfg.max_error_rate:
         return True, (
-            f"error rate {rate:.0%} ({error_count}/{len(window)}) exceeds "
-            f"threshold {cfg.max_error_rate:.0%} — likely VPN/IP blocked. "
-            f"Switch VPN exit and re-run."
+            f"error rate {rate:.0%} ({err}/{len(window)}) exceeds threshold "
+            f"{cfg.max_error_rate:.0%} — likely VPN/IP blocked. Switch and re-run."
         )
     return False, None
 
 
 def run_batch(cfg: Config) -> RunState:
     state = RunState()
-    log_path = cfg.output_root / "_collect.log"
     cfg.output_root.mkdir(parents=True, exist_ok=True)
+    log_path = cfg.output_root / "_collect.log"
 
     def log(msg: str) -> None:
         line = f"[{datetime.now(timezone.utc).isoformat()}] {msg}"
@@ -427,49 +431,82 @@ def run_batch(cfg: Config) -> RunState:
         f"start mode={cfg.mode} batch={cfg.batch_size} rate={cfg.rate_per_second}/s "
         f"jitter={cfg.jitter_pct} parcels={len(parcel_ids)} output={cfg.output_root}"
     )
-    work, summary = plan_batch(parcel_ids, cfg)
-    log(
-        f"plan: parcels_total={summary['parcels_total']} "
-        f"fully_cached={summary['fully_cached_parcels']} "
-        f"missing_components={summary['missing_components']} "
-        f"this_batch={len(work)}"
-    )
-    if not work:
-        log("nothing to do — all components cached for selected mode")
-        return state
 
     session = _new_session()
-    for i, (pin, component) in enumerate(work, 1):
-        ok, status = fetch_component(session, pin, component, cfg.output_root, cfg.max_retries)
-        state.requests_done += 1
-        state.recent_errors.append(ok)
-        if status == "cached":
-            state.cache_hits += 1
-        elif ok:
-            state.fetched_ok += 1
-        else:
-            state.fetched_fail += 1
 
-        # Compact per-request log every 25 items
-        if i % 25 == 0 or i == len(work):
-            log(
-                f"  [{i}/{len(work)}] last={pin}/{component} status={status} "
-                f"ok={state.fetched_ok} fail={state.fetched_fail}"
-            )
-
-        should_abort, reason = _check_abort(state, cfg)
-        if should_abort:
-            state.aborted = True
-            state.abort_reason = reason
-            log(f"ABORT: {reason}")
+    for pin in parcel_ids:
+        if state.requests_done >= cfg.batch_size or state.aborted:
             break
 
-        _sleep_pacing(cfg.rate_per_second, cfg.jitter_pct)
+        # Build per-parcel work queue dynamically (m4 first; sr items
+        # discovered after m4 is cached).
+        work = deque(parcel_needed_components(cfg.output_root, pin, cfg.mode))
+        if not work:
+            continue  # already fully cached for this mode
+
+        while work and state.requests_done < cfg.batch_size:
+            component, ssi = work.popleft()
+            ok, status = fetch_component(
+                session, pin, component, cfg.output_root, cfg.max_retries, ssi=ssi
+            )
+            state.requests_done += 1
+            state.recent_errors.append(ok)
+            if status == "cached":
+                state.cache_hits += 1
+            elif status == "no_sale":
+                state.fetched_no_sale += 1
+            elif ok:
+                state.fetched_ok += 1
+            else:
+                state.fetched_fail += 1
+
+            label = f"{pin}/{component}"
+            if state.requests_done % 25 == 0:
+                log(
+                    f"  [{state.requests_done}/{cfg.batch_size}] {label} "
+                    f"status={status} ok={state.fetched_ok} no_sale={state.fetched_no_sale} "
+                    f"fail={state.fetched_fail}"
+                )
+            else:
+                log(f"  {label} status={status}")
+
+            # If we just successfully fetched the m4 component for a
+            # comprehensive run, enumerate its ssis and add them to the
+            # work queue for THIS parcel before moving on.
+            if (
+                component == COMPONENT_M4
+                and ok
+                and status != "cached"
+                and cfg.mode == "comprehensive"
+            ):
+                m4_path = parcel_dir(cfg.output_root, pin) / COMPONENT_M4
+                try:
+                    text = m4_path.read_text(errors="replace")
+                except OSError:
+                    text = ""
+                discovered = extract_ssis_from_m4(text)
+                for ssi_v in discovered:
+                    sr_comp = sr_component_name(ssi_v)
+                    if not is_cached(cfg.output_root, pin, sr_comp):
+                        work.append((sr_comp, ssi_v))
+                log(f"    {pin}: discovered {len(discovered)} ssi(s) from m4")
+
+            should_abort, reason = _check_abort(state, cfg)
+            if should_abort:
+                state.aborted = True
+                state.abort_reason = reason
+                log(f"ABORT: {reason}")
+                break
+
+            _sleep_pacing(cfg.rate_per_second, cfg.jitter_pct)
+
+        if not work:
+            state.parcels_completed += 1
 
     log(
         f"batch end: requests={state.requests_done} ok={state.fetched_ok} "
-        f"fail={state.fetched_fail} cache_hits={state.cache_hits} "
-        f"aborted={state.aborted}"
+        f"no_sale={state.fetched_no_sale} fail={state.fetched_fail} "
+        f"parcels_completed={state.parcels_completed} aborted={state.aborted}"
     )
     return state
 
@@ -480,27 +517,62 @@ def run_batch(cfg: Config) -> RunState:
 
 def report_status(cfg: Config) -> None:
     parcel_ids = load_parcel_ids(cfg.parcels_path)
-    components = required_components(cfg.mode)
-    fully_cached = 0
-    component_counts = {c: 0 for c in components}
-    for pin in parcel_ids:
-        all_ok = True
-        for comp in components:
-            if is_cached(cfg.output_root, pin, comp):
-                component_counts[comp] += 1
-            else:
-                all_ok = False
-        if all_ok:
-            fully_cached += 1
     total = len(parcel_ids)
+    m4_cached = 0
+    parcels_complete = 0
+    sr_cached = 0
+    sr_no_sale = 0
+    sr_required = 0
+    sr_pending = 0
+
+    for pin in parcel_ids:
+        m4_present = is_cached(cfg.output_root, pin, COMPONENT_M4)
+        if m4_present:
+            m4_cached += 1
+        if cfg.mode == "basic":
+            if m4_present:
+                parcels_complete += 1
+            continue
+        # Comprehensive — enumerate ssis from m4 (if cached)
+        if not m4_present:
+            continue
+        m4_path = parcel_dir(cfg.output_root, pin) / COMPONENT_M4
+        try:
+            text = m4_path.read_text(errors="replace")
+        except OSError:
+            text = ""
+        ssis = extract_ssis_from_m4(text)
+        sr_required += len(ssis)
+        all_sr_done = True
+        for ssi in ssis:
+            comp = sr_component_name(ssi)
+            real = (parcel_dir(cfg.output_root, pin) / comp).exists()
+            marker = (parcel_dir(cfg.output_root, pin) / (comp + ".no_sale")).exists()
+            if real:
+                sr_cached += 1
+            elif marker:
+                sr_no_sale += 1
+            else:
+                all_sr_done = False
+                sr_pending += 1
+        if all_sr_done:
+            parcels_complete += 1
+
     print(f"OPRS cache status — mode={cfg.mode} output={cfg.output_root}")
-    print(f"  parcels_total: {total}")
-    print(f"  parcels_complete (all components for mode): {fully_cached} ({100*fully_cached/total:.1f}%)")
-    for c, n in component_counts.items():
-        print(f"  component {c:12s}: {n}/{total} ({100*n/total:.1f}%)")
-    missing = sum(total - n for n in component_counts.values())
-    print(f"  total missing component fetches needed: {missing}")
-    print(f"  estimated batches at batch={cfg.batch_size}: {-(-missing // cfg.batch_size)}")
+    print(f"  parcels total:            {total}")
+    print(f"  m4.html cached:           {m4_cached} ({100*m4_cached/total:.1f}%)")
+    print(f"  parcels fully complete:   {parcels_complete} ({100*parcels_complete/total:.1f}%)")
+    if cfg.mode == "comprehensive":
+        print(f"  sr (real):                {sr_cached}")
+        print(f"  sr (no_sale markers):     {sr_no_sale}")
+        print(f"  sr pending:               {sr_pending}")
+        print(f"  sr total expected (so far from cached m4s): {sr_required}")
+        # Estimate remaining work — sr_pending plus m4-not-yet-cached parcels'
+        # average ssi count (~3-4 per Fair Haven parcel).
+        m4_pending = total - m4_cached
+        est_remaining = sr_pending + m4_pending * 3  # rough
+        print(f"  rough remaining requests: ~{m4_pending + est_remaining}")
+        print(f"  estimated batches at batch={cfg.batch_size}: ~{-(-est_remaining // cfg.batch_size)}")
 
 
 # ----------------------------------------------------------------------------
@@ -510,17 +582,17 @@ def report_status(cfg: Config) -> None:
 def main() -> int:
     p = argparse.ArgumentParser(
         description="Collect Fair Haven OPRS Property Record Card data "
-        "(batch-based, VPN-swap friendly, idempotent, atomic).",
+        "(per-parcel, batch-based, VPN-swap friendly, idempotent, atomic).",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument("--parcels-from", type=Path, default=PARCELS_DEFAULT,
-                   help="Parquet/CSV/JSON file with PAMS_PINs (column 'pams_pin')")
+                   help="Parquet/CSV/JSON with PAMS_PINs (column 'pams_pin')")
     p.add_argument("--output-dir", type=Path, default=OUTPUT_DEFAULT,
                    help="Cache root. Each parcel gets a subdir.")
     p.add_argument("--mode", choices=["basic", "comprehensive"], default="basic",
-                   help="basic = m4.cgi only; comprehensive = m4 + sr (sale detail)")
+                   help="basic = m4 only; comprehensive = m4 + sr per discovered sale")
     p.add_argument("--batch", dest="batch_size", type=int, default=500,
-                   help="Max requests per invocation (then exit cleanly)")
+                   help="Max requests per invocation")
     p.add_argument("--rate", dest="rate_per_second", type=float, default=2.0,
                    help="Target requests per second")
     p.add_argument("--jitter-pct", type=float, default=0.15,
@@ -534,7 +606,7 @@ def main() -> int:
     p.add_argument("--max-retries", type=int, default=3,
                    help="Retries per component before giving up")
     p.add_argument("--status", action="store_true",
-                   help="Print cache status for the given parcels and exit")
+                   help="Print cache status and exit")
     args = p.parse_args()
 
     cfg = Config(

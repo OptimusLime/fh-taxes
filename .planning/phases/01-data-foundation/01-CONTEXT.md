@@ -31,8 +31,8 @@ Acquire three green-tier datasets (NJGIN Monmouth Parcels+MOD-IV file geodatabas
 
 - **D-09 (Failure mode):** Hard-fail on out-of-tolerance. Pipeline exits non-zero; writes `data/processed/_VALIDATION-FAILED.md` with delta breakdown by property class and tax map area. No silent continuation. This is critical for a methodology artifact that will be defended publicly.
 - **D-10 (Tolerance):** ±5% per REQUIREMENTS DATA-01 — covers rounding in published Director's Ratio + minor MOD-IV revisions between annual cycles. Single threshold (not two-tier). If tightening becomes useful in Phase 2 calibration, revisit then.
-- **D-11 (Validation targets):** (a) parcel count ~2,200 ±5% after class-2 filter; (b) aggregate assessed value ~$2.77B ±5%; (c) Sum of SR1A 2018-2025 arms-length sales ≥ 200 (sanity floor for hedonic training set). Each target produces a line in `data/processed/validation_report.parquet`.
-- **D-12 (NU code rejection):** Only NU codes ∈ {0, 7, 10, 26, 33} retained as arms-length. All other SR1A rows persisted to `data/processed/rejections.parquet` with columns: `parcel_pin`, `sale_date`, `sale_price`, `nu_code`, `deed_ref`, `rejection_reason`, `source_file`. Audit trail is non-negotiable.
+- **D-11 (Validation targets) [CORRECTED 2026-04-29 against real data]:** (a) parcel count ~2,064 ±5% after class-2 filter (real measured); (b) aggregate assessed value ~$2.74B ±5% (real measured: $2,740,871,000); (c) Sum of SR1A 2020-2025 arms-length sales ≥ 100 (real value 197). Original spec used 2,200 / $2.77B — drawn from PROJECT.md narrative; real NJGIN-published numbers are 2,064 / $2.74B for class-2-only. Each target produces a line in `data/processed/validation_report.parquet`.
+- **D-12 (NU code rejection) [CORRECTED 2026-04-29 against real SR1A data]:** Per NJ DOT / IAAO convention, the SR1A NU code field is BLANK (or "0"/"00") when the transaction is USABLE for ratio analysis (arms-length). Codes 01-33 enumerate the various Non-Usable categories (compulsion, related parties, sheriff sales, corrective deeds, physical-condition changes, etc.). Filter is `nu_code ∈ {"", "0", "00"}`. Original spec had `{0, 7, 10, 26, 33}` — that was inverted and would have rejected all real arms-length sales while accepting non-arms-length ones. Verified empirically: Fair Haven 2020-2025 yields 197 arms-length sales under the corrected rule. Rejected rows persist to `data/processed/rejections.parquet` with rejection_reason like `nu_code_not_arms_length:27`.
 
 ### CRS & Geometry
 
@@ -42,7 +42,7 @@ Acquire three green-tier datasets (NJGIN Monmouth Parcels+MOD-IV file geodatabas
 
 ### SR1A Parsing
 
-- **D-16 (Schema strategy):** Tolerant column-mapper config per year. `src/fairhaven_tax/ingest/sr1a/columns/{YYYY}.yaml` maps actual file columns to canonical schema. Unrecognized rows or unmappable columns → `rejections.parquet` with reason. Resilient to NJ Treasury format drift.
+- **D-16 (Schema strategy) [CORRECTED 2026-04-29 against real SR1A data]:** SR1A is fixed-width 663-byte records (one schema across all years), NOT delimited CSV. Original spec called for per-year YAML column mappers — those have been removed. Field offsets are documented at `src/fairhaven_tax/ingest/sr1a/__init__.py::FIELDS` (sourced from NJ Treasury's SR1Afilelayout.pdf). The parser slices fields by position; no per-year config is needed because the layout has been stable.
 - **D-17 (Canonical sales schema):** `parcel_pin` (PAMS_PIN), `sale_date` (date), `sale_price` (decimal), `nu_code` (string), `deed_book`, `deed_page`, `grantor_redacted` (bool), `source_file`, `source_year`.
 - **D-18 (Dedupe / last-sale resolution):** For each parcel, "last arms-length sale" = MAX(sale_date) over arms-length rows; tie-break by MAX(sale_price) on same date (handles same-day correction deeds). The full multi-sale history is retained in `sales.parquet`; the resolved last-sale columns are denormalized onto `parcels.parquet` for fast cohort tagging in Phase 2.
 

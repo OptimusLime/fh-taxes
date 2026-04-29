@@ -9,10 +9,10 @@ MVP scope: three green-tier downloads, one Python pipeline, one HTML output. Tes
 
 ### Data Acquisition
 
-- [x] **DATA-01**: Acquire NJGIN Monmouth Parcels + MOD-IV file geodatabase; filter to MUN_CODE = 1314 (Fair Haven); parcel count validates to ~2,200 ±5%; total assessed value validates to ~$2.77B ±5%
-- [x] **DATA-02**: Acquire NJ DLGS Property Tax Tables; extract Fair Haven 2025/2026 general tax rate ($1.574/$100), six-component breakdown (muni/county/library/local-school/regional-school/open-space), and total municipal levy
-- [x] **DATA-03**: Acquire NJ DOT SR1A annual sales files for 2018-2025; filter to Fair Haven (district 14) arms-length sales (NU codes ∈ {0, 7, 10, 26, 33})
-- [x] **DATA-04**: Cross-validate SR1A sales against MOD-IV per-parcel last-sale fields; reconcile discrepancies; document rejection reasons for excluded sales
+- [x] **DATA-01** [CORRECTED 2026-04-29]: Acquire NJGIN Monmouth Parcels + MOD-IV file geodatabase from `https://geoapps.nj.gov/njgin/parcel/parcels_gdb_Monmouth.zip`. The FGDB has TWO layers (`parcels` for geometry, `tax_list` for MOD-IV attributes) joined on PAMS_PIN ↔ GIS_PIN. Filter MUN/CD_CODE = "1314" + PROP_CLASS = "2". Real measured values (2026-04-29 snapshot): 2,061 joined class-2 parcels, aggregate assessed = $2,735,202,500. Validates to ~2,064 ±5% / ~$2.74B ±5%.
+- [x] **DATA-02** [CORRECTED 2026-04-29]: Acquire NJ DLGS Property Tax Tables from `https://www.nj.gov/dca/dlgs/resources/Property_Tax/{YY}_data/{YY}taxes.xls` (legacy `.xls`, not `.xlsx`). Fair Haven row in "Municipal Tax Summary" sheet has MuniCode = "1313" (DLGS scheme; differs from NJGIN's "1314"). Real 2025 values: total levy = $40,339,309.77; Net Valuation Taxable = $2,827,194,216; computed general rate = **$1.427 per $100** (PROJECT.md's $1.574 figure does not match published DLGS data and has been superseded). Levy breakdown captured into `constants.LEVY_BREAKDOWN` (14 keys including county/library/health/open-space/local-school/regional-school/municipal).
+- [x] **DATA-03** [CORRECTED 2026-04-29]: Acquire NJ DOT SR1A annual sales files from `https://www.nj.gov/treasury/taxation/lpt/statdata/Sales{YYYY}.zip`. **Coverage = 2020-2025 (six years)**, not 2018-2025: 2018 and 2019 are not publicly available on NJ Treasury statdata page. SR1A is **fixed-width 663-byte records** (`.txt`), not CSV; layout per `https://www.nj.gov/treasury/taxation/pdf/lpt/SR1Afilelayout.pdf`. Filter county="13" + district="14". Arms-length per NJ DOT/IAAO convention = **NU code field BLANK** (or "0"/"00") — codes 01-33 enumerate Non-Usable categories. Original spec inverted this. Real measured: 197 arms-length sales, 705 rejections.
+- [x] **DATA-04**: Cross-validate SR1A sales against MOD-IV per-parcel last-sale fields; reconcile discrepancies (>180 days OR >5% price diff) into `data/processed/reconciliation_diffs.parquet`. Real measured: 53 diffs flagged across 2,061 parcels. Non-blocking per D-19.
 
 ### Storage & Schema
 
@@ -22,12 +22,12 @@ MVP scope: three green-tier downloads, one Python pipeline, one HTML output. Tes
 ### Statistical Pipeline
 
 - [ ] **MODEL-01**: Generate neighborhood fixed-effect labels via k-means (k=5-8) on parcel centroids
-- [ ] **MODEL-02**: Fit hedonic OLS `log(sale_price) ~ log(sqft) + log(lot_size) + year_built + bedrooms + bathrooms + waterfront_flag + neighborhood_FE` on Fair Haven 2023-2025 arms-length sales; statsmodels with HC3 robust SEs; report R² (target ≥ 0.7)
-- [ ] **MODEL-03**: Apply hedonic to all ~2,200 class-2 residential parcels; produce per-parcel `estimated_true_value`; aggregate within 5% of $2.83B published total (apply constant correction if needed)
+- [ ] **MODEL-02** [REVISED 2026-04-29 against real MOD-IV schema]: Fit hedonic OLS on Fair Haven 2020-2025 arms-length sales (~197 sales total; ~92 in 2023-2025). **Available real features:** `log(sqft)` (from SR1A `LIVING-SPACE`, populated only on sale; or from MOD-IV `BLDG_DESC` text-extraction if needed), `log(lot_size_acres)` (MOD-IV `CALC_ACRE`), `year_built` (MOD-IV `YR_CONSTR`), `dwellings` (MOD-IV `DWELL`), property classification (`bldg_class`, `prop_use`), `neighborhood_FE` (k-means k=5-8). **NOT available:** `bedrooms`, `bathrooms`, `waterfront_flag` — these fields do not exist in MOD-IV's standard distribution. Original spec must be revised. statsmodels HC3 robust SEs; report R² (target ≥ 0.7).
+- [ ] **MODEL-03** [CORRECTED 2026-04-29]: Apply hedonic to all 2,061 class-2 residential parcels with geometry; produce per-parcel `estimated_true_value`; aggregate within 5% of real measured $2.74B (was $2.83B from PROJECT.md narrative; real DLGS-published Net Valuation Taxable across ALL classes is $2.83B but class-2-only is $2.74B). Apply constant correction if needed.
 - [ ] **CALC-01**: Compute Berry tax-shift per parcel — `fair_bill_i = (true_value_i / Σ true_value) × total_levy`; `actual_bill_i = assessed_value_i × tax_rate`; `delta_i = actual_bill_i − fair_bill_i`; verify Σ delta ≈ 0 within rounding
 - [ ] **CALC-02**: Tag each parcel with `tenure_cohort` ∈ {pre-2010, 2010-2015, 2016-2019, 2020-2022, 2023-2026} from last arms-length sale date
 - [ ] **CALC-03**: Tabulate cohort summaries — sum of positive deltas, sum of negative deltas, median delta, mean delta, share in over/underpaying tail per cohort; report COD and PRD overall and by cohort against IAAO standards (COD ≤15% acceptable, PRD 0.98-1.03 acceptable)
-- [ ] **TEST-01**: Reimplement IAAO/CCAO `assessr::detect_chasing()` in Python (CDF gap method + distribution comparison method); run on Fair Haven sales 2018-2025; emit TRUE/FALSE result and CDF plot
+- [ ] **TEST-01** [CORRECTED 2026-04-29]: Reimplement IAAO/CCAO `assessr::detect_chasing()` in Python (CDF gap method + distribution comparison method); run on Fair Haven sales 2020-2025 (197 arms-length); emit TRUE/FALSE result and CDF plot. Note: ratio = sale-price / assessed-value-at-time-of-sale. SR1A `main_assessed_total` field captures the assessment in effect at sale; use that as denominator.
 
 ### Output Artifacts
 

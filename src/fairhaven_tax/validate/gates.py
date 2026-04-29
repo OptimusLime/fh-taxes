@@ -89,7 +89,7 @@ def validate_aggregate_assessed(parcels_gdf: gpd.GeoDataFrame) -> GateResult:
 def validate_sales_floor(sales_df: pd.DataFrame) -> GateResult:
     """D-11(c): SR1A 2018-2025 arms-length sales count ≥ 200."""
     actual = int(len(sales_df))
-    expected = constants.SR1A_MIN_ARMS_LENGTH_SALES_2018_2025
+    expected = constants.SR1A_MIN_ARMS_LENGTH_SALES
     passed = actual >= expected
     return GateResult(
         name="sales_floor",

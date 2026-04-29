@@ -69,6 +69,15 @@ def reconcile_last_sale(
     """
     resolved = resolve_last_arms_length_sale(sales_df)
 
+    # Drop placeholder last_sale_* columns from parcels (set to None in ingest)
+    # so the merge doesn't produce _x/_y suffixes.
+    placeholder_cols = [
+        c for c in ("last_sale_date", "last_sale_price",
+                    "last_sale_nu_code", "last_sale_source")
+        if c in parcels_gdf.columns
+    ]
+    parcels_gdf = parcels_gdf.drop(columns=placeholder_cols)
+
     # Left join SR1A resolved last-sale onto parcels by pams_pin
     merged = parcels_gdf.merge(
         resolved, how="left", left_on="pams_pin", right_on="parcel_pin"

@@ -119,12 +119,15 @@ def _split_block_lot(value: str) -> tuple[str, str]:
 def encode_l02(block: str, lot: str, qualifier: str = "") -> str:
     """Encode (block, lot, qualifier) → OPRS l02 URL parameter.
 
-    Format (29 chars + trailing 'M'):
-        DDDD BBBBB SSSS LLLLL ZZ QQQQQ M
-        district(4) + block_base(5) + block_suffix(4) + lot_base(5) + lot_suffix(2) + qualifier(5) + 'M'
+    Format (28 chars total):
+        DDDD BBBBB SSSS LLLLL XXXX QQQQQ M
+        district(4) + block_base(5) + block_suffix(4) + lot_base(5) +
+        lot_suffix(4) + qualifier(5) + 'M'  =  4+5+4+5+4+5+1 = 28 chars
 
-    Underscores are used as the padding character throughout (CGI-safe).
-    Verified against live samples like '131400077____00080__02_____M'.
+    Block/lot bases zero-pad-LEFT; suffixes RIGHT-justify with underscore
+    fill (e.g. lot_suffix "02" → "__02"). Verified against live samples:
+        '131400003____00033_________M'  (block=3 lot=33, no suffixes/qual)
+        '131400077____00080__02_____M'  (block=77 lot=80.02)
     """
     block_base, block_suffix = _split_block_lot(block)
     lot_base, lot_suffix = _split_block_lot(lot)
@@ -132,10 +135,10 @@ def encode_l02(block: str, lot: str, qualifier: str = "") -> str:
     parts = [
         DISTRICT,                               # 4
         block_base.zfill(5),                    # 5
-        (block_suffix or "").ljust(4, "_"),     # 4
+        (block_suffix or "").rjust(4, "_"),     # 4 (right-justified per live samples)
         lot_base.zfill(5),                      # 5
-        (lot_suffix or "").ljust(2, "_"),       # 2
-        (qualifier or "").ljust(5, "_"),        # 5
+        (lot_suffix or "").rjust(4, "_"),       # 4 (right-justified)
+        (qualifier or "").ljust(5, "_"),        # 5 (qualifiers tend to be alphanumeric, left-justified)
         "M",
     ]
     return "".join(parts)
@@ -170,8 +173,14 @@ def required_components(mode: str) -> list[str]:
 
 
 def is_cached(output_root: Path, pams_pin: str, component: str) -> bool:
-    p = parcel_dir(output_root, pams_pin) / component
-    return p.exists() and p.stat().st_size > 100  # tombstone for tiny error pages
+    """A component is 'cached' if either the real file exists OR a '.no_sale'
+    marker exists (sr.cgi only — for parcels with no recorded sale, an empty
+    response is a legitimate outcome and we don't want to refetch every run)."""
+    base = parcel_dir(output_root, pams_pin) / component
+    if base.exists() and base.stat().st_size > 100:
+        return True
+    marker = base.with_suffix(base.suffix + ".no_sale")
+    return marker.exists()
 
 
 # ----------------------------------------------------------------------------
@@ -215,6 +224,55 @@ def _write_atomic(path: Path, data: bytes, min_size: int = 200) -> bool:
         return False
 
 
+def _is_empty_sr_template(flat: str) -> bool:
+    """sr.cgi returns a structurally identical 'no sale on record' page when
+    the parcel has never sold. Detectable by the absence of any deed/price
+    data (Date is just '//', BOOK/PAGE/PRICE rows are blank). Pre-flattened
+    text input."""
+    # The empty template has '// //' where the dates would be, and
+    # 'GRANTOR &nbsp GRANTEE' with no actual names between them.
+    # Crude but reliable signal: literal '// //' substring (date placeholder).
+    return " // // " in flat or " // // MONMOUTH" in flat
+
+
+def _validate_response(component: str, body: bytes, block: str, lot: str) -> tuple[bool, str]:
+    """Confirm response actually contains the requested parcel's data.
+
+    OPRS returns 200 OK with an EMPTY-form template (~13 KB) when the URL
+    is malformed or the parcel doesn't exist — visually a real PRC, but
+    every value field blank. Detect by requiring the requested block AND
+    lot values to appear inside the rendered Block:/Lot: rows.
+    """
+    if not body or len(body) < 500:
+        return False, f"too_small:{len(body) if body else 0}"
+    text = body.decode("latin-1", errors="replace")
+    # Strip tags + collapse whitespace so we can match across the messy
+    # OPRS markup (each value is wrapped in <font color=FIREBRICK> inside
+    # its own <td>, with </font> </td> blocks between label and value).
+    flat = re.sub(r"<[^>]+>", " ", text)
+    flat = re.sub(r"&nbsp;|&amp;", " ", flat)
+    flat = re.sub(r"\s+", " ", flat)
+    block_int = block.lstrip("0").split(".")[0] or "0"
+    lot_int = lot.lstrip("0").split(".")[0] or "0"
+    # m4.cgi renders "Block: 3" / "Lot: 33"; sr.cgi renders "BLOCK 3" / "LOT 33"
+    # — both use the integer, no leading-zero. Accept colon as optional.
+    block_match = re.search(
+        rf"\bBlock:?\s+{re.escape(block_int)}(?:\.\d+)?\b", flat, re.IGNORECASE
+    )
+    lot_match = re.search(
+        rf"\bLot:?\s+{re.escape(lot_int)}(?:\.\d+)?\b", flat, re.IGNORECASE
+    )
+    if not block_match or not lot_match:
+        # For sr.cgi, an empty body is a legitimate "no sale on record" outcome,
+        # not an error — the parcel exists but has never been sold.
+        if component == COMPONENT_SR and _is_empty_sr_template(flat):
+            return False, "no_sale"
+        if not block_match:
+            return False, f"empty_form:block_missing:{block_int}"
+        return False, f"empty_form:lot_missing:{lot_int}"
+    return True, "ok"
+
+
 def fetch_component(
     session: requests.Session, pams_pin: str, component: str, output_root: Path,
     max_retries: int,
@@ -222,7 +280,7 @@ def fetch_component(
     """Fetch one component, atomic-write to cache. Returns (ok, status_string).
 
     status_string is a short tag for logging: 'cached', 'ok', 'http_404',
-    'too_small', 'network_err', etc.
+    'empty_form:...', 'network_err', etc.
     """
     if is_cached(output_root, pams_pin, component):
         return True, "cached"
@@ -247,10 +305,21 @@ def fetch_component(
             last_status = f"http_{status_code}"
             time.sleep(1.0 + attempt)
             continue
+        valid, vstatus = _validate_response(component, body, block, lot)
+        if vstatus == "no_sale":
+            # Legitimate outcome — write a small marker so we never re-fetch.
+            marker = parcel_dir(output_root, pams_pin) / (component + ".no_sale")
+            marker.parent.mkdir(parents=True, exist_ok=True)
+            marker.write_bytes(b"no_sale_on_record\n")
+            return True, "no_sale"
+        if not valid:
+            last_status = vstatus
+            time.sleep(0.5)
+            continue
         out = parcel_dir(output_root, pams_pin) / component
         if _write_atomic(out, body):
             return True, "ok"
-        last_status = f"too_small:{len(body) if body else 0}"
+        last_status = f"write_failed:{len(body) if body else 0}"
         time.sleep(0.5)
 
     return False, last_status

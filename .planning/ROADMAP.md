@@ -26,7 +26,9 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
   2. The 2025/2026 general tax rate ($1.574/$100), six-component breakdown, and total municipal levy are extracted from DLGS tables and stored as constants the pipeline can reference
   3. SR1A sales for 2018-2025 are filtered to Fair Haven arms-length transactions (NU codes 0/7/10/26/33) and reconciled against MOD-IV last-sale fields, with rejection reasons documented for excluded sales
   4. The parcel and sales tables persist in a queryable form (parquet/SQLite) and survive process restart without re-download
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 01-01-PLAN.md — Project skeleton + raw acquisition (uv project, package layout, three acquire scripts, manifest helper, per-year SR1A YAML mappers)
+- [ ] 01-02-PLAN.md — Ingest, validate, persist, reconcile (NJGIN parcels GeoParquet, DLGS constants extraction, SR1A parser + rejections, last-sale resolution + MOD-IV reconciliation, ±5% validation gate)
 
 ### Phase 2: Statistical Pipeline
 **Goal**: A reproducible Python pipeline that produces per-parcel `delta_dollars`, IAAO ratio-study diagnostics by tenure cohort, and a TRUE/FALSE CDF gap test verdict on Fair Haven sales 2018-2025.
@@ -57,7 +59,7 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Foundation | 0/? | Not started | - |
+| 1. Data Foundation | 0/2 | Not started | - |
 | 2. Statistical Pipeline | 0/? | Not started | - |
 | 3. Public Artifact and Legal Compliance | 0/? | Not started | - |
 

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-29T12:28:55.693Z"
+last_updated: "2026-04-29T12:39:38.155Z"
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_plans: 2
+  percent: 100
 ---
 
 # State: Fair Haven Tax Assessment Analysis
@@ -22,15 +22,15 @@ progress:
 
 ## Current Position
 
-Phase: 1 (Data Foundation) — EXECUTING
-Plan: 2 of 2 (Plan 1 complete)
+Phase: 1 (Data Foundation) — COMPLETE
+Plan: 2 of 2 (both plans complete)
 
 - **Milestone:** v1 MVP
 - **Phase:** 01-data-foundation
-- **Plan:** 01-02 (next)
-- **Status:** Executing Phase 1 — Plan 01-01 complete, requirements DATA-01..03 acquisition leg satisfied
+- **Plan:** Phase 1 complete; ready to transition to Phase 2 (statistical core)
+- **Status:** Phase 1 complete — DATA-01..04 + STORE-01..02 satisfied (acquisition + ingest + validation gates)
 
-**Progress:** [█████░░░░░] 50%
+**Progress:** [██████████] 100%
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Plan: 2 of 2 (Plan 1 complete)
 | Requirements validated | 0/21 |
 | Sessions | 1 (initialization) |
 | Phase 01-data-foundation P01 | 3.5min | 2 tasks | 25 files |
+| Phase 01-data-foundation P02 | 7.3min | 2 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -61,10 +62,19 @@ Plan: 2 of 2 (Plan 1 complete)
 - Pinned both openpyxl and xlrd; DLGS file format has drifted .xls ↔ .xlsx historically
 - DATA-01, DATA-02, DATA-03 acquisition leg satisfied (live download deferred to user / Plan 2 prerequisite)
 
+### Phase 1 Decisions (Plan 01-02)
+
+- Hard-fail validation gate writes `_VALIDATION-FAILED.md` and exits non-zero (D-09) — no warn downgrade
+- NU code "0" and "00" both normalize to "0" — preserves canonical SR1A_ARMS_LENGTH_NU_CODES set
+- MOD-IV/SR1A reconciliation is non-blocking (D-19) — `reconciliation_diffs.parquet` always written, never affects validation gate
+- SR1A parser handles CSV/TXT-in-zip; DBF deferred behind explicit NotImplementedError (only added when a year ships DBF)
+- Live data acquisition NOT exercised in this environment; coverage is unit-test driven on synthetic fixtures (32/32 tests pass), including a hard-fail integration test that runs `scripts/validate_phase1.py` as a subprocess
+- DATA-01..04 + STORE-01..02 satisfied (live `make all` end-to-end deferred to user)
+
 ### Open Todos
 
-- Run `make acquire` against live network (user) to populate `data/raw/` and verify URLs are still canonical
-- Plan 01-02: ingest + validate (parse raw → parquet, run validation gate)
+- Run `make all` against live network (user) to populate `data/processed/` and verify URLs are still canonical
+- Phase 2: hedonic OLS fit + Berry tax-shift calculation (REQ-IDs MODEL-01/02, CALC-01/02, TEST-01)
 
 ### Blockers
 
@@ -86,15 +96,15 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-29T12:28:38.562Z
-**Next session:** Plan Phase 1 (Data Foundation) — `/gsd-plan-phase 1`
+**Last session:** 2026-04-29T12:39:38.153Z
+**Stopped at:** Completed 01-02-PLAN.md
+**Next session:** Transition Phase 1 → 2 — `/gsd-transition`
 
 ### Resume Instructions
 
-1. Read `.planning/PROJECT.md` for project context and constraints
-2. Read `.planning/REQUIREMENTS.md` for v1 scope (21 reqs)
-3. Read `.planning/ROADMAP.md` for phase structure and success criteria
-4. Run `/gsd-plan-phase 1` to begin Phase 1 planning
+1. Read `.planning/phases/01-data-foundation/01-02-SUMMARY.md` for phase completion state
+2. Read `.planning/REQUIREMENTS.md` for remaining v1 scope (PIPE/MODEL/CALC/TEST/OUT/LEGAL/DOC)
+3. Run `/gsd-transition` to advance to Phase 2 (statistical core: hedonic + Berry tax-shift)
 
 ---
 *Last updated: 2026-04-28 (roadmap creation)*

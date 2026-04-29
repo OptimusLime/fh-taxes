@@ -1,4 +1,4 @@
-.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest validate all clean test
+.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test
 
 PYTHON := uv run python
 TODAY := $(shell date +%Y-%m-%d)
@@ -10,8 +10,12 @@ help:
 	@echo "  make acquire-njgin   - download Monmouth Parcels+MOD-IV FGDB only"
 	@echo "  make acquire-dlgs    - download DLGS Property Tax Tables only"
 	@echo "  make acquire-sr1a    - download SR1A 2018-2025 only"
-	@echo "  make ingest          - parse raw -> data/processed/ parquet (Plan 2)"
-	@echo "  make validate        - run validation gate (Plan 2)"
+	@echo "  make ingest          - parse raw -> data/processed/ parquet"
+	@echo "  make ingest-njgin    - NJGIN -> parcels.parquet"
+	@echo "  make extract-dlgs    - DLGS xlsx -> populate constants.py"
+	@echo "  make ingest-sr1a     - SR1A -> sales.parquet + rejections.parquet"
+	@echo "  make reconcile       - MOD-IV ↔ SR1A last-sale reconciliation"
+	@echo "  make validate        - run validation gate (D-09)"
 	@echo "  make all             - acquire + ingest + validate"
 	@echo "  make test            - pytest"
 	@echo "  make clean           - rm -rf data/processed/ (raw is preserved)"
@@ -30,11 +34,22 @@ acquire-dlgs:
 acquire-sr1a:
 	$(PYTHON) scripts/acquire_sr1a.py
 
-ingest:
-	$(PYTHON) -m fairhaven_tax.cli ingest
+ingest-njgin:
+	$(PYTHON) scripts/ingest_njgin.py
+
+extract-dlgs:
+	$(PYTHON) scripts/extract_dlgs.py
+
+ingest-sr1a:
+	$(PYTHON) scripts/ingest_sr1a.py
+
+reconcile:
+	$(PYTHON) scripts/reconcile.py
+
+ingest: ingest-njgin extract-dlgs ingest-sr1a reconcile
 
 validate:
-	$(PYTHON) -m fairhaven_tax.cli validate
+	$(PYTHON) scripts/validate_phase1.py
 
 all: acquire ingest validate
 

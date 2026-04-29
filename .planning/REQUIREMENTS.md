@@ -9,9 +9,9 @@ MVP scope: three green-tier downloads, one Python pipeline, one HTML output. Tes
 
 ### Data Acquisition
 
-- [ ] **DATA-01**: Acquire NJGIN Monmouth Parcels + MOD-IV file geodatabase; filter to MUN_CODE = 1314 (Fair Haven); parcel count validates to ~2,200 ±5%; total assessed value validates to ~$2.77B ±5%
-- [ ] **DATA-02**: Acquire NJ DLGS Property Tax Tables; extract Fair Haven 2025/2026 general tax rate ($1.574/$100), six-component breakdown (muni/county/library/local-school/regional-school/open-space), and total municipal levy
-- [ ] **DATA-03**: Acquire NJ DOT SR1A annual sales files for 2018-2025; filter to Fair Haven (district 14) arms-length sales (NU codes ∈ {0, 7, 10, 26, 33})
+- [x] **DATA-01**: Acquire NJGIN Monmouth Parcels + MOD-IV file geodatabase; filter to MUN_CODE = 1314 (Fair Haven); parcel count validates to ~2,200 ±5%; total assessed value validates to ~$2.77B ±5%
+- [x] **DATA-02**: Acquire NJ DLGS Property Tax Tables; extract Fair Haven 2025/2026 general tax rate ($1.574/$100), six-component breakdown (muni/county/library/local-school/regional-school/open-space), and total municipal levy
+- [x] **DATA-03**: Acquire NJ DOT SR1A annual sales files for 2018-2025; filter to Fair Haven (district 14) arms-length sales (NU codes ∈ {0, 7, 10, 26, 33})
 - [ ] **DATA-04**: Cross-validate SR1A sales against MOD-IV per-parcel last-sale fields; reconcile discrepancies; document rejection reasons for excluded sales
 
 ### Storage & Schema
@@ -99,9 +99,9 @@ Conditional on MVP signal (Berry shift > ~$200K cohort-correlated AND/OR CDF gap
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
 | DATA-04 | Phase 1 | Pending |
 | STORE-01 | Phase 1 | Pending |
 | STORE-02 | Phase 1 | Pending |

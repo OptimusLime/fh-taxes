@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-29T12:22:32.655Z"
+last_updated: "2026-04-29T12:28:55.693Z"
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 50
 ---
 
 # State: Fair Haven Tax Assessment Analysis
@@ -18,16 +18,19 @@ progress:
 
 **Core Value:** A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift + CDF gap test) that either demonstrates tenure-correlated horizontal inequity in Fair Haven assessments, or documents that ADP works as designed.
 
-**Current Focus:** Pre-Phase 1. Roadmap created; awaiting `/gsd-plan-phase 1` to decompose Data Foundation into executable plans.
+**Current Focus:** Phase 1 — Data Foundation
 
 ## Current Position
 
-- **Milestone:** v1 MVP
-- **Phase:** Pre-Phase 1 (not started)
-- **Plan:** None
-- **Status:** Ready to execute
+Phase: 1 (Data Foundation) — EXECUTING
+Plan: 2 of 2 (Plan 1 complete)
 
-**Progress:** `[----------------------------------------] 0%` (0/3 phases complete)
+- **Milestone:** v1 MVP
+- **Phase:** 01-data-foundation
+- **Plan:** 01-02 (next)
+- **Status:** Executing Phase 1 — Plan 01-01 complete, requirements DATA-01..03 acquisition leg satisfied
+
+**Progress:** [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -37,6 +40,7 @@ progress:
 | Plans complete | 0/0 |
 | Requirements validated | 0/21 |
 | Sessions | 1 (initialization) |
+| Phase 01-data-foundation P01 | 3.5min | 2 tasks | 25 files |
 
 ## Accumulated Context
 
@@ -49,9 +53,18 @@ progress:
 - Pre-commitment to publish either direction (falsification of H1+H2+H3 is itself publishable)
 - H2 framed as passive sales chasing, not stale assessments (ADP makes stale-assessment hypothesis structurally weak)
 
+### Phase 1 Decisions (Plan 01-01)
+
+- Used uv + pyproject.toml directly (not `uv init` defaults) to control `src/fairhaven_tax/` layout per D-03
+- Manifest helpers use atomic write + sha256 verification; reproducibility via manifest.json (not git-lfs per D-08)
+- Acquire scripts support `FAIRHAVEN_*_URL` env-var override to absorb URL rotation without code change
+- Pinned both openpyxl and xlrd; DLGS file format has drifted .xls ↔ .xlsx historically
+- DATA-01, DATA-02, DATA-03 acquisition leg satisfied (live download deferred to user / Plan 2 prerequisite)
+
 ### Open Todos
 
-- Begin Phase 1 planning via `/gsd-plan-phase 1`
+- Run `make acquire` against live network (user) to populate `data/raw/` and verify URLs are still canonical
+- Plan 01-02: ingest + validate (parse raw → parquet, run validation gate)
 
 ### Blockers
 
@@ -73,7 +86,7 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-29T12:03:09.094Z
+**Last session:** 2026-04-29T12:28:38.562Z
 **Next session:** Plan Phase 1 (Data Foundation) — `/gsd-plan-phase 1`
 
 ### Resume Instructions

@@ -28,3 +28,4 @@ temporary_scripts/**/*.html
 temporary_scripts/**/*.pdf
 data/raw/oprs_prc/
 temporary_scripts/sandbox/
+.claude/

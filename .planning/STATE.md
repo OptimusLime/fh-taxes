@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-04-30T00:29:33.202Z"
+stopped_at: Completed 01.5-01-PLAN.md
+last_updated: "2026-04-30T00:36:16.027Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 8
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 38
 ---
 
 # State: Fair Haven Tax Assessment Analysis
@@ -19,19 +19,19 @@ progress:
 
 **Core Value:** A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift + CDF gap test) that either demonstrates tenure-correlated horizontal inequity in Fair Haven assessments, or documents that ADP works as designed.
 
-**Current Focus:** Phase 1 — Data Foundation
+**Current Focus:** Phase 01.5 — oprs-collection
 
 ## Current Position
 
-Phase: 1 (Data Foundation) — EXECUTING
-Plan: 1 of 2
+Phase: 01.5 (oprs-collection) — EXECUTING
+Plan: 2 of 6  (Plan 01 complete: PRC/CH75/TAXLIST PDF endpoints)
 
 - **Milestone:** v1 MVP
 - **Phase:** 01-data-foundation
 - **Plan:** Phase 1 complete; ready to transition to Phase 2 (statistical core)
-- **Status:** Ready to execute
+- **Status:** Executing Phase 01.5
 
-**Progress:** [██████████] 100%
+**Progress:** [████░░░░░░] 38%
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Plan: 1 of 2
 | Sessions | 1 (initialization) |
 | Phase 01-data-foundation P01 | 3.5min | 2 tasks | 25 files |
 | Phase 01-data-foundation P02 | 7.3min | 2 tasks | 17 files |
+| Phase 01.5 P01 | 25m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -97,8 +98,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-29T12:39:38.153Z
-**Stopped at:** Completed 01-02-PLAN.md
+**Last session:** 2026-04-30T00:36:16.024Z
+**Stopped at:** Completed 01.5-01-PLAN.md
 **Next session:** Transition Phase 1 → 2 — `/gsd-transition`
 
 ### Resume Instructions

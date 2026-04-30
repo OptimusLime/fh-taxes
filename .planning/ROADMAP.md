@@ -45,7 +45,7 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
   6. Parser produces `data/processed/prc.parquet` joining all OPRS components by PAMS_PIN with bedrooms, bathrooms, room_count, kitchens, livable_area, condition, quality_grade, foundation, exterior, roof, heating, AC, sewer, fireplaces, garage_sqft, porch_sqft, eff_age — every field the Phase 2 hedonic needs
   7. Bloustein loader produces `data/processed/modiv_history.parquet` with one row per (parcel_pin, year) and includes `sale_assessment` for parcels that sold that year (the gold-standard input for the CDF gap test)
 **Plans**: 6 plans
-- [ ] 01.5-01-PLAN.md — Extend collect_oprs.py with prc/ch75/taxlist PDF endpoints (D-27/D-28/D-30) [DATA-07, DATA-08]
+- [x] 01.5-01-PLAN.md — Extend collect_oprs.py with prc/ch75/taxlist PDF endpoints (D-27/D-28/D-30) [DATA-07, DATA-08]
 - [ ] 01.5-02-PLAN.md — Operator-driven comprehensive collection across 2,061 parcels with VPN-swap loop [DATA-05..08]
 - [ ] 01.5-03-PLAN.md — OPRS HTML parsers: parse_m4.py + parse_sr.py with unit tests [DATA-05, DATA-06]
 - [ ] 01.5-04-PLAN.md — OPRS PDF parsers: parse_prc_pdf + parse_ch75_pdf + parse_taxlist_pdf via pdfplumber [DATA-07, DATA-08]

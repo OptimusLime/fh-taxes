@@ -234,7 +234,7 @@ class TestPhase2Gates:
         from fairhaven_tax.validate.checks import run_phase2_gates
         prc = _prc(2060)
         sales = _sales(150)
-        modiv = _modiv(50, year=2020)
+        modiv = _modiv(2060, year=2020)  # cover all PINs for cross-source alignment
         ok, results = run_phase2_gates(prc, sales, modiv, processed_dir=tmp_path)
         assert ok is True
         report_path = tmp_path / "validation_report.parquet"
@@ -261,7 +261,7 @@ class TestPhase2Gates:
 
         prc = _prc(2060)
         sales = _sales(150)
-        modiv = _modiv(50, year=2020)
+        modiv = _modiv(2060, year=2020)
         run_phase2_gates(prc, sales, modiv, processed_dir=tmp_path)
 
         report = pq.read_table(tmp_path / "validation_report.parquet").to_pandas()

@@ -37,15 +37,14 @@ const COHORT_LABEL: Record<string, string> = {
   tenure_post_pandemic_2023plus: 'Last transfer 2023+ (post-pandemic)',
 };
 
-// Plasma-style sequential palette — saturated, vivid, perceptually
-// ordered. Old = deep cosmic purple, new = bright gold. Matches the
-// fill palette in ParcelMap.astro exactly so map and drawer agree.
+// Red→green sequential cohort palette. Old/aged (autumn red) → fresh/new
+// (spring green). Matches ParcelMap.astro exactly so map and drawer agree.
 const COHORT_FILL: Record<string, string> = {
-  no_deed_since_1989: '#0d0887',           // deep cosmic indigo
-  tenure_pre_2015: '#7e03a8',              // royal violet
-  tenure_2015_2019: '#cc4778',             // hot magenta
-  tenure_pandemic_2020_2022: '#f89441',    // vivid orange
-  tenure_post_pandemic_2023plus: '#f0f921', // bright gold-yellow
+  no_deed_since_1989: '#c8181d',           // vivid red (oldest)
+  tenure_pre_2015: '#ee6c1c',              // orange-red
+  tenure_2015_2019: '#f7c52d',             // gold-yellow
+  tenure_pandemic_2020_2022: '#94c52d',    // yellow-green
+  tenure_post_pandemic_2023plus: '#1ca64f', // vivid green (newest)
 };
 
 const COHORT_DEFINITION: Record<string, string> = {

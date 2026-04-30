@@ -79,12 +79,15 @@ for (const [path, mod] of Object.entries(overlayModules)) {
     // Cohort fill palette — categorical, distinct hues, no good/bad coding.
     // pre_2015 + never_sold lean amber/sienna (long-tenured = warm earth);
     // mid-decade = teal; pandemic eras = purple/rose (post-COVID waves).
+    // Sequential warm "sepia / aged paper" gradient — temporally ordered
+    // so adjacent cohorts read as visually adjacent. Old = dark walnut
+    // (settled, weathered), new = pale parchment (fresh). No moral coding.
     const COHORT_FILL: Record<string, string> = {
-      no_deed_since_1989:              '#b06d2f', // sienna (deep)
-      tenure_pre_2015:                 '#deb887', // burlywood
-      tenure_2015_2019:                '#5fb1be', // teal
-      tenure_pandemic_2020_2022:       '#9b6bd1', // amethyst
-      tenure_post_pandemic_2023plus:   '#d96c8f', // rose
+      no_deed_since_1989:              '#4a2511', // dark walnut (oldest, ancient title)
+      tenure_pre_2015:                 '#8b4513', // saddle brown (long-tenured)
+      tenure_2015_2019:                '#c87f3e', // caramel (mid-decade)
+      tenure_pandemic_2020_2022:       '#e6b87a', // sand (recent)
+      tenure_post_pandemic_2023plus:   '#f4dfb8', // pale parchment (newest)
     };
     const COHORT_LABEL: Record<string, string> = {
       no_deed_since_1989:              'No deed since 1989',

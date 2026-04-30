@@ -162,33 +162,87 @@ def _build_unified_sales(
     return sales
 
 
-def _cohort_tags(latest_arms_year: int | None) -> dict:
-    """Map the latest arms-length sale year to the multi-tag cohort schema
-    locked in CONTEXT.md D-53. Returns a dict with primary `cohort` (one of
-    five tenure buckets) and any orthogonal tags like `never_sold`.
+def _cohort_tags(
+    latest_arms_year: int | None,
+    latest_any_deed_year: int | None,
+) -> dict:
+    """Multi-tag cohort assignment.
+
+    Primary `cohort` = tenure window keyed off LATEST DEED EVENT OF ANY KIND
+    (arms-length OR family/exempt transfer) — matches what the legend label
+    "last sold" intuitively means to a viewer of the map.
+
+    Orthogonal flags:
+      - `non_arms_only`: parcel has deed events but NEVER an arms-length sale.
+        Critical for assessment analysis: assessor has no market price anchor.
+      - `no_deed_since_1989`: zero deed events on record. Truly never traded.
     """
     tags: list[str] = []
-    if latest_arms_year is None:
-        cohort = "never_sold"
-        tags.append("never_sold")
-        tags.append("tenure_pre_2015")
-    elif latest_arms_year < 2015:
+
+    # Bucket by the latest deed event (any kind). If none at all, fall into
+    # the dedicated "no_deed_since_1989" cohort.
+    bucket_year = latest_any_deed_year
+    if bucket_year is None:
+        cohort = "no_deed_since_1989"
+        tags.append("no_deed_since_1989")
+        tags.append("tenure_pre_2015")  # by definition predates 2015
+    elif bucket_year < 2015:
         cohort = "tenure_pre_2015"
         tags.append("tenure_pre_2015")
-    elif latest_arms_year < 2020:
+    elif bucket_year < 2020:
         cohort = "tenure_2015_2019"
         tags.append("tenure_2015_2019")
-    elif latest_arms_year < 2023:
+    elif bucket_year < 2023:
         cohort = "tenure_pandemic_2020_2022"
         tags.append("tenure_pandemic_2020_2022")
     else:
         cohort = "tenure_post_pandemic_2023plus"
         tags.append("tenure_post_pandemic_2023plus")
+
+    # Orthogonal: did this parcel ever have an arms-length sale on record?
+    if latest_arms_year is None and latest_any_deed_year is not None:
+        tags.append("non_arms_only")
+
     return {
         "cohort": cohort,
         "tags": tags,
         "latest_arms_length_year": latest_arms_year,
+        "latest_any_deed_year": latest_any_deed_year,
+        "non_arms_only": (latest_arms_year is None and latest_any_deed_year is not None),
+        "no_deed_since_1989": (latest_any_deed_year is None),
     }
+
+
+def _latest_any_deed_year(
+    sales_records: list[dict],
+    hist_records: list[dict],
+) -> int | None:
+    """Latest year of ANY deed event (arms-length or not). Used for the
+    primary tenure cohort bucket since 'last transfer' is what a viewer
+    naturally reads from a map legend.
+    """
+    years: list[int] = []
+    for s in sales_records:
+        d = s.get("sale_date")
+        if d and len(str(d)) >= 4:
+            try:
+                years.append(int(str(d)[:4]))
+            except ValueError:
+                pass
+    seen: set[tuple] = set()
+    for h in hist_records:
+        deed_date = h.get("deed_date")
+        if not deed_date:
+            continue
+        key = (str(deed_date)[:10], h.get("deed_book"), h.get("deed_page"))
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            years.append(int(str(deed_date)[:4]))
+        except (ValueError, TypeError):
+            pass
+    return max(years) if years else None
 
 
 def _latest_arms_length_year(
@@ -413,7 +467,10 @@ def main() -> int:
             "history": hist_records,  # 37 years
             "unified_sales": _build_unified_sales(sales_records, hist_records),
             "data_quality_flags": dq.get(pin, []),
-            "cohort": _cohort_tags(_latest_arms_length_year(sales_records, hist_records)),
+            "cohort": _cohort_tags(
+                _latest_arms_length_year(sales_records, hist_records),
+                _latest_any_deed_year(sales_records, hist_records),
+            ),
         }
         out[pin] = record
 
@@ -460,7 +517,7 @@ def main() -> int:
 
     cohort_breakdown = []
     for c in [
-        "never_sold",
+        "no_deed_since_1989",
         "tenure_pre_2015",
         "tenure_2015_2019",
         "tenure_pandemic_2020_2022",

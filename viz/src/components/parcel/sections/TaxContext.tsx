@@ -26,18 +26,19 @@ type Props = {
   parcelTax: number | null | undefined;
   parcelAssessed: number | null | undefined;
   aggregates: Aggregates | null;
+  nonArmsOnly?: boolean;
 };
 
 const COHORT_LABEL: Record<string, string> = {
-  never_sold: 'Never Sold',
-  tenure_pre_2015: 'Pre-2015',
-  tenure_2015_2019: '2015–2019',
-  tenure_pandemic_2020_2022: 'Pandemic (2020–22)',
-  tenure_post_pandemic_2023plus: 'Post-Pandemic (2023+)',
+  no_deed_since_1989: 'No deed since 1989',
+  tenure_pre_2015: 'Last transfer pre-2015',
+  tenure_2015_2019: 'Last transfer 2015–2019',
+  tenure_pandemic_2020_2022: 'Last transfer 2020–2022 (pandemic)',
+  tenure_post_pandemic_2023plus: 'Last transfer 2023+ (post-pandemic)',
 };
 
 const COHORT_FILL: Record<string, string> = {
-  never_sold: '#b06d2f',
+  no_deed_since_1989: '#b06d2f',
   tenure_pre_2015: '#deb887',
   tenure_2015_2019: '#5fb1be',
   tenure_pandemic_2020_2022: '#9b6bd1',
@@ -45,17 +46,20 @@ const COHORT_FILL: Record<string, string> = {
 };
 
 const COHORT_DEFINITION: Record<string, string> = {
-  never_sold:
-    'No arms-length sale recorded since 1989. Held continuously through every assessment regime change. If horizontal-inequity hypothesis holds, this is the cohort most likely to be under-assessed relative to current market.',
+  no_deed_since_1989:
+    'No deed events on record since 1989 — no transfers of any kind, arms-length or family. Title held continuously by the same owner (or estate) through every assessment regime change. The most extreme long-tenure case.',
   tenure_pre_2015:
-    'Most recent arms-length sale was before January 1, 2015 — predating Monmouth County\'s Assessment Demonstration Program (ADP) annual revaluation. Long-tenured under the legacy decadal-revaluation regime.',
+    'Most recent deed event (arms-length OR family/exempt transfer) was before January 1, 2015 — predating Monmouth County\'s Assessment Demonstration Program (ADP) annual revaluation. Long-tenured under the legacy decadal-revaluation regime.',
   tenure_2015_2019:
-    'Bought between 2015 and 2019 — the early ADP years before the COVID housing surge. Assessment baseline set under the new annual-mass-appraisal regime.',
+    'Most recent deed event 2015–2019 — the early ADP years before the COVID housing surge. Assessment baseline set under the new annual-mass-appraisal regime.',
   tenure_pandemic_2020_2022:
-    'Bought during the 2020–2022 pandemic housing market — when COVID money supply expansion drove rapid price appreciation. Assessments calibrated against pandemic-peak comparables.',
+    'Most recent deed event during the 2020–2022 pandemic housing market — when COVID money supply expansion drove rapid price appreciation. Assessments calibrated against pandemic-peak comparables.',
   tenure_post_pandemic_2023plus:
-    'Bought 2023 or later — the sustained-inflation era as millennials aged into family-purchase years. Most recent comparables; least likely to be drifting from market.',
+    'Most recent deed event 2023 or later — sustained-inflation era as millennials aged into family-purchase years. Most recent comparables; least likely to be drifting from market.',
 };
+
+const NON_ARMS_NOTE =
+  'This parcel has had non-arms-length transfers only (e.g., between family, estate, or exempt entity). The assessor has no clean market-price anchor for this parcel — sale-chasing inequity risk is elevated.';
 
 // Donut chart with hover-to-label slices
 function Donut({
@@ -165,7 +169,7 @@ function SinglePctDonut({
   );
 }
 
-export default function TaxContext({ parcelCohort, parcelTax, parcelAssessed, aggregates }: Props) {
+export default function TaxContext({ parcelCohort, parcelTax, parcelAssessed, aggregates, nonArmsOnly }: Props) {
   if (!aggregates || !aggregates.cohorts || aggregates.cohorts.length === 0) {
     return null;
   }
@@ -202,6 +206,17 @@ export default function TaxContext({ parcelCohort, parcelTax, parcelAssessed, ag
         </div>
         <div style="font-size:0.84rem;color:var(--pd-fg);line-height:1.5">{definition}</div>
       </div>
+
+      {nonArmsOnly && (
+        <div
+          style="background:#fff3df;border-left:4px solid #b85c00;padding:0.6rem 0.85rem;border-radius:0 4px 4px 0;margin-bottom:0.9rem;font-size:0.82rem;line-height:1.45"
+        >
+          <strong style="color:#b85c00;text-transform:uppercase;font-size:0.7rem;letter-spacing:0.05em">
+            ⚠ Non-arms transfers only
+          </strong>
+          <div style="margin-top:0.2rem;color:var(--pd-fg)">{NON_ARMS_NOTE}</div>
+        </div>
+      )}
 
       {/* Two donuts side by side */}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.9rem">

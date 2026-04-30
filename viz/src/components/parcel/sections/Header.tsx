@@ -4,11 +4,18 @@ import { isPresent } from '../format';
 type Props = {
   pin: string;
   identity: Record<string, any>;
-  cohort?: { cohort?: string; tags?: string[]; latest_arms_length_year?: number | null };
+  cohort?: {
+    cohort?: string;
+    tags?: string[];
+    latest_arms_length_year?: number | null;
+    latest_any_deed_year?: number | null;
+    non_arms_only?: boolean;
+    no_deed_since_1989?: boolean;
+  };
 };
 
 const COHORT_LABEL: Record<string, string> = {
-  never_sold: '🌳 Never sold (since 1989)',
+  no_deed_since_1989: '🌳 No deed since 1989',
   tenure_pre_2015: 'Tenure: Pre-2015',
   tenure_2015_2019: 'Tenure: 2015–2019',
   tenure_pandemic_2020_2022: 'Tenure: Pandemic (2020–22)',
@@ -22,15 +29,28 @@ export default function Header({ pin, identity, cohort }: Props) {
     subtitleParts.push(`block ${identity.block ?? '—'} · lot ${identity.lot ?? '—'}`);
   }
   if (identity?.qualifier) subtitleParts.push(`qual ${identity.qualifier}`);
-  if (cohort?.latest_arms_length_year) {
+
+  // Subtitle reflects the actual deed-event chain, not just arms-length.
+  if (cohort?.no_deed_since_1989) {
+    subtitleParts.push('no deed events on record (since 1989)');
+  } else if (cohort?.non_arms_only && cohort?.latest_any_deed_year) {
+    subtitleParts.push(`last transfer ${cohort.latest_any_deed_year} (non-arms only)`);
+  } else if (cohort?.latest_arms_length_year && cohort?.latest_any_deed_year && cohort.latest_arms_length_year !== cohort.latest_any_deed_year) {
+    subtitleParts.push(
+      `last arms-length ${cohort.latest_arms_length_year} · last transfer ${cohort.latest_any_deed_year}`
+    );
+  } else if (cohort?.latest_arms_length_year) {
     subtitleParts.push(`last arms-length sale ${cohort.latest_arms_length_year}`);
-  } else if (cohort?.cohort === 'never_sold') {
-    subtitleParts.push('no arms-length sale on record (since 1989)');
+  } else if (cohort?.latest_any_deed_year) {
+    subtitleParts.push(`last transfer ${cohort.latest_any_deed_year}`);
   }
 
   const badges: { label: string; cls: string }[] = [];
   if (cohort?.cohort && COHORT_LABEL[cohort.cohort]) {
     badges.push({ label: COHORT_LABEL[cohort.cohort], cls: 'accent' });
+  }
+  if (cohort?.non_arms_only) {
+    badges.push({ label: '⚠ Non-arms transfers only', cls: 'warn' });
   }
   if (identity?.zone) badges.push({ label: `Zone ${identity.zone}`, cls: 'neutral' });
   if (identity?.property_class) badges.push({ label: `Class ${identity.property_class}`, cls: 'neutral' });

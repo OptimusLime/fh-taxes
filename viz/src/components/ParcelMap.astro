@@ -80,18 +80,18 @@ for (const [path, mod] of Object.entries(overlayModules)) {
     // pre_2015 + never_sold lean amber/sienna (long-tenured = warm earth);
     // mid-decade = teal; pandemic eras = purple/rose (post-COVID waves).
     const COHORT_FILL: Record<string, string> = {
-      never_sold:                      '#b06d2f', // sienna (deep)
+      no_deed_since_1989:              '#b06d2f', // sienna (deep)
       tenure_pre_2015:                 '#deb887', // burlywood
       tenure_2015_2019:                '#5fb1be', // teal
       tenure_pandemic_2020_2022:       '#9b6bd1', // amethyst
       tenure_post_pandemic_2023plus:   '#d96c8f', // rose
     };
     const COHORT_LABEL: Record<string, string> = {
-      never_sold:                      'Never sold (1989+)',
-      tenure_pre_2015:                 'Pre-2015',
-      tenure_2015_2019:                '2015–2019',
-      tenure_pandemic_2020_2022:       'Pandemic (2020–2022)',
-      tenure_post_pandemic_2023plus:   'Post-pandemic (2023+)',
+      no_deed_since_1989:              'No deed since 1989',
+      tenure_pre_2015:                 'Last transfer pre-2015',
+      tenure_2015_2019:                'Last transfer 2015–2019',
+      tenure_pandemic_2020_2022:       'Last transfer 2020–2022 (pandemic)',
+      tenure_post_pandemic_2023plus:   'Last transfer 2023+ (post-pandemic)',
     };
 
     // Outline tax palette — single-hue sequential blue (light → dark).
@@ -202,7 +202,7 @@ for (const [path, mod] of Object.entries(overlayModules)) {
           for (const c of Object.values(cohortByPin)) cohortCounts[c] = (cohortCounts[c] || 0) + 1;
 
           const cohortRows = [
-            'never_sold',
+            'no_deed_since_1989',
             'tenure_pre_2015',
             'tenure_2015_2019',
             'tenure_pandemic_2020_2022',

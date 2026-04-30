@@ -47,6 +47,7 @@ export default function ParcelDetail({ pin, record, variant = 'page', aggregates
         parcelTax={record.current_assessment?.last_year_tax}
         parcelAssessed={record.current_assessment?.net_value}
         aggregates={aggregates}
+        nonArmsOnly={(record.cohort as any)?.non_arms_only}
       />
       <Identity identity={record.identity} lot={record.lot_geometry} />
       <Building building={record.building} />

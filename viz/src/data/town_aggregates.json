@@ -5,59 +5,59 @@
   "total_assessed_value": 2735202500.0,
   "cohorts": [
     {
-      "cohort": "never_sold",
-      "n_parcels": 685,
-      "pct_of_parcels": 33.23629306162057,
-      "sum_tax": 10968944.449999986,
-      "pct_of_tax_pool": 29.659180237332446,
-      "sum_assessed": 812102000.0,
-      "pct_of_assessed": 29.69074501796485,
-      "avg_tax_per_parcel": 16013.057591240855,
-      "avg_assessed_per_parcel": 1185550.3649635036
+      "cohort": "no_deed_since_1989",
+      "n_parcels": 361,
+      "pct_of_parcels": 17.515769044153323,
+      "sum_tax": 5303995.239999999,
+      "pct_of_tax_pool": 14.341594263531306,
+      "sum_assessed": 394409000.0,
+      "pct_of_assessed": 14.419736747096422,
+      "avg_tax_per_parcel": 14692.507590027699,
+      "avg_assessed_per_parcel": 1092545.7063711912
     },
     {
       "cohort": "tenure_pre_2015",
-      "n_parcels": 652,
-      "pct_of_parcels": 31.63512857836002,
-      "sum_tax": 11856014.1,
-      "pct_of_tax_pool": 32.05774819000522,
-      "sum_assessed": 874927100.0,
-      "pct_of_assessed": 31.98765356495543,
-      "avg_tax_per_parcel": 18184.070705521473,
-      "avg_assessed_per_parcel": 1341912.7300613497
+      "n_parcels": 682,
+      "pct_of_parcels": 33.09073265405143,
+      "sum_tax": 11733026.389999997,
+      "pct_of_tax_pool": 31.725198902834123,
+      "sum_assessed": 865917900.0,
+      "pct_of_assessed": 31.65827393035799,
+      "avg_tax_per_parcel": 17203.8510117302,
+      "avg_assessed_per_parcel": 1269674.340175953
     },
     {
       "cohort": "tenure_2015_2019",
-      "n_parcels": 333,
-      "pct_of_parcels": 16.157205240174672,
-      "sum_tax": 6456760.66,
-      "pct_of_tax_pool": 17.45858309677718,
-      "sum_assessed": 474148000.0,
-      "pct_of_assessed": 17.335023640845606,
-      "avg_tax_per_parcel": 19389.671651651654,
-      "avg_assessed_per_parcel": 1423867.867867868
+      "n_parcels": 446,
+      "pct_of_parcels": 21.63998059194566,
+      "sum_tax": 8464613.110000001,
+      "pct_of_tax_pool": 22.88766134363799,
+      "sum_assessed": 620727600.0,
+      "pct_of_assessed": 22.69402722467532,
+      "avg_tax_per_parcel": 18978.95316143498,
+      "avg_assessed_per_parcel": 1391765.919282511
     },
     {
       "cohort": "tenure_pandemic_2020_2022",
-      "n_parcels": 234,
-      "pct_of_parcels": 11.353711790393014,
-      "sum_tax": 4857543.909999997,
-      "pct_of_tax_pool": 13.134424282497546,
-      "sum_assessed": 356412600.0,
-      "pct_of_assessed": 13.030574518705654,
-      "avg_tax_per_parcel": 20758.734658119647,
-      "avg_assessed_per_parcel": 1523130.7692307692
+      "n_parcels": 345,
+      "pct_of_parcels": 16.739446870451236,
+      "sum_tax": 7168257.229999999,
+      "pct_of_tax_pool": 19.382414975411027,
+      "sum_assessed": 525054800.0,
+      "pct_of_assessed": 19.19619479727735,
+      "avg_tax_per_parcel": 20777.557188405794,
+      "avg_assessed_per_parcel": 1521897.9710144927
     },
     {
       "cohort": "tenure_post_pandemic_2023plus",
-      "n_parcels": 157,
-      "pct_of_parcels": 7.617661329451723,
-      "sum_tax": 2844039.73,
-      "pct_of_tax_pool": 7.690064193387761,
-      "sum_assessed": 217612800.0,
-      "pct_of_assessed": 7.956003257528464,
-      "avg_tax_per_parcel": 18114.902738853503,
-      "avg_assessed_per_parcel": 1386068.789808917
+      "n_parcels": 227,
+      "pct_of_parcels": 11.01407083939835,
+      "sum_tax": 4313410.88,
+      "pct_of_tax_pool": 11.663130514585742,
+      "sum_assessed": 329093200.0,
+      "pct_of_assessed": 12.031767300592918,
+      "avg_tax_per_parcel": 19001.81004405286,
+      "avg_assessed_per_parcel": 1449749.7797356828
     }
   ]
 }

@@ -149,7 +149,7 @@
   background: var(--pd-card-bg); border: 1px solid var(--pd-border);
   border-radius: 6px; padding: 0.5rem 0.6rem 0.4rem;
 }
-.pd-spark { width: 100%; height: 60px; display: block; }
+.pd-spark { width: 100%; height: 110px; display: block; }
 .pd-spark-axis { font-size: 0.65rem; fill: var(--pd-faint); }
 .pd-spark-line { fill: none; stroke: var(--pd-accent); stroke-width: 1.5; }
 .pd-spark-area { fill: var(--pd-accent); opacity: 0.08; }
@@ -193,7 +193,46 @@
   padding: 0 0 0.75rem;
 }
 
-/* Drawer-only tweaks */
-.pd-drawer .pd-section { padding: 0.85rem 1rem; }
-.pd-drawer .pd-money-row { grid-template-columns: repeat(3, 1fr); }
-.pd-drawer .pd-hero { grid-template-columns: repeat(3, 1fr); }
+/* Drawer-only tweaks — generous interior padding so content doesn't jam
+   against the right edge of the viewport. */
+.pd-drawer { padding-bottom: 2rem; }
+.pd-drawer .pd-section { padding: 1.1rem 1.4rem 1.25rem; }
+.pd-drawer .pd-header { padding: 1.1rem 1.4rem 0.9rem; }
+.pd-drawer .pd-money-row { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+.pd-drawer .pd-hero { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+.pd-drawer .pd-stat-grid {
+  grid-template-columns: minmax(120px, 38%) 1fr;
+  row-gap: 0.4rem; column-gap: 0.9rem;
+}
+.pd-drawer .pd-table thead th { padding: 0.45rem 0.55rem; }
+.pd-drawer .pd-table tbody td { padding: 0.4rem 0.55rem; }
+.pd-drawer .pd-money-card { padding: 0.6rem 0.7rem; }
+.pd-drawer .pd-money-card .value { font-size: 1.05rem; }
+
+/* Interactive sparkline tooltip */
+.pd-spark-tip {
+  position: absolute;
+  background: rgba(14, 17, 22, 0.95); color: #fff;
+  padding: 6px 10px; border-radius: 4px;
+  font-size: 0.74rem; line-height: 1.35;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, calc(-100% - 8px));
+  z-index: 100;
+}
+.pd-spark-tip strong { font-weight: 600; }
+.pd-spark-tip .tip-row { display: flex; justify-content: space-between; gap: 12px; }
+.pd-spark-tip .tip-key { color: #98a0ac; }
+.pd-spark-wrap { position: relative; }
+.pd-spark { cursor: crosshair; }
+.pd-spark-cursor {
+  stroke: var(--pd-faint); stroke-width: 1; stroke-dasharray: 2,2;
+  pointer-events: none; opacity: 0;
+}
+.pd-spark-cursor.active { opacity: 1; }
+.pd-spark-hover-pt {
+  fill: var(--pd-accent); stroke: #fff; stroke-width: 1.5;
+  pointer-events: none; opacity: 0;
+}
+.pd-spark-hover-pt.active { opacity: 1; }

@@ -65,34 +65,94 @@ for (const [path, mod] of Object.entries(overlayModules)) {
 
     // Click → dispatch parcel:select event consumed by the drawer in
     // index.astro. Hover → cheap visual highlight only (no popup).
-    let selectedLyr: any = null;
-    const baseStyle = { color: '#3388ff', weight: 1, fillOpacity: 0.1 };
-    const hoverStyle = { color: '#0055cc', weight: 2, fillOpacity: 0.25 };
-    const selectedStyle = { color: '#b85c00', weight: 3, fillOpacity: 0.35 };
+    //
+    // Heatmap: outline color of each polygon is keyed to the parcel's
+    // last_year_tax (from parcels_full.json). Sequential YlOrRd scale on
+    // log-quantile of the tax value. Fill stays transparent / lightly tinted
+    // so the map remains readable.
 
-    fetch('/data/parcels.geojson')
-      .then((r) => {
-        if (!r.ok) throw new Error(`parcels.geojson HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((gj) => {
+    let selectedLyr: any = null;
+    const SELECTED_COLOR = '#0a3d91';
+    const FALLBACK_COLOR = '#94a3b8'; // slate-400 for parcels w/o tax data
+
+    // Sequential YlOrRd palette (D3-style, 7 stops).
+    const PALETTE = [
+      '#ffffcc', '#ffeda0', '#fed976', '#feb24c',
+      '#fd8d3c', '#fc4e2a', '#e31a1c'
+    ];
+
+    function makeColorFn(values: number[]): (v: number | null | undefined) => string {
+      const sorted = values.filter((v) => Number.isFinite(v) && v > 0).sort((a, b) => a - b);
+      if (sorted.length === 0) return () => FALLBACK_COLOR;
+      // Quantile breakpoints
+      const stops = PALETTE.length;
+      const breaks: number[] = [];
+      for (let i = 1; i < stops; i++) {
+        const q = i / stops;
+        breaks.push(sorted[Math.floor(q * sorted.length)]);
+      }
+      return (v) => {
+        if (!Number.isFinite(v as number) || (v as number) <= 0) return FALLBACK_COLOR;
+        for (let i = 0; i < breaks.length; i++) {
+          if ((v as number) <= breaks[i]) return PALETTE[i];
+        }
+        return PALETTE[stops - 1];
+      };
+    }
+
+    function styleFor(color: string, isHover = false, isSelected = false) {
+      if (isSelected) {
+        return { color: SELECTED_COLOR, weight: 3, fillColor: color, fillOpacity: 0.45 };
+      }
+      if (isHover) {
+        return { color: color, weight: 3, fillColor: color, fillOpacity: 0.35 };
+      }
+      return { color: color, weight: 1.5, fillColor: color, fillOpacity: 0.18 };
+    }
+
+    Promise.all([
+      fetch('/data/parcels.geojson').then((r) => r.json()),
+      fetch('/data/parcels_full.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+    ])
+      .then(([gj, fullData]) => {
+        // Compute heatmap: tax contribution per parcel (last_year_tax from
+        // current_assessment section of parcels_full.json).
+        const taxByPin: Record<string, number> = {};
+        for (const [pin, rec] of Object.entries(fullData) as Array<[string, any]>) {
+          const t = rec?.current_assessment?.last_year_tax;
+          if (Number.isFinite(t) && t > 0) taxByPin[pin] = t;
+        }
+        const colorFn = makeColorFn(Object.values(taxByPin));
+
+        const colorByPin: Record<string, string> = {};
+        for (const pin of Object.keys(taxByPin)) {
+          colorByPin[pin] = colorFn(taxByPin[pin]);
+        }
+
         const layer = L.geoJSON(gj, {
-          style: () => ({ ...baseStyle }),
+          style: (f: any) => {
+            const pin = f?.properties?.pams_pin;
+            const c = colorByPin[pin] || FALLBACK_COLOR;
+            return styleFor(c);
+          },
           onEachFeature: (feature, lyr) => {
             const props = (feature.properties || {}) as Record<string, any>;
             const pin = props.pams_pin;
+            const c = colorByPin[pin] || FALLBACK_COLOR;
             lyr.on('mouseover', () => {
-              if (lyr !== selectedLyr) (lyr as any).setStyle(hoverStyle);
+              if (lyr !== selectedLyr) (lyr as any).setStyle(styleFor(c, true));
             });
             lyr.on('mouseout', () => {
-              if (lyr !== selectedLyr) (lyr as any).setStyle(baseStyle);
+              if (lyr !== selectedLyr) (lyr as any).setStyle(styleFor(c));
             });
             lyr.on('click', () => {
               if (selectedLyr && selectedLyr !== lyr) {
-                (selectedLyr as any).setStyle(baseStyle);
+                const prevPin = (selectedLyr as any).feature?.properties?.pams_pin;
+                const prevColor = colorByPin[prevPin] || FALLBACK_COLOR;
+                (selectedLyr as any).setStyle(styleFor(prevColor));
               }
               selectedLyr = lyr;
-              (lyr as any).setStyle(selectedStyle);
+              (lyr as any).setStyle(styleFor(c, false, true));
               window.dispatchEvent(
                 new CustomEvent('parcel:select', { detail: { pin, props } })
               );
@@ -106,7 +166,28 @@ for (const [path, mod] of Object.entries(overlayModules)) {
         } catch (_) {
           /* keep default view */
         }
+
+        // Heatmap legend (bottom-right)
+        const legend = (L as any).control({ position: 'bottomright' });
+        legend.onAdd = () => {
+          const div = (L as any).DomUtil.create('div', 'pd-heatmap-legend');
+          const sorted = Object.values(taxByPin).filter((v) => v > 0).sort((a, b) => a - b);
+          const pct = (q: number) => sorted[Math.floor(q * sorted.length)] || 0;
+          const fmt = (n: number) => '$' + Math.round(n / 1000) + 'K';
+          div.innerHTML =
+            '<div style="background:rgba(255,255,255,0.95);padding:6px 8px;border:1px solid #c8cdd4;border-radius:4px;font:11px/1.4 system-ui,sans-serif;color:#0e1116;box-shadow:0 1px 3px rgba(0,0,0,0.1)">' +
+            '<div style="font-weight:600;margin-bottom:3px">Last-year tax</div>' +
+            PALETTE.map((c, i) => {
+              const lo = i === 0 ? 0 : pct(i / PALETTE.length);
+              const hi = i === PALETTE.length - 1 ? sorted[sorted.length - 1] : pct((i + 1) / PALETTE.length);
+              return `<div style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:14px;height:10px;background:${c};border:1px solid #888"></span>${fmt(lo)} – ${fmt(hi)}</div>`;
+            }).join('') +
+            `<div style="margin-top:4px;color:#5b6270;font-size:10px">${sorted.length} parcels</div>` +
+            '</div>';
+          return div;
+        };
+        legend.addTo(map);
       })
-      .catch((err) => console.error('[ParcelMap] geojson load failed:', err));
+      .catch((err) => console.error('[ParcelMap] data load failed:', err));
   }
 </script>

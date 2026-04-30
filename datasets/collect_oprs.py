@@ -206,8 +206,14 @@ _TAXLIST_YEAR_RE = re.compile(r"^taxlist_(\d{4})\.pdf$")
 
 _SSI_RE = re.compile(r'sr\.cgi\?[^"\']*?ssi=(\d+)[^"\']*?block=(\d+)[^"\']*?lot=(\d+)')
 
-# D-27: cgi response embeds an href to a session-bound tmp/<random>.pdf URL.
-_PDF_HREF_RE = re.compile(r'href=["\']([^"\']*tmp/[^"\']+\.pdf)["\']', re.I)
+# D-27: cgi response embeds an href= or src= ref to a session-bound tmp/<random>.pdf
+# URL. Real OPRS responses use unquoted attributes (frame src=../tmp/x.pdf, body
+# onload=window.location.href='../tmp/x.pdf', plain <a href=../tmp/x.pdf>) so quotes
+# are optional and we accept both href and src.
+_PDF_HREF_RE = re.compile(
+    r'''(?:href|src)\s*=\s*["']?([^"'>\s]*tmp/[^"'>\s]+\.pdf)''',
+    re.I,
+)
 
 
 def extract_ssis_from_m4(m4_html: str) -> list[str]:
@@ -304,19 +310,25 @@ def _build_url(component: str, block: str, lot: str, qualifier: str, ssi: str | 
         return f"{M4_BASE}?district={DISTRICT}&l02={l02}&hist=1"
     if component.startswith("sr_") and ssi:
         return f"{SR_BASE}?&district={DISTRICT}&ms_user=&ssi={ssi}&block={block}&lot={lot}&qual={qualifier}"
+    # PDF endpoints use h00/h01/h02/ccdd parameters per docs/specs/oprs_samples/README.md.
+    # Verified live: l02-style params return generic stubs (prc) or "not found" (ch75/taxlist).
     if component == COMPONENT_PRC:
-        l02 = encode_l02(block, lot, qualifier)
-        return f"{PRC_BASE}?district={DISTRICT}&l02={l02}"
+        return (
+            f"{PRC_BASE}?h00={block}&h01={lot}&h02={qualifier}&ccdd={DISTRICT}"
+        )
     if component == COMPONENT_CH75:
-        l02 = encode_l02(block, lot, qualifier)
-        return f"{CH75_BASE}?district={DISTRICT}&l02={l02}"
+        return (
+            f"{CH75_BASE}?h00={block}&h01={lot}&h02={qualifier}&i24=2&ccdd={DISTRICT}"
+        )
     if component.startswith("taxlist_") and component.endswith(".pdf"):
         m = _TAXLIST_YEAR_RE.match(component)
         if not m:
             raise ValueError(f"can't parse year from taxlist component {component!r}")
         year = m.group(1)
-        l02 = encode_l02(block, lot, qualifier)
-        return f"{TAXLIST_BASE}?district={DISTRICT}&l02={l02}&year={year}"
+        return (
+            f"{TAXLIST_BASE}?h00={block}&h01={lot}&h02={qualifier}"
+            f"&year={year}&ccdd={DISTRICT}"
+        )
     raise ValueError(f"can't build URL for component {component!r} ssi={ssi!r}")
 
 
@@ -369,13 +381,27 @@ def _fetch_pdf_two_step(
 
 
 def _pdfplumber_page1_ok(path: Path) -> bool:
-    """D-30: a valid PDF must yield non-empty page-1 text via pdfplumber."""
+    """D-30: a valid PDF must yield non-empty extractable text.
+
+    Try pdfplumber first; fall back to pdfminer.six (pdfplumber's underlying
+    engine) for PDFs whose MediaBox is missing — pdfplumber's Page __init__
+    raises on that, but pdfminer handles it gracefully. ch75.cgi PDFs are
+    structurally valid but trip the pdfplumber MediaBox check.
+    """
     try:
         with pdfplumber.open(str(path)) as pdf:
             if not pdf.pages:
                 return False
             text = pdf.pages[0].extract_text() or ""
-            return bool(text.strip())
+            if text.strip():
+                return True
+    except Exception:
+        pass
+    # Fallback for MediaBox-missing or otherwise pdfplumber-hostile PDFs.
+    try:
+        from pdfminer.high_level import extract_text
+        text = extract_text(str(path), maxpages=1) or ""
+        return bool(text.strip())
     except Exception:
         return False
 

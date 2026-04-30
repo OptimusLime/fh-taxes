@@ -33,27 +33,28 @@ from datasets.collect_oprs import (
 # ---------------------------------------------------------------------------
 
 def test_build_url_prc():
+    # PDF endpoints use h00/h01/h02/ccdd (NOT l02). Verified against live OPRS:
+    # the l02 form returns a generic stub PDF; h00/h01 returns parcel-specific.
     url = _build_url("prc.pdf", "77", "80", "", None)
     assert "prc.cgi" in url
-    assert "district=1314" in url
-    assert "l02=" in url
-    # 28-char l02 token (DDDD + BBBBB + SSSS + LLLLL + XXXX + QQQQQ + M)
-    l02 = url.split("l02=", 1)[1].split("&", 1)[0]
-    assert len(l02) == 28
+    assert "ccdd=1314" in url
+    assert "h00=77" in url and "h01=80" in url and "h02=" in url
 
 
 def test_build_url_ch75():
     url = _build_url("ch75.pdf", "77", "80", "", None)
     assert "ch75.cgi" in url
-    assert "district=1314" in url
-    assert "l02=" in url
+    assert "ccdd=1314" in url
+    assert "h00=77" in url and "h01=80" in url
+    assert "i24=2" in url
 
 
 def test_build_url_taxlist_extracts_year():
     url = _build_url("taxlist_2026.pdf", "3", "33", "", None)
     assert "taxlist.cgi" in url
     assert "year=2026" in url
-    assert "l02=" in url
+    assert "ccdd=1314" in url
+    assert "h00=3" in url and "h01=33" in url
 
 
 def test_build_url_taxlist_unknown_year_raises():
@@ -102,6 +103,22 @@ def test_pdf_href_re_extracts_relative_no_leading_slash():
     m = _PDF_HREF_RE.search(html)
     assert m is not None
     assert m.group(1) == "tmp/abc.pdf"
+
+
+def test_pdf_href_re_extracts_unquoted_href_real_prc_shape():
+    # Real prc.cgi response shape: unquoted href in an <a> tag.
+    html = "<a href=../tmp/prc-1314-30-1--10928.pdf>Click Here</a>"
+    m = _PDF_HREF_RE.search(html)
+    assert m is not None
+    assert m.group(1) == "../tmp/prc-1314-30-1--10928.pdf"
+
+
+def test_pdf_href_re_extracts_frame_src_real_ch75_shape():
+    # Real ch75.cgi/taxlist.cgi response shape: <frame src=../tmp/x.pdf> (no quotes).
+    html = "<frame name=FrmR src=../tmp/ch75.10917.pdf resize>"
+    m = _PDF_HREF_RE.search(html)
+    assert m is not None
+    assert m.group(1) == "../tmp/ch75.10917.pdf"
 
 
 # ---------------------------------------------------------------------------

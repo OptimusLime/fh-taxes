@@ -1,0 +1,4 @@
+# Vendored Leaflet marker icons land here in Plan 03 (Astro scaffold).
+# Required files: marker-icon.png, marker-icon-2x.png, marker-shadow.png.
+# Researcher-flagged: Astro static build does not resolve Leaflet's bundled
+# default icon path; vendoring under public/leaflet/ avoids the issue.

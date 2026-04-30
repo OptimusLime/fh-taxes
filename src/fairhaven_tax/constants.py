@@ -59,3 +59,44 @@ LEVY_BREAKDOWN: dict[str, Decimal] | None = {"county_general": Decimal("5056823.
 #   "total_county", "local_school", "regional_school", "muni_school", "total_school",
 #   "local_municipal", "muni_open_space", "minimum_library", "total_municipal",
 #   "total_levy"
+
+# ---------------------------------------------------------------------------
+# Phase 2 — Statistical Pipeline thresholds and reproducibility constants
+# ---------------------------------------------------------------------------
+
+# Reproducibility (D-67) — Plan 4, 5, 7
+RANDOM_SEED: int = 42
+
+# IAAO Standard on Ratio Studies (April 2013) — Plan 6
+# Source: assessr R formulas.R cod_met / prd_met / prb_met (RESEARCH.md §3)
+IAAO_COD_RESIDENTIAL_MAX: Decimal = Decimal("15.0")     # percent
+IAAO_COD_RESIDENTIAL_MIN: Decimal = Decimal("5.0")      # percent
+IAAO_PRD_MIN: Decimal = Decimal("0.98")
+IAAO_PRD_MAX: Decimal = Decimal("1.03")
+IAAO_PRB_MIN: Decimal = Decimal("-0.05")
+IAAO_PRB_MAX: Decimal = Decimal("0.05")
+
+# Hedonic spec (D-54) — Plan 4
+HEDONIC_TRAIN_YEAR_MIN: int = 2020
+HEDONIC_TRAIN_YEAR_MAX: int = 2025
+HEDONIC_K_NEIGHBORHOOD_DEFAULT: int = 6   # within {5..8}
+HEDONIC_R2_TARGET: Decimal = Decimal("0.7")  # MODEL-02
+
+# CDF gap test (D-55, D-66) — Plan 7
+# Defaults from assessr::detect_chasing (RESEARCH.md §4.1)
+CDF_GAP_BOUNDS: tuple[Decimal, Decimal] = (Decimal("0.98"), Decimal("1.02"))
+CDF_GAP_THRESHOLD: Decimal = Decimal("0.03")
+CDF_TEST_YEAR_MIN: int = 2014   # post-ADP regime per D-55
+CDF_TEST_YEAR_MAX: int = 2025
+CDF_TEST_MIN_N: int = 30        # assessr soft warning threshold
+
+# Historical Fair Haven general tax rates per $100 (D-52: yearly correctness within regime).
+# Source: DLGS Property Tax Tables (cached under data/raw/dlgs_tax_tables/).
+# Missing years fall back to the 2025 verified rate (1.427) with a limitation_flag
+# set in downstream outputs (Plan 05).
+HISTORICAL_TAX_RATES: dict[int, Decimal] = {
+    2025: Decimal("1.427"),  # verified DLGS 2025 25taxes.xls (cached under data/raw/dlgs_tax_tables/2026-04-29/)
+    # Other years populated by the historical-rate extractor;
+    # missing entries trigger fallback-to-2025 + limitation_flag in Plan 05 outputs.
+}
+HISTORICAL_TAX_RATES_FALLBACK: Decimal = Decimal("1.427")  # used when year missing

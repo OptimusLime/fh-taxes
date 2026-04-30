@@ -1,0 +1,43 @@
+---
+import TownComposition from '../components/TownComposition.tsx';
+import aggregates from '../data/town_aggregates.json';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Town Composition — Fair Haven Tax Analysis</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, system-ui, sans-serif;
+        color: #0e1116;
+        background: #f6f7f9;
+      }
+      .topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.5rem 1rem; border-bottom: 1px solid #e3e6ea;
+        background: #fff; height: 48px;
+      }
+      .topbar h1 { font-size: 1rem; margin: 0; font-weight: 600; }
+      .topbar nav a {
+        margin-left: 1rem; font-size: 0.85rem; color: #1a56db;
+        text-decoration: none;
+      }
+      .topbar nav a:hover { text-decoration: underline; }
+      .topbar nav a.active { color: #0e1116; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <h1>Fair Haven Tax Assessment Analysis</h1>
+      <nav>
+        <a href="/">Map</a>
+        <a href="/town-composition" class="active">Town Composition</a>
+      </nav>
+    </div>
+    <TownComposition aggregates={aggregates} />
+  </body>
+</html>

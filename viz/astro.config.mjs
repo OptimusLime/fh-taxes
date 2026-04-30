@@ -8,8 +8,12 @@ import preact from '@astrojs/preact';
 //   Default Vite already watches src/**, but we name it for documentation.
 export default defineConfig({
   integrations: [preact()],
+  // 4322 because port 4321 is taken by the Sophon dashboard on this machine.
+  server: { host: '0.0.0.0', port: 4322 },
   vite: {
     server: {
+      // Allow Tailscale / LAN hostnames through Vite's host check. Add more as needed.
+      allowedHosts: ['pauls-macbook-pro', '.local', '.ts.net'],
       watch: {
         ignored: ['!**/src/data/**'],
       },

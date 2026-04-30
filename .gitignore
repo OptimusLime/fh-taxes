@@ -29,3 +29,6 @@ temporary_scripts/**/*.pdf
 data/raw/oprs_prc/
 temporary_scripts/sandbox/
 .claude/
+
+# Generated parcel join data (24MB, regen via scripts/build_parcels_full_data.py)
+viz/src/data/parcels_full.json

@@ -3,16 +3,15 @@
 //
 // - Renders a Leaflet map of all Fair Haven parcels (parcels.geojson).
 // - Reads ALL JSON files under viz/src/data/overlays/ at build/HMR time
-//   via import.meta.glob (eager) and looks each clicked parcel's PAMS_PIN
-//   up across every overlay. Popup body is the union of overlay values.
-// - Daniel's Law (D-65): the GeoJSON shipped here contains NO owner names
-//   (enforced by scripts/build_parcels_geojson.py PROPERTY_COLS whitelist).
-//   Overlays may contain richer per-PIN data — Phase 3 build pipeline strips
-//   anything sensitive at deploy time.
-// - Leaflet default-icon fix (researcher-flagged): vendored marker PNGs at
-//   /leaflet/* override the default URL resolution that breaks under
-//   Astro/Vite static builds.
-import 'leaflet/dist/leaflet.css';
+//   via import.meta.glob (eager). Overlays serialized as data-overlays
+//   attribute on the map div — read by client-side module script.
+// - Daniel's Law (D-65): the GeoJSON shipped here contains NO owner names.
+// - Leaflet default-icon fix: vendored marker PNGs at /leaflet/*.
+//
+// IMPORTANT: client-side script is `<script>` (no define:vars) so Astro
+// bundles it as an ES module. `define:vars` ships an INLINE CLASSIC script
+// where bare-specifier `import 'leaflet'` doesn't resolve at runtime, which
+// silently breaks the map. Vars travel via data-* attributes instead.
 
 const {
   center = [40.3604, -74.0410],
@@ -20,8 +19,6 @@ const {
   height = '600px',
 } = Astro.props;
 
-// Eager glob: loaded at build/dev time so the script payload below has
-// the overlay data already inlined (no extra fetch round-trips).
 const overlayModules = import.meta.glob('/src/data/overlays/*.json', { eager: true });
 const overlays: Record<string, Record<string, unknown>> = {};
 for (const [path, mod] of Object.entries(overlayModules)) {
@@ -30,16 +27,30 @@ for (const [path, mod] of Object.entries(overlayModules)) {
 }
 ---
 
-<div id="parcel-map" style={`height:${height};width:100%;`}></div>
+<div
+  id="parcel-map"
+  style={`height:${height};width:100%;`}
+  data-center={JSON.stringify(center)}
+  data-zoom={String(zoom)}
+  data-overlays={JSON.stringify(overlays)}>
+</div>
 
-<script define:vars={{ center, zoom, overlays }}>
-  (async () => {
-    const Lmod = await import('leaflet');
-    const L = Lmod.default ?? Lmod;
+<script>
+  // Astro-processed module script. Bundler resolves the leaflet import.
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
 
-    // Researcher-flagged: Leaflet's default icon paths break under
-    // Astro/Vite static builds. Override with our vendored absolute URLs.
-    delete L.Icon.Default.prototype._getIconUrl;
+  const el = document.getElementById('parcel-map');
+  if (!el) {
+    console.error('[ParcelMap] #parcel-map div not found');
+  } else {
+    const center = JSON.parse(el.dataset.center || '[40.3604,-74.041]') as [number, number];
+    const zoom = parseInt(el.dataset.zoom || '14', 10);
+    const overlays = JSON.parse(el.dataset.overlays || '{}') as Record<string, Record<string, unknown>>;
+
+    // Leaflet default-icon URL fix for Astro/Vite static builds.
+    // @ts-expect-error mergeOptions accepts these URL keys at runtime
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconUrl: '/leaflet/marker-icon.png',
       iconRetinaUrl: '/leaflet/marker-icon-2x.png',
@@ -52,41 +63,50 @@ for (const [path, mod] of Object.entries(overlayModules)) {
       maxZoom: 19,
     }).addTo(map);
 
-    // viz/public/data symlinks to viz/src/data, so this URL resolves to
-    // the canonical GeoJSON sink (D-63 atomic-write target).
-    const resp = await fetch('/data/parcels.geojson');
-    if (!resp.ok) {
-      console.error('parcels.geojson fetch failed:', resp.status);
-      return;
-    }
-    const gj = await resp.json();
+    // Click → dispatch parcel:select event consumed by the drawer in
+    // index.astro. Hover → cheap visual highlight only (no popup).
+    let selectedLyr: any = null;
+    const baseStyle = { color: '#3388ff', weight: 1, fillOpacity: 0.1 };
+    const hoverStyle = { color: '#0055cc', weight: 2, fillOpacity: 0.25 };
+    const selectedStyle = { color: '#b85c00', weight: 3, fillOpacity: 0.35 };
 
-    const layer = L.geoJSON(gj, {
-      style: { color: '#3388ff', weight: 1, fillOpacity: 0.1 },
-      onEachFeature: (feature, lyr) => {
-        const props = feature.properties || {};
-        const pin = props.pams_pin;
-        const lines = [`<strong>${pin ?? '(no PIN)'}</strong>`];
-        if (props.property_location) {
-          lines.push(`<em>loc</em>: ${props.property_location}`);
-        }
-        for (const [name, dict] of Object.entries(overlays)) {
-          const val = dict?.[pin];
-          if (val !== undefined) {
-            lines.push(`<em>${name}</em>: ${JSON.stringify(val)}`);
-          }
-        }
-        lines.push(`<a href="/parcel/${pin}">detail →</a>`);
-        lyr.bindPopup(lines.join('<br/>'));
-      },
-    }).addTo(map);
+    fetch('/data/parcels.geojson')
+      .then((r) => {
+        if (!r.ok) throw new Error(`parcels.geojson HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((gj) => {
+        const layer = L.geoJSON(gj, {
+          style: () => ({ ...baseStyle }),
+          onEachFeature: (feature, lyr) => {
+            const props = (feature.properties || {}) as Record<string, any>;
+            const pin = props.pams_pin;
+            lyr.on('mouseover', () => {
+              if (lyr !== selectedLyr) (lyr as any).setStyle(hoverStyle);
+            });
+            lyr.on('mouseout', () => {
+              if (lyr !== selectedLyr) (lyr as any).setStyle(baseStyle);
+            });
+            lyr.on('click', () => {
+              if (selectedLyr && selectedLyr !== lyr) {
+                (selectedLyr as any).setStyle(baseStyle);
+              }
+              selectedLyr = lyr;
+              (lyr as any).setStyle(selectedStyle);
+              window.dispatchEvent(
+                new CustomEvent('parcel:select', { detail: { pin, props } })
+              );
+            });
+          },
+        }).addTo(map);
 
-    // Fit map to data bounds if features exist.
-    try {
-      const b = layer.getBounds();
-      if (b.isValid()) map.fitBounds(b, { padding: [20, 20] });
-    } catch (_) {
-      /* keep default view if bounds invalid */
-    }
-  })();
+        try {
+          const b = layer.getBounds();
+          if (b.isValid()) map.fitBounds(b, { padding: [20, 20] });
+        } catch (_) {
+          /* keep default view */
+        }
+      })
+      .catch((err) => console.error('[ParcelMap] geojson load failed:', err));
+  }
 </script>

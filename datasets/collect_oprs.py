@@ -54,6 +54,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import geopandas as gpd
+import pdfplumber
 import requests
 
 
@@ -67,10 +68,19 @@ REFERER = "https://oprs.co.monmouth.nj.us/"
 
 M4_BASE = "https://tax1.co.monmouth.nj.us/cgi-bin/m4.cgi"
 SR_BASE = "https://tax1.co.monmouth.nj.us/cgi-bin/sr.cgi"
+PRC_BASE = "https://tax1.co.monmouth.nj.us/cgi-bin/prc.cgi"
+CH75_BASE = "https://tax1.co.monmouth.nj.us/cgi-bin/ch75.cgi"
+TAXLIST_BASE = "https://tax1.co.monmouth.nj.us/cgi-bin/taxlist.cgi"
+TAX1_HOST = "https://tax1.co.monmouth.nj.us"
 
 DISTRICT = "1314"  # Fair Haven NJGIN code
 
+# Operator updates this annually when the next year's tax list becomes available.
+CURRENT_YEAR = 2026
+
 COMPONENT_M4 = "m4.html"
+COMPONENT_PRC = "prc.pdf"
+COMPONENT_CH75 = "ch75.pdf"
 
 
 # ----------------------------------------------------------------------------
@@ -183,11 +193,21 @@ def sr_component_name(ssi: str) -> str:
     return f"sr_{ssi}.html"
 
 
+def taxlist_component_name(year: int) -> str:
+    return f"taxlist_{year}.pdf"
+
+
+_TAXLIST_YEAR_RE = re.compile(r"^taxlist_(\d{4})\.pdf$")
+
+
 # ----------------------------------------------------------------------------
 # Parsing m4 to discover ssi values for sales
 # ----------------------------------------------------------------------------
 
 _SSI_RE = re.compile(r'sr\.cgi\?[^"\']*?ssi=(\d+)[^"\']*?block=(\d+)[^"\']*?lot=(\d+)')
+
+# D-27: cgi response embeds an href to a session-bound tmp/<random>.pdf URL.
+_PDF_HREF_RE = re.compile(r'href=["\']([^"\']*tmp/[^"\']+\.pdf)["\']', re.I)
 
 
 def extract_ssis_from_m4(m4_html: str) -> list[str]:
@@ -254,6 +274,13 @@ def _validate(component: str, body: bytes, block: str, lot: str) -> tuple[bool, 
     Returns (ok, status_tag). Special status_tag='no_sale' for empty sr."""
     if not body or len(body) < 500:
         return False, f"too_small:{len(body) if body else 0}"
+    # D-30: PDF components must have a %PDF marker. Header strip (D-28) is
+    # applied upstream in _fetch_pdf_two_step for prc.pdf, so by the time we
+    # see the body here it should start with b"%PDF" if valid.
+    if component.endswith(".pdf"):
+        if not body.startswith(b"%PDF"):
+            return False, "no_pdf_marker"
+        return True, "ok"
     text = body.decode("latin-1", errors="replace")
     flat = re.sub(r"<[^>]+>", " ", text)
     flat = re.sub(r"&nbsp;|&amp;", " ", flat)
@@ -277,7 +304,80 @@ def _build_url(component: str, block: str, lot: str, qualifier: str, ssi: str | 
         return f"{M4_BASE}?district={DISTRICT}&l02={l02}&hist=1"
     if component.startswith("sr_") and ssi:
         return f"{SR_BASE}?&district={DISTRICT}&ms_user=&ssi={ssi}&block={block}&lot={lot}&qual={qualifier}"
+    if component == COMPONENT_PRC:
+        l02 = encode_l02(block, lot, qualifier)
+        return f"{PRC_BASE}?district={DISTRICT}&l02={l02}"
+    if component == COMPONENT_CH75:
+        l02 = encode_l02(block, lot, qualifier)
+        return f"{CH75_BASE}?district={DISTRICT}&l02={l02}"
+    if component.startswith("taxlist_") and component.endswith(".pdf"):
+        m = _TAXLIST_YEAR_RE.match(component)
+        if not m:
+            raise ValueError(f"can't parse year from taxlist component {component!r}")
+        year = m.group(1)
+        l02 = encode_l02(block, lot, qualifier)
+        return f"{TAXLIST_BASE}?district={DISTRICT}&l02={l02}&year={year}"
     raise ValueError(f"can't build URL for component {component!r} ssi={ssi!r}")
+
+
+def _fetch_pdf_two_step(
+    session: requests.Session, cgi_url: str, component: str, timeout: int = 30
+) -> tuple[int, bytes | None, int]:
+    """D-27: Two-request session-bound PDF fetch.
+
+    1. GET cgi_url → HTML containing href to tmp/<random>.pdf
+    2. GET the resolved tmp PDF URL on the same session
+
+    For COMPONENT_PRC only (D-28), slice the body from the b"%PDF" marker —
+    upstream Apache prepends a literal HTTP envelope despite a 200 OK status.
+
+    Returns (status_code, body, requests_made).
+        - cgi step fails → (status, None, 1)
+        - href not found → (200, None, 1)
+        - second GET fails → (status, None, 2)
+        - success → (200, body, 2)
+    """
+    try:
+        r1 = session.get(cgi_url, timeout=timeout)
+    except requests.RequestException:
+        return 0, None, 1
+    if r1.status_code != 200 or not r1.content:
+        return r1.status_code, None, 1
+    html = r1.content.decode("latin-1", errors="replace")
+    m = _PDF_HREF_RE.search(html)
+    if not m:
+        return 200, None, 1
+    href = m.group(1)
+    if href.startswith("http://") or href.startswith("https://"):
+        pdf_url = href
+    elif href.startswith("/"):
+        pdf_url = TAX1_HOST + href
+    else:
+        pdf_url = TAX1_HOST + "/" + href
+    try:
+        r2 = session.get(pdf_url, timeout=timeout)
+    except requests.RequestException:
+        return 0, None, 2
+    if r2.status_code != 200 or not r2.content:
+        return r2.status_code, None, 2
+    body = r2.content
+    if component == COMPONENT_PRC:
+        # D-28: strip prepended HTTP envelope by slicing from %PDF marker.
+        if body.find(b"%PDF") > 0:
+            body = body[body.find(b"%PDF"):]
+    return 200, body, 2
+
+
+def _pdfplumber_page1_ok(path: Path) -> bool:
+    """D-30: a valid PDF must yield non-empty page-1 text via pdfplumber."""
+    try:
+        with pdfplumber.open(str(path)) as pdf:
+            if not pdf.pages:
+                return False
+            text = pdf.pages[0].extract_text() or ""
+            return bool(text.strip())
+    except Exception:
+        return False
 
 
 def fetch_component(
@@ -287,16 +387,30 @@ def fetch_component(
     output_root: Path,
     max_retries: int,
     ssi: str | None = None,
-) -> tuple[bool, str]:
-    """Fetch one component, atomic-write to cache. Returns (ok, status_string)."""
+) -> tuple[bool, str, int]:
+    """Fetch one component, atomic-write to cache.
+
+    Returns (ok, status_string, requests_made).
+        - cached → (True, "cached", 0)
+        - HTML success → (True, "ok", 1)
+        - PDF success → (True, "ok", 2)
+        - failure → (False, status, requests_made_so_far summed across retries)
+    """
     if is_cached(output_root, pams_pin, component):
-        return True, "cached"
+        return True, "cached", 0
     block, lot, qualifier = parse_pams_pin(pams_pin)
     url = _build_url(component, block, lot, qualifier, ssi)
+    is_pdf = component.endswith(".pdf")
 
     last_status = "no_attempt"
+    total_requests = 0
     for attempt in range(max_retries):
-        status_code, body = _fetch(session, url)
+        if is_pdf:
+            status_code, body, made = _fetch_pdf_two_step(session, url, component)
+            total_requests += made
+        else:
+            status_code, body = _fetch(session, url)
+            total_requests += 1
         if status_code == 0:
             last_status = "network_err"
             time.sleep(1.0 + attempt)
@@ -305,23 +419,39 @@ def fetch_component(
             last_status = f"http_{status_code}"
             time.sleep(1.0 + attempt)
             continue
+        if body is None:
+            last_status = "no_pdf_href" if is_pdf else "empty_body"
+            time.sleep(0.5)
+            continue
         valid, vstatus = _validate(component, body, block, lot)
         if vstatus == "no_sale":
             marker = parcel_dir(output_root, pams_pin) / (component + ".no_sale")
             marker.parent.mkdir(parents=True, exist_ok=True)
             marker.write_bytes(b"no_detail_on_record\n")
-            return True, "no_sale"
+            return True, "no_sale", total_requests
         if not valid:
             last_status = vstatus
             time.sleep(0.5)
             continue
         out = parcel_dir(output_root, pams_pin) / component
-        if _write_atomic(out, body):
-            return True, "ok"
-        last_status = f"write_failed:{len(body) if body else 0}"
-        time.sleep(0.5)
+        if not _write_atomic(out, body):
+            last_status = f"write_failed:{len(body) if body else 0}"
+            time.sleep(0.5)
+            continue
+        # D-30: post-write pdfplumber sanity check for PDF components.
+        if is_pdf:
+            if not _pdfplumber_page1_ok(out):
+                # unlink and retry
+                try:
+                    out.unlink()
+                except OSError:
+                    pass
+                last_status = "pdfplumber_failed"
+                time.sleep(0.5)
+                continue
+        return True, "ok", total_requests
 
-    return False, last_status
+    return False, last_status, total_requests
 
 
 # ----------------------------------------------------------------------------
@@ -384,6 +514,16 @@ def parcel_needed_components(
         comp = sr_component_name(ssi)
         if not is_cached(output_root, pams_pin, comp):
             needed.append((comp, ssi))
+
+    # PDF components — comprehensive mode adds prc.pdf, ch75.pdf, taxlist_<year>.pdf
+    # alongside sr discovery (D-29: each component independently cached).
+    for pdf_comp in (
+        COMPONENT_PRC,
+        COMPONENT_CH75,
+        taxlist_component_name(CURRENT_YEAR),
+    ):
+        if not is_cached(output_root, pams_pin, pdf_comp):
+            needed.append((pdf_comp, None))
     return needed
 
 
@@ -446,10 +586,12 @@ def run_batch(cfg: Config) -> RunState:
 
         while work and state.requests_done < cfg.batch_size:
             component, ssi = work.popleft()
-            ok, status = fetch_component(
+            ok, status, requests_made = fetch_component(
                 session, pin, component, cfg.output_root, cfg.max_retries, ssi=ssi
             )
-            state.requests_done += 1
+            # PDF components consume two requests per attempt (D-27); HTML
+            # components consume one. Cached returns 0.
+            state.requests_done += max(requests_made, 1) if status != "cached" else 0
             state.recent_errors.append(ok)
             if status == "cached":
                 state.cache_hits += 1
@@ -524,6 +666,13 @@ def report_status(cfg: Config) -> None:
     sr_no_sale = 0
     sr_required = 0
     sr_pending = 0
+    prc_cached = 0
+    prc_pending = 0
+    ch75_cached = 0
+    ch75_pending = 0
+    taxlist_cached = 0
+    taxlist_pending = 0
+    taxlist_comp = taxlist_component_name(CURRENT_YEAR)
 
     for pin in parcel_ids:
         m4_present = is_cached(cfg.output_root, pin, COMPONENT_M4)
@@ -555,7 +704,29 @@ def report_status(cfg: Config) -> None:
             else:
                 all_sr_done = False
                 sr_pending += 1
-        if all_sr_done:
+        # PDF components — independent of sr discovery
+        all_pdfs_done = True
+        for pdf_comp, c_count, p_count in (
+            (COMPONENT_PRC, "prc", "prc_p"),
+            (COMPONENT_CH75, "ch75", "ch75_p"),
+            (taxlist_comp, "taxlist", "taxlist_p"),
+        ):
+            if is_cached(cfg.output_root, pin, pdf_comp):
+                if pdf_comp == COMPONENT_PRC:
+                    prc_cached += 1
+                elif pdf_comp == COMPONENT_CH75:
+                    ch75_cached += 1
+                else:
+                    taxlist_cached += 1
+            else:
+                all_pdfs_done = False
+                if pdf_comp == COMPONENT_PRC:
+                    prc_pending += 1
+                elif pdf_comp == COMPONENT_CH75:
+                    ch75_pending += 1
+                else:
+                    taxlist_pending += 1
+        if all_sr_done and all_pdfs_done:
             parcels_complete += 1
 
     print(f"OPRS cache status — mode={cfg.mode} output={cfg.output_root}")
@@ -567,10 +738,15 @@ def report_status(cfg: Config) -> None:
         print(f"  sr (no_sale markers):     {sr_no_sale}")
         print(f"  sr pending:               {sr_pending}")
         print(f"  sr total expected (so far from cached m4s): {sr_required}")
+        print(f"  prc.pdf cached:           {prc_cached}  pending: {prc_pending}")
+        print(f"  ch75.pdf cached:          {ch75_cached}  pending: {ch75_pending}")
+        print(f"  {taxlist_comp} cached:   {taxlist_cached}  pending: {taxlist_pending}")
         # Estimate remaining work — sr_pending plus m4-not-yet-cached parcels'
-        # average ssi count (~3-4 per Fair Haven parcel).
+        # average ssi count (~3-4 per Fair Haven parcel). PDFs cost 2 requests
+        # each (D-27).
         m4_pending = total - m4_cached
-        est_remaining = sr_pending + m4_pending * 3  # rough
+        pdf_pending = prc_pending + ch75_pending + taxlist_pending
+        est_remaining = sr_pending + m4_pending * 3 + pdf_pending * 2
         print(f"  rough remaining requests: ~{m4_pending + est_remaining}")
         print(f"  estimated batches at batch={cfg.batch_size}: ~{-(-est_remaining // cfg.batch_size)}")
 

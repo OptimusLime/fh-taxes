@@ -657,6 +657,18 @@ def run_batch(cfg: Config) -> RunState:
                     sr_comp = sr_component_name(ssi_v)
                     if not is_cached(cfg.output_root, pin, sr_comp):
                         work.append((sr_comp, ssi_v))
+                # Queue PDF components alongside sr items so this parcel's
+                # 4-tier fetch completes in a single inline pass — without
+                # this, PDFs only enqueue on a second invocation when m4 is
+                # already cached, and a per-batch HTTP-request budget would
+                # cover way more m4-only parcels than full ones.
+                for pdf_comp in (
+                    COMPONENT_PRC,
+                    COMPONENT_CH75,
+                    taxlist_component_name(CURRENT_YEAR),
+                ):
+                    if not is_cached(cfg.output_root, pin, pdf_comp):
+                        work.append((pdf_comp, None))
                 log(f"    {pin}: discovered {len(discovered)} ssi(s) from m4")
 
             should_abort, reason = _check_abort(state, cfg)

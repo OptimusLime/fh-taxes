@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01.5-05-PLAN.md
-last_updated: "2026-04-30T12:34:11.182Z"
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-04-30T15:14:29.108Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
+  total_plans: 15
+  completed_plans: 9
+  percent: 60
 ---
 
 # State: Fair Haven Tax Assessment Analysis
@@ -19,19 +19,19 @@ progress:
 
 **Core Value:** A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift + CDF gap test) that either demonstrates tenure-correlated horizontal inequity in Fair Haven assessments, or documents that ADP works as designed.
 
-**Current Focus:** Phase 01.5 — oprs-collection
+**Current Focus:** Phase 02 — statistical-pipeline
 
 ## Current Position
 
-Phase: 01.5 (oprs-collection) — EXECUTING
-Plan: 1 of 6
+Phase: 02 (statistical-pipeline) — EXECUTING
+Plan: 1 of 7
 
 - **Milestone:** v1 MVP
 - **Phase:** 01-data-foundation
 - **Plan:** Phase 1 complete; ready to transition to Phase 2 (statistical core)
-- **Status:** Executing Phase 01.5
+- **Status:** Executing Phase 02
 
-**Progress:** [██████████] 100%
+**Progress:** [██████░░░░] 60%
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 1 of 6
 | Phase 01.5 P06 | 25min | 2 tasks | 4 files |
 | Phase 01.5 P04 | 22min | 2 tasks | 9 files |
 | Phase 01.5 P05 | 12min | 1 tasks | 2 files |
+| Phase 02 P01 | 25min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -76,10 +77,18 @@ Plan: 1 of 6
 - Live data acquisition NOT exercised in this environment; coverage is unit-test driven on synthetic fixtures (32/32 tests pass), including a hard-fail integration test that runs `scripts/validate_phase1.py` as a subprocess
 - DATA-01..04 + STORE-01..02 satisfied (live `make all` end-to-end deferred to user)
 
+### Phase 2 Decisions (Plan 02-01)
+
+- Phase-2 validation gate operational; live run flags `condition` column at 84% non-null (real data-quality issue for Plan 04 hedonic spec to address — drop, impute, or revise feature set)
+- `atomic_write_json` is the single canonical .tmp+rename helper for all `viz/src/data/**` writes (D-63 hot-reload)
+- IAAO/CDF/hedonic constants centralised in `constants.py`; Phase-2 gates source thresholds from there
+- HISTORICAL_TAX_RATES wired up with 2025 verified + fallback; 2020-2024 deferred (cache only has 2025)
+
 ### Open Todos
 
 - Run `make all` against live network (user) to populate `data/processed/` and verify URLs are still canonical
 - Phase 2: hedonic OLS fit + Berry tax-shift calculation (REQ-IDs MODEL-01/02, CALC-01/02, TEST-01)
+- Plan 04: address `condition` 84% non-null finding from Plan 02-01 validation gate
 
 ### Blockers
 
@@ -101,8 +110,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-04-30T12:34:11.179Z
-**Stopped at:** Completed 01.5-05-PLAN.md
+**Last session:** 2026-04-30T15:14:29.106Z
+**Stopped at:** Completed 02-01-PLAN.md
 **Next session:** Transition Phase 1 → 2 — `/gsd-transition`
 
 ### Resume Instructions

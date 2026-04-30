@@ -79,15 +79,13 @@ for (const [path, mod] of Object.entries(overlayModules)) {
     // Cohort fill palette — categorical, distinct hues, no good/bad coding.
     // pre_2015 + never_sold lean amber/sienna (long-tenured = warm earth);
     // mid-decade = teal; pandemic eras = purple/rose (post-COVID waves).
-    // Red → green sequential cohort palette: old/aged (autumn red) →
-    // fresh/new (spring green). Familiar warm-to-cool temporal metaphor,
-    // punchy and saturated, doesn't conflict with the blue tax outline.
+    // Red → green sequential cohort palette, MAX punch. Saturated primaries.
     const COHORT_FILL: Record<string, string> = {
-      no_deed_since_1989:              '#c8181d', // vivid red (oldest)
-      tenure_pre_2015:                 '#ee6c1c', // orange-red
-      tenure_2015_2019:                '#f7c52d', // gold-yellow
-      tenure_pandemic_2020_2022:       '#94c52d', // yellow-green
-      tenure_post_pandemic_2023plus:   '#1ca64f', // vivid green (newest)
+      no_deed_since_1989:              '#ff0000', // pure red (oldest)
+      tenure_pre_2015:                 '#ff8800', // pure orange
+      tenure_2015_2019:                '#ffe600', // pure yellow
+      tenure_pandemic_2020_2022:       '#88dd00', // lime-green
+      tenure_post_pandemic_2023plus:   '#00cc44', // vivid green (newest)
     };
     const COHORT_LABEL: Record<string, string> = {
       no_deed_since_1989:              'No deed since 1989',

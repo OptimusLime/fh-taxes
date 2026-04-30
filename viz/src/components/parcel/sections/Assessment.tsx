@@ -28,6 +28,7 @@ const SIGNAL_LABEL: Record<string, string> = {
   eff_age: 'Assessor effective-age compression (gut/rebuild)',
   eff_age_partial: 'Assessor effective-age compression (partial)',
   desc_change: 'Building-description change',
+  year_built_change: 'Year-built recoded forward',
 };
 
 function fmtMoney(v: number): string {
@@ -83,6 +84,10 @@ function RenovationBadge({ r }: { r: Reno }) {
               } else if (e.signal === 'desc_change') {
                 if (e.prev_desc && e.building_description) {
                   detail.push(`${e.prev_desc} → ${e.building_description}`);
+                }
+              } else if (e.signal === 'year_built_change') {
+                if (isPresent(e.old_year_built) && isPresent(e.new_year_built)) {
+                  detail.push(`${Math.round(e.old_year_built)} → ${Math.round(e.new_year_built)}`);
                 }
               }
               return (

@@ -67,7 +67,18 @@ def main() -> None:
     mh["delta_imp"] = mh["improvement_value"] - mh["prev_imp"]
     mh["pct_imp"] = mh["delta_imp"] / mh["prev_imp"]
     mh["prev_sale_price"] = mh.groupby("parcel_pin")["sale_price"].shift(1)
-    mh["sale_event"] = mh["sale_price"].notna() & (mh["sale_price"] != mh["prev_sale_price"])
+    # Arms-length sale events suppress step_up (the assessor's re-pin to
+    # sale-price IS the explanation). Family/exempt transfers (NU codes 1,
+    # 3, 4, 7, 26, etc.) do NOT — assessor has no clean market anchor for
+    # those, so a step-up around a family transfer is more likely real
+    # renovation than a price-driven re-pin.
+    nu = mh["sale_nu_code"].astype(str).str.strip()
+    is_arms = nu.isin(["", "00", "0", "nan", "None"]) | mh["sale_nu_code"].isna()
+    mh["sale_event"] = (
+        mh["sale_price"].notna()
+        & (mh["sale_price"] != mh["prev_sale_price"])
+        & is_arms
+    )
 
     # --- Signal 1: MAD-based step-up vs town-year baseline ---
     # MAD is robust to reval-year shocks where mean/std blow up.
@@ -87,12 +98,14 @@ def main() -> None:
     # Robust z-score using 1.4826 * MAD as std-equivalent
     mh["mad_z"] = (mh["pct_imp"] - mh["yr_median"]) / (1.4826 * mh["yr_mad"].replace(0, np.nan))
 
+    # No post-2014 floor: the MAD residualization already controls for
+    # town-wide reval-year shocks (e.g., 2003 reval), so a parcel that's
+    # still far above its year's median is real signal even pre-ADP.
     sig1_mask = (
         (~mh["sale_event"])
         & (mh["pct_imp"] >= 0.10)
         & (mh["delta_imp"] >= 25_000)
         & (mh["mad_z"] >= 1.5)
-        & (mh["year"] >= 2014)
     )
     sig1 = mh.loc[sig1_mask, ["parcel_pin", "year", "prop_loc", "prev_imp",
                               "improvement_value", "delta_imp", "pct_imp", "mad_z"]].copy()
@@ -112,8 +125,6 @@ def main() -> None:
         for i in range(2, len(g)):
             window = g.iloc[i - 2 : i + 1]
             if window["sale_event"].any():
-                continue
-            if window["year"].max() < 2014:
                 continue
             cum_pct = window["pct_imp"].sum(skipna=True)
             cum_delta = window["delta_imp"].sum(skipna=True)
@@ -210,6 +221,26 @@ def main() -> None:
     print(f"Signal 3 (description change, non-recoding): {len(sig3)} events across "
           f"{sig3['parcel_pin'].nunique()} parcels")
 
+    # --- Signal 4: year_built changed forward in modiv_history ---
+    # When the assessor revises year_built FORWARD by 10+ years mid-history,
+    # they have explicitly recoded the build vintage — usually after a
+    # gut/rebuild walk-through. Excluded if either side is NaN (initial
+    # population events) or the change is backward (historical correction).
+    mh["yb_num"] = pd.to_numeric(mh["year_built"], errors="coerce")
+    mh["prev_yb"] = mh.groupby("parcel_pin")["yb_num"].shift(1)
+    yb_jump = (
+        mh["prev_yb"].notna()
+        & mh["yb_num"].notna()
+        & ((mh["yb_num"] - mh["prev_yb"]) >= 10)
+    )
+    sig4 = mh.loc[yb_jump, ["parcel_pin", "year", "prop_loc", "prev_yb",
+                            "yb_num"]].copy()
+    sig4 = sig4.rename(columns={"prev_yb": "old_year_built", "yb_num": "new_year_built"})
+    sig4["signal"] = "year_built_change"
+    sig4["weight"] = 1.5
+    print(f"Signal 4 (year_built forward jump >=10): {len(sig4)} events across "
+          f"{sig4['parcel_pin'].nunique() if len(sig4) else 0} parcels")
+
     # --- Combine into events log ---
     events_cols = ["parcel_pin", "year", "prop_loc", "signal", "weight"]
     parts = [sig1[events_cols + ["delta_imp", "pct_imp", "mad_z"]]]
@@ -217,6 +248,8 @@ def main() -> None:
         parts.append(sig1b[events_cols + ["cum_delta_imp", "cum_pct_imp"]])
     parts.append(sig2[events_cols + ["reno_gap", "eff_age"]])
     parts.append(sig3[events_cols + ["prev_desc", "building_description"]])
+    if len(sig4):
+        parts.append(sig4[events_cols + ["old_year_built", "new_year_built"]])
     events = pd.concat(parts, ignore_index=True)
     events["year"] = events["year"].astype("Int64")
     events = events.sort_values(["parcel_pin", "year", "weight"], ascending=[True, True, False])
@@ -243,7 +276,7 @@ def main() -> None:
     def tier(row: pd.Series) -> str:
         c = row["confidence"]
         sigs = set(row["signals"])
-        strong = sigs & {"step_up", "cum_step_up", "eff_age"}
+        strong = sigs & {"step_up", "cum_step_up", "eff_age", "year_built_change"}
         if c >= 4.5 or len(strong) >= 2:
             return "high"
         if c >= 2.5 or strong:
@@ -274,7 +307,7 @@ def main() -> None:
             ev: dict = {"signal": e["signal"], "weight": float(e["weight"])}
             if pd.notna(e["year"]):
                 ev["year"] = int(e["year"])
-            for k in ("delta_imp", "pct_imp", "mad_z", "cum_delta_imp", "cum_pct_imp", "reno_gap", "eff_age"):
+            for k in ("delta_imp", "pct_imp", "mad_z", "cum_delta_imp", "cum_pct_imp", "reno_gap", "eff_age", "old_year_built", "new_year_built"):
                 v = e.get(k)
                 if pd.notna(v):
                     ev[k] = float(v)
@@ -301,7 +334,11 @@ def main() -> None:
 
     # --- Probe: user's named parcels ---
     print("\n=== User-named probe parcels ===")
-    for needle, pin in [("93 BATTIN", "1314_79_3"), ("144 BUTTONWOOD", "1314_76_2")]:
+    for needle, pin in [
+        ("93 BATTIN", "1314_79_3"),
+        ("144 BUTTONWOOD", "1314_76_2"),
+        ("25 FAIR HAVEN", "1314_47_3"),
+    ]:
         if pin in overlay:
             o = overlay[pin]
             print(f"\n{needle} ({pin}): tier={o['tier']}, confidence={o['confidence']}, "

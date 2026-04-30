@@ -46,9 +46,9 @@ A reproducible, defensible parcel-level dollar-delta artifact (Berry tax-shift +
   7. Bloustein loader produces `data/processed/modiv_history.parquet` with one row per (parcel_pin, year) and includes `sale_assessment` for parcels that sold that year (the gold-standard input for the CDF gap test)
 **Plans**: 6 plans
 - [x] 01.5-01-PLAN.md — Extend collect_oprs.py with prc/ch75/taxlist PDF endpoints (D-27/D-28/D-30) [DATA-07, DATA-08]
-- [ ] 01.5-02-PLAN.md — Operator-driven comprehensive collection across 2,061 parcels with VPN-swap loop [DATA-05..08]
+- [x] 01.5-02-PLAN.md — Operator-driven comprehensive collection across 2,061 parcels with VPN-swap loop [DATA-05..08]
 - [ ] 01.5-03-PLAN.md — OPRS HTML parsers: parse_m4.py + parse_sr.py with unit tests [DATA-05, DATA-06]
-- [ ] 01.5-04-PLAN.md — OPRS PDF parsers: parse_prc_pdf + parse_ch75_pdf + parse_taxlist_pdf via pdfplumber [DATA-07, DATA-08]
+- [x] 01.5-04-PLAN.md — OPRS PDF parsers: parse_prc_pdf + parse_ch75_pdf + parse_taxlist_pdf via pdfplumber [DATA-07, DATA-08]
 - [ ] 01.5-05-PLAN.md — scripts/build_prc_parquet.py aggregator → data/processed/prc.parquet + sales enrichment [DATA-05..08]
 - [x] 01.5-06-PLAN.md — Bloustein loader (src/fairhaven_tax/ingest/bloustein.py) + scripts/build_modiv_history.py → modiv_history.parquet [DATA-09]
 **Notes**: Tier-C OPRS endpoints (tax appeals, deed images, tax maps, etc.) are explicitly out of scope — see `.planning/deferred/oprs-tier-c.md`.

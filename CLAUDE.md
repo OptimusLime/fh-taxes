@@ -27,7 +27,20 @@ Technology stack not yet documented. Will populate after codebase mapping or fir
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+### TEMP-FILE BAN (HARD RULE — NO EXCEPTIONS)
+
+**`/tmp` (and any other system temp dir like `/var/folders`, `~/.cache`, `$TMPDIR`) is FORBIDDEN for ALL agent-generated artifacts.** This includes — but is not limited to — sandbox parcel lists, scratch parquets, raw HTTP captures, PDF samples, log files, ad-hoc scripts, Python heredocs that write files, and "I'll just put this here for a sec" caches.
+
+**Why:** the user cannot reproduce, inspect, or audit anything written to `/tmp`. Files there vanish on reboot, are invisible to `git`, and break the chain of evidence between what the agent claims it did and what actually exists.
+
+**Where to put scratch instead:**
+- One-off scripts and probes → `temporary_scripts/<topic>/`
+- Sandbox/exploration data (test parcel lists, captured responses, throwaway parquets) → `temporary_scripts/sandbox/`
+- Test fixtures that need to live with the test → `tests/fixtures/<area>/`
+- Production raw cache → `data/raw/<source>/` (already gitignored where appropriate)
+- Production processed artifacts → `data/processed/`
+
+**Enforcement:** if the agent finds itself about to write to `/tmp`, `/var/folders`, `$TMPDIR`, or any system temp path, STOP and use `temporary_scripts/sandbox/` instead. There is no "fast/temporary" exception. The user has explicitly invoked this rule by name.
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->

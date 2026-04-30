@@ -1,0 +1,141 @@
+{
+  "config": {
+    "view": {
+      "continuousWidth": 300,
+      "continuousHeight": 300
+    }
+  },
+  "data": {
+    "name": "data-df553a8b51187fcf89f569afa2fb6a30"
+  },
+  "mark": {
+    "type": "bar"
+  },
+  "encoding": {
+    "color": {
+      "field": "passed",
+      "scale": {
+        "domain": [
+          true,
+          false
+        ],
+        "range": [
+          "#2ca02c",
+          "#d62728"
+        ]
+      },
+      "type": "nominal"
+    },
+    "tooltip": [
+      {
+        "field": "gate_name",
+        "type": "nominal"
+      },
+      {
+        "field": "actual",
+        "type": "quantitative"
+      },
+      {
+        "field": "expected",
+        "type": "quantitative"
+      },
+      {
+        "field": "message",
+        "type": "nominal"
+      },
+      {
+        "field": "source",
+        "type": "nominal"
+      }
+    ],
+    "x": {
+      "field": "gate_name",
+      "sort": "-y",
+      "title": "Validation gate",
+      "type": "nominal"
+    },
+    "y": {
+      "field": "actual_over_expected",
+      "title": "Actual / Expected",
+      "type": "quantitative"
+    }
+  },
+  "title": "Phase 2 Data Quality \u2014 Gate Results",
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json",
+  "datasets": {
+    "data-df553a8b51187fcf89f569afa2fb6a30": [
+      {
+        "gate_name": "parcel_count",
+        "actual": 2061.0,
+        "expected": 2064.0,
+        "actual_over_expected": 0.998546511627907,
+        "passed": true,
+        "message": "parcel count 2061 vs expected 2064 (pct_diff=0.0015, tolerance=0.05)",
+        "source": "phase1"
+      },
+      {
+        "gate_name": "aggregate_assessed",
+        "actual": 2735202500.0,
+        "expected": 2740871000.0,
+        "actual_over_expected": 0.9979318618059734,
+        "passed": true,
+        "message": "aggregate assessed $2735202500 vs expected $2740871000 (pct_diff=0.0021, tolerance=0.05)",
+        "source": "phase1"
+      },
+      {
+        "gate_name": "sales_floor",
+        "actual": 197.0,
+        "expected": 100.0,
+        "actual_over_expected": 1.97,
+        "passed": true,
+        "message": "arms-length sales 2018-2025: 197 (floor=100)",
+        "source": "phase1"
+      },
+      {
+        "gate_name": "prc_required_features",
+        "actual": 0.8398058252427184,
+        "expected": 0.95,
+        "actual_over_expected": 0.8840061318344404,
+        "passed": false,
+        "message": "worst non-null share = 0.8398 on column 'condition' (need \u22650.95 across 7 hedonic features)",
+        "source": "phase2"
+      },
+      {
+        "gate_name": "prc_row_count",
+        "actual": 2060.0,
+        "expected": 2060.0,
+        "actual_over_expected": 1.0,
+        "passed": true,
+        "message": "prc rows 2060 vs expected 2060 (pct_diff=0.0000, tolerance=0.05)",
+        "source": "phase2"
+      },
+      {
+        "gate_name": "sales_row_count",
+        "actual": 197.0,
+        "expected": 100.0,
+        "actual_over_expected": 1.97,
+        "passed": true,
+        "message": "sales rows 197 (floor=100)",
+        "source": "phase2"
+      },
+      {
+        "gate_name": "modiv_history_sale_assessment",
+        "actual": 19193.0,
+        "expected": 30.0,
+        "actual_over_expected": 639.7666666666667,
+        "passed": true,
+        "message": "modiv_history rows in [2014,2025] with sale_price+sale_assessment: 19193 (min for CDF gap test = 30)",
+        "source": "phase2"
+      },
+      {
+        "gate_name": "cross_source_pin_alignment",
+        "actual": 0.9690721649484536,
+        "expected": 0.95,
+        "actual_over_expected": 1.0200759631036354,
+        "passed": true,
+        "message": "sales PIN alignment rate = 0.9691 (188/194 present in both prc and modiv_history)",
+        "source": "phase2"
+      }
+    ]
+  }
+}

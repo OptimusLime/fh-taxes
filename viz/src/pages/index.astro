@@ -1,5 +1,7 @@
 ---
 import ParcelMap from '../components/ParcelMap.astro';
+import DrawerApp from '../components/parcel/DrawerApp.tsx';
+import '../components/parcel/parcel.css';
 
 const pages = [
   { href: '/data-quality', label: 'Data Quality (Plan 1)' },
@@ -17,33 +19,29 @@ const pages = [
     <title>Fair Haven Tax Assessment Analysis</title>
     <style>
       :root {
-        --drawer-w: 460px;
-        --bg: #ffffff;
-        --fg: #0e1116;
-        --muted: #5b6270;
-        --border: #e3e6ea;
-        --accent: #3388ff;
-        --row-alt: #f7f8fa;
-        --warn: #b85c00;
-        --good: #1f7a3a;
-        --bad: #b00020;
+        --drawer-w: 480px;
+        --shell-bg: #ffffff;
+        --shell-fg: #0e1116;
+        --shell-muted: #5b6270;
+        --shell-border: #e3e6ea;
+        --shell-accent: #1a56db;
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; height: 100%; }
       body {
         font-family: -apple-system, system-ui, sans-serif;
-        color: var(--fg);
-        background: var(--bg);
+        color: var(--shell-fg);
+        background: var(--shell-bg);
         overflow: hidden;
       }
       .topbar {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 0.5rem 1rem; border-bottom: 1px solid var(--border);
+        padding: 0.5rem 1rem; border-bottom: 1px solid var(--shell-border);
         height: 48px;
       }
       .topbar h1 { font-size: 1rem; margin: 0; font-weight: 600; }
       .topbar nav a {
-        margin-left: 1rem; font-size: 0.85rem; color: var(--accent);
+        margin-left: 1rem; font-size: 0.85rem; color: var(--shell-accent);
         text-decoration: none;
       }
       .topbar nav a:hover { text-decoration: underline; }
@@ -61,60 +59,20 @@ const pages = [
       .map-pane { position: relative; overflow: hidden; }
       .map-pane :global(#parcel-map) { width: 100%; height: 100% !important; }
 
-      .drawer {
-        background: var(--bg);
-        border-left: 1px solid var(--border);
+      .drawer-shell {
+        background: var(--shell-bg);
+        border-left: 1px solid var(--shell-border);
         overflow-y: auto;
         overflow-x: hidden;
-        font-size: 0.88rem;
+        position: relative;
       }
-      .drawer-header {
-        position: sticky; top: 0;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        padding: 0.75rem 1rem;
-        display: flex; align-items: center; justify-content: space-between;
-        z-index: 1;
-      }
-      .drawer-title { font-weight: 600; font-size: 1rem; }
-      .drawer-subtitle { color: var(--muted); font-size: 0.78rem; }
       .drawer-close {
-        background: none; border: 1px solid var(--border); border-radius: 4px;
-        width: 28px; height: 28px; cursor: pointer; line-height: 1; font-size: 1rem;
+        position: absolute; top: 0.5rem; right: 0.5rem;
+        background: rgba(255, 255, 255, 0.9); border: 1px solid var(--shell-border);
+        border-radius: 4px; width: 28px; height: 28px; cursor: pointer; line-height: 1;
+        font-size: 1.05rem; z-index: 10;
       }
-      .drawer-close:hover { background: var(--row-alt); }
-
-      .drawer section {
-        border-bottom: 1px solid var(--border);
-        padding: 0.75rem 1rem;
-      }
-      .drawer h3 {
-        font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;
-        color: var(--muted); margin: 0 0 0.5rem 0; font-weight: 600;
-      }
-      .kv { display: grid; grid-template-columns: minmax(110px, 35%) 1fr; row-gap: 0.25rem; column-gap: 0.5rem; }
-      .kv .k { color: var(--muted); }
-      .kv .v { font-variant-numeric: tabular-nums; }
-
-      table.history { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-variant-numeric: tabular-nums; }
-      table.history th, table.history td { padding: 2px 6px; text-align: right; }
-      table.history th { color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); }
-      table.history td:first-child, table.history th:first-child { text-align: left; }
-      table.history tr:nth-child(even) { background: var(--row-alt); }
-      table.history tr.sale-row { background: #fff8e1; font-weight: 500; }
-
-      table.sales { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-variant-numeric: tabular-nums; }
-      table.sales th, table.sales td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--border); }
-      table.sales th { color: var(--muted); font-weight: 500; }
-
-      .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.72rem; margin-right: 4px; }
-      .badge.warn { background: #fff3df; color: var(--warn); }
-      .badge.bad { background: #ffe5e8; color: var(--bad); }
-      .badge.good { background: #e3f4e8; color: var(--good); }
-      .badge.neutral { background: var(--row-alt); color: var(--muted); }
-
-      .empty-state { padding: 2rem 1rem; color: var(--muted); text-align: center; font-size: 0.9rem; }
-      .sparkline { width: 100%; height: 36px; display: block; }
+      .drawer-close:hover { background: #f0f1f3; }
     </style>
   </head>
   <body>
@@ -130,304 +88,10 @@ const pages = [
         <ParcelMap height="100%" />
       </div>
 
-      <aside class="drawer" id="drawer" aria-hidden="true">
-        <div class="drawer-header">
-          <div>
-            <div class="drawer-title" id="drawer-title">Parcel</div>
-            <div class="drawer-subtitle" id="drawer-subtitle">Click a parcel on the map</div>
-          </div>
-          <button class="drawer-close" id="drawer-close" aria-label="Close drawer">×</button>
-        </div>
-        <div id="drawer-body">
-          <div class="empty-state">No parcel selected.</div>
-        </div>
+      <aside class="drawer-shell" id="drawer" aria-hidden="true">
+        <button class="drawer-close" id="drawer-close" aria-label="Close drawer">×</button>
+        <DrawerApp client:load />
       </aside>
     </div>
-
-    <script>
-      // Drawer rendering. Listens for 'parcel:select' events dispatched by
-      // the Leaflet click handler in ParcelMap.astro and renders the matching
-      // record from /data/parcels_full.json into structured sections.
-      // No popup; the map fully owns hover/highlight, the drawer fully owns
-      // detail rendering.
-
-      type ParcelRecord = {
-        identity: Record<string, any>;
-        lot_geometry: Record<string, any>;
-        building: Record<string, any>;
-        current_assessment: Record<string, any>;
-        sales_history: Array<Record<string, any>>;
-        modiv_last_sale: Record<string, any>;
-        history: Array<Record<string, any>>;
-        data_quality_flags: string[];
-      };
-
-      let parcels: Record<string, ParcelRecord> | null = null;
-      let parcelsPromise: Promise<Record<string, ParcelRecord>> | null = null;
-
-      function loadParcels() {
-        if (!parcelsPromise) {
-          parcelsPromise = fetch('/data/parcels_full.json')
-            .then((r) => r.json())
-            .then((data) => { parcels = data; return data; });
-        }
-        return parcelsPromise;
-      }
-
-      const layout = document.getElementById('layout')!;
-      const drawer = document.getElementById('drawer')!;
-      const drawerTitle = document.getElementById('drawer-title')!;
-      const drawerSubtitle = document.getElementById('drawer-subtitle')!;
-      const drawerBody = document.getElementById('drawer-body')!;
-      const drawerClose = document.getElementById('drawer-close')!;
-
-      drawerClose.addEventListener('click', () => {
-        layout.classList.remove('drawer-open');
-        drawer.setAttribute('aria-hidden', 'true');
-      });
-
-      const fmtMoney = (n: any) => {
-        if (n === null || n === undefined || n === '') return '—';
-        const num = typeof n === 'number' ? n : parseFloat(n);
-        if (isNaN(num)) return String(n);
-        return num.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-      };
-      const fmtNum = (n: any, digits = 0) => {
-        if (n === null || n === undefined || n === '') return '—';
-        const num = typeof n === 'number' ? n : parseFloat(n);
-        if (isNaN(num)) return String(n);
-        return num.toLocaleString('en-US', { maximumFractionDigits: digits });
-      };
-      const fmtPct = (n: any) => {
-        if (n === null || n === undefined) return '—';
-        const num = typeof n === 'number' ? n : parseFloat(n);
-        if (isNaN(num)) return String(n);
-        return num.toFixed(1) + '%';
-      };
-      const fmtVal = (v: any) => {
-        if (v === null || v === undefined || v === '') return '—';
-        if (typeof v === 'boolean') return v ? 'yes' : 'no';
-        if (Array.isArray(v)) return v.length === 0 ? '—' : v.join(', ');
-        return String(v);
-      };
-      const escapeHtml = (s: any) =>
-        String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
-
-      function kv(rows: Array<[string, any]>, formatter?: (v: any) => string) {
-        const f = formatter || fmtVal;
-        return rows
-          .filter(([_, v]) => v !== null && v !== undefined && v !== '')
-          .map(([k, v]) => `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(f(v))}</div>`)
-          .join('');
-      }
-
-      function sparkline(history: any[]) {
-        const pts = history.filter((h) => h.net_value !== null && h.net_value !== undefined);
-        if (pts.length < 2) return '';
-        const w = 420, h = 36, pad = 2;
-        const xs = pts.map((p) => p.year);
-        const ys = pts.map((p) => Number(p.net_value));
-        const minX = Math.min(...xs), maxX = Math.max(...xs);
-        const minY = Math.min(...ys), maxY = Math.max(...ys);
-        const sx = (x: number) => pad + ((x - minX) / Math.max(1, maxX - minX)) * (w - 2 * pad);
-        const sy = (y: number) => h - pad - ((y - minY) / Math.max(1, maxY - minY)) * (h - 2 * pad);
-        const path = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${sx(p.year).toFixed(1)},${sy(Number(p.net_value)).toFixed(1)}`).join(' ');
-        // Mark sale events (sale_price > 0) as red dots
-        const dots = pts
-          .filter((p) => p.sale_price !== null && p.sale_price !== undefined)
-          .map((p) => `<circle cx="${sx(p.year).toFixed(1)}" cy="${sy(Number(p.net_value)).toFixed(1)}" r="2.5" fill="#b00020"/>`)
-          .join('');
-        return `<svg class="sparkline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${path}" fill="none" stroke="#3388ff" stroke-width="1.5"/>${dots}</svg>`;
-      }
-
-      function renderRecord(pin: string, r: ParcelRecord) {
-        drawerTitle.textContent = r.identity.property_location || pin;
-        const sub = [pin];
-        if (r.identity.zone) sub.push(`zone ${r.identity.zone}`);
-        if (r.identity.waterfront) sub.push('🌊 waterfront');
-        drawerSubtitle.textContent = sub.join(' · ');
-
-        const sections: string[] = [];
-
-        // Identity
-        sections.push(`
-          <section>
-            <h3>Identity</h3>
-            <div class="kv">${kv([
-              ['Block / Lot / Qual', [r.identity.block, r.identity.lot, r.identity.qualifier].filter(Boolean).join(' / ')],
-              ['Class', r.identity.property_class],
-              ['Bldg class', r.identity.bldg_class],
-              ['District', r.identity.district],
-              ['Map page', r.identity.map_page],
-              ['Owner mailing', r.identity.owner_mailing_address],
-              ['Waterfront', r.identity.waterfront],
-            ])}</div>
-          </section>`);
-
-        // Building
-        const b = r.building || {};
-        sections.push(`
-          <section>
-            <h3>Building</h3>
-            <div class="kv">${kv([
-              ['Year built', b.year_built ? Math.round(b.year_built) : null],
-              ['Eff age', b.eff_age != null ? `${Math.round(b.eff_age)} yr` : null],
-              ['Style', b.bldg_desc],
-              ['Bedrooms', b.bedrooms != null ? Math.round(b.bedrooms) : null],
-              ['Bathrooms', b.bathrooms != null ? Math.round(b.bathrooms) : null],
-              ['Total rooms', b.room_count != null ? Math.round(b.room_count) : null],
-              ['Kitchens', b.kitchens != null ? Math.round(b.kitchens) : null],
-              ['Livable area', b.livable_area != null ? `${fmtNum(b.livable_area)} sf` : null],
-              ['Story breakdown', [
-                b.first_story_sf != null ? `1st ${fmtNum(b.first_story_sf)}` : null,
-                b.upper_story_sf != null ? `upper ${fmtNum(b.upper_story_sf)}` : null,
-                b.half_story_sf != null ? `half ${fmtNum(b.half_story_sf)}` : null,
-              ].filter(Boolean).join(' · ') || null],
-              ['Condition', b.condition],
-              ['Quality grade', b.quality_grade],
-              ['Foundation', b.foundation],
-              ['Exterior', b.exterior],
-              ['Roof', [b.roof_type, b.roof_material].filter(Boolean).join(' / ')],
-              ['Heating', b.heating_type],
-              ['AC', b.ac_type],
-              ['Fireplaces', b.fireplaces != null ? Math.round(b.fireplaces) : null],
-              ['Garage', b.garage_type],
-              ['Sewer / Water', [b.sewer, b.water].filter(Boolean).join(' / ')],
-              ['Topo / Road', [b.topography, b.road_type].filter(Boolean).join(' / ')],
-            ])}</div>
-          </section>`);
-
-        // Lot geometry
-        const lg = r.lot_geometry || {};
-        sections.push(`
-          <section>
-            <h3>Lot</h3>
-            <div class="kv">${kv([
-              ['Lot description', lg.land_desc],
-              ['Acreage', lg.lot_size_acres != null ? Number(lg.lot_size_acres).toFixed(3) : null],
-              ['Polygon area', lg.shape_area_sqft != null ? `${fmtNum(lg.shape_area_sqft)} sf` : null],
-            ])}</div>
-          </section>`);
-
-        // Current assessment
-        const ca = r.current_assessment || {};
-        sections.push(`
-          <section>
-            <h3>Current Assessment & Tax</h3>
-            <div class="kv">${kv([
-              ['Land', fmtMoney(ca.land_value)],
-              ['Improvements', fmtMoney(ca.improvement_value)],
-              ['Net (assessed)', fmtMoney(ca.net_value)],
-              ['Last year tax', fmtMoney(ca.last_year_tax)],
-            ])}</div>
-            ${ca.notice_year_ch75 ? `
-              <h3 style="margin-top:0.5rem">Chapter 75 Notice — ${escapeHtml(String(ca.notice_year_ch75))}</h3>
-              <div class="kv">${kv([
-                ['Prior year', fmtMoney(ca.prior_year_assessment_ch75)],
-                ['Current year', fmtMoney(ca.current_year_assessment_ch75)],
-                ['Change', fmtPct(ca.assessment_change_pct_ch75)],
-                ['Tax (1H)', fmtMoney(ca.tax_1h_paid)],
-                ['Tax (2H)', fmtMoney(ca.tax_2h_paid)],
-                ['Tax (total)', fmtMoney(ca.actual_tax_paid_total)],
-                ['Deduction codes', ca.deduction_codes],
-                ['Deduction amount', ca.deduction_amount != null ? fmtMoney(ca.deduction_amount) : null],
-              ])}</div>` : ''}
-          </section>`);
-
-        // Sales history (SR1A + sr.cgi enriched, arms-length only)
-        const sales = r.sales_history || [];
-        sections.push(`
-          <section>
-            <h3>Recent Sales (SR1A 2018-2025, arms-length)</h3>
-            ${sales.length === 0 ? '<div style="color:var(--muted);font-size:0.85rem">No arms-length sales 2018-2025 on record.</div>' :
-              `<table class="sales">
-                <thead><tr><th>Date</th><th>Price</th><th>NU</th><th>Deed</th><th>Family?</th></tr></thead>
-                <tbody>${sales.map(s => `
-                  <tr>
-                    <td>${escapeHtml(s.sale_date ?? '—')}</td>
-                    <td style="text-align:right">${fmtMoney(s.sale_price)}</td>
-                    <td>${escapeHtml(s.nu_code ?? '—')}</td>
-                    <td>${escapeHtml([s.deed_book, s.deed_page].filter(Boolean).join('/') || '—')}</td>
-                    <td>${s.family_sale_flag ? '⚠️ yes' : 'no'}</td>
-                  </tr>${s.grantor || s.grantee ? `<tr><td colspan="5" style="font-size:0.72rem;color:var(--muted);padding-left:1rem">
-                    ${s.grantor ? `<strong>grantor:</strong> ${escapeHtml(s.grantor)}` : ''}
-                    ${s.grantor && s.grantee ? ' → ' : ''}
-                    ${s.grantee ? `<strong>grantee:</strong> ${escapeHtml(s.grantee)}` : ''}
-                  </td></tr>` : ''}
-                `).join('')}</tbody>
-              </table>`}
-            ${r.modiv_last_sale && r.modiv_last_sale.date ? `
-              <div style="margin-top:0.5rem;font-size:0.78rem;color:var(--muted)">
-                <strong>MOD-IV last-recorded sale:</strong> ${escapeHtml(r.modiv_last_sale.date)} ·
-                ${fmtMoney(r.modiv_last_sale.price)} ·
-                NU ${escapeHtml(r.modiv_last_sale.nu_code ?? '—')} ·
-                deed ${escapeHtml([r.modiv_last_sale.deed_book, r.modiv_last_sale.deed_page].filter(Boolean).join('/') || '—')}
-              </div>` : ''}
-          </section>`);
-
-        // 37-year assessment trajectory (Bloustein)
-        const hist = r.history || [];
-        const sale_years = new Set(hist.filter(h => h.sale_price && h.deed_date).map(h => h.year));
-        sections.push(`
-          <section>
-            <h3>Assessment Trajectory (Bloustein 1989-2025)</h3>
-            ${sparkline(hist)}
-            <details style="margin-top:0.5rem">
-              <summary style="cursor:pointer;font-size:0.78rem;color:var(--muted)">Year-by-year table (${hist.length} years)</summary>
-              <table class="history">
-                <thead><tr><th>Year</th><th>Land</th><th>Impr</th><th>Net</th><th>Sale@</th></tr></thead>
-                <tbody>${hist.map(h => `
-                  <tr class="${sale_years.has(h.year) ? 'sale-row' : ''}">
-                    <td>${h.year}</td>
-                    <td>${fmtMoney(h.land_value)}</td>
-                    <td>${fmtMoney(h.improvement_value)}</td>
-                    <td>${fmtMoney(h.net_value)}</td>
-                    <td>${h.sale_assessment != null ? fmtMoney(h.sale_assessment) : ''}</td>
-                  </tr>`).join('')}</tbody>
-              </table>
-            </details>
-          </section>`);
-
-        // Data quality
-        const dq = r.data_quality_flags || [];
-        if (dq.length > 0) {
-          sections.push(`
-            <section>
-              <h3>Data Quality Flags</h3>
-              <div>${dq.map(f => `<span class="badge warn">${escapeHtml(f)}</span>`).join('')}</div>
-            </section>`);
-        }
-
-        drawerBody.innerHTML = sections.join('');
-      }
-
-      function showLoading(pin: string) {
-        drawerTitle.textContent = pin;
-        drawerSubtitle.textContent = 'loading...';
-        drawerBody.innerHTML = '<div class="empty-state">Loading parcel data...</div>';
-      }
-
-      function notFound(pin: string) {
-        drawerTitle.textContent = pin;
-        drawerSubtitle.textContent = 'not in joined dataset';
-        drawerBody.innerHTML = `<div class="empty-state">No record for ${escapeHtml(pin)}.</div>`;
-      }
-
-      window.addEventListener('parcel:select', async (ev: Event) => {
-        const ce = ev as CustomEvent<{ pin: string }>;
-        const pin = ce.detail?.pin;
-        if (!pin) return;
-        layout.classList.add('drawer-open');
-        drawer.setAttribute('aria-hidden', 'false');
-        showLoading(pin);
-        const data = await loadParcels();
-        const r = data[pin];
-        if (!r) { notFound(pin); return; }
-        renderRecord(pin, r);
-      });
-
-      // Pre-warm the cache so first click is instant.
-      loadParcels();
-    </script>
   </body>
 </html>

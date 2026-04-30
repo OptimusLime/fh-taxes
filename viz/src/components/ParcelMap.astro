@@ -63,51 +63,70 @@ for (const [path, mod] of Object.entries(overlayModules)) {
       maxZoom: 19,
     }).addTo(map);
 
-    // Click → dispatch parcel:select event consumed by the drawer in
-    // index.astro. Hover → cheap visual highlight only (no popup).
+    // Dual-encoding map (D-53 cohorts + tax magnitude):
+    //   FILL  = tenure cohort (categorical palette, semantic only)
+    //   OUTLINE = last-year tax intensity (single-hue blue sequential —
+    //             magnitude only, NOT a moral red/green/yellow scale)
     //
-    // Heatmap: outline color of each polygon is keyed to the parcel's
-    // last_year_tax (from parcels_full.json). Sequential YlOrRd scale on
-    // log-quantile of the tax value. Fill stays transparent / lightly tinted
-    // so the map remains readable.
+    // Click → dispatch parcel:select event for the drawer.
+    // Hover → bump fill opacity + stroke weight, no popup.
 
     let selectedLyr: any = null;
-    const SELECTED_COLOR = '#0a3d91';
-    const FALLBACK_COLOR = '#94a3b8'; // slate-400 for parcels w/o tax data
+    const SELECTED_COLOR = '#000000';
+    const FALLBACK_FILL = '#cbd5e1'; // slate-300 for parcels w/o data
+    const FALLBACK_STROKE = '#94a3b8'; // slate-400
 
-    // Sequential YlOrRd palette (D3-style, 7 stops).
-    const PALETTE = [
-      '#ffffcc', '#ffeda0', '#fed976', '#feb24c',
-      '#fd8d3c', '#fc4e2a', '#e31a1c'
+    // Cohort fill palette — categorical, distinct hues, no good/bad coding.
+    // pre_2015 + never_sold lean amber/sienna (long-tenured = warm earth);
+    // mid-decade = teal; pandemic eras = purple/rose (post-COVID waves).
+    const COHORT_FILL: Record<string, string> = {
+      never_sold:                      '#b06d2f', // sienna (deep)
+      tenure_pre_2015:                 '#deb887', // burlywood
+      tenure_2015_2019:                '#5fb1be', // teal
+      tenure_pandemic_2020_2022:       '#9b6bd1', // amethyst
+      tenure_post_pandemic_2023plus:   '#d96c8f', // rose
+    };
+    const COHORT_LABEL: Record<string, string> = {
+      never_sold:                      'Never sold (1989+)',
+      tenure_pre_2015:                 'Pre-2015',
+      tenure_2015_2019:                '2015–2019',
+      tenure_pandemic_2020_2022:       'Pandemic (2020–2022)',
+      tenure_post_pandemic_2023plus:   'Post-pandemic (2023+)',
+    };
+
+    // Outline tax palette — single-hue sequential blue (light → dark).
+    // Magnitude scale only: more tax paid = darker outline. No "good/bad".
+    const TAX_PALETTE = [
+      '#deebf7', '#c6dbef', '#9ecae1', '#6baed6',
+      '#4292c6', '#2171b5', '#08306b'
     ];
 
-    function makeColorFn(values: number[]): (v: number | null | undefined) => string {
+    function makeQuantileFn(values: number[], palette: string[]): (v: number | null | undefined) => string {
       const sorted = values.filter((v) => Number.isFinite(v) && v > 0).sort((a, b) => a - b);
-      if (sorted.length === 0) return () => FALLBACK_COLOR;
-      // Quantile breakpoints
-      const stops = PALETTE.length;
+      if (sorted.length === 0) return () => palette[0];
+      const stops = palette.length;
       const breaks: number[] = [];
       for (let i = 1; i < stops; i++) {
         const q = i / stops;
         breaks.push(sorted[Math.floor(q * sorted.length)]);
       }
       return (v) => {
-        if (!Number.isFinite(v as number) || (v as number) <= 0) return FALLBACK_COLOR;
+        if (!Number.isFinite(v as number) || (v as number) <= 0) return palette[0];
         for (let i = 0; i < breaks.length; i++) {
-          if ((v as number) <= breaks[i]) return PALETTE[i];
+          if ((v as number) <= breaks[i]) return palette[i];
         }
-        return PALETTE[stops - 1];
+        return palette[stops - 1];
       };
     }
 
-    function styleFor(color: string, isHover = false, isSelected = false) {
+    function styleFor(fill: string, stroke: string, isHover = false, isSelected = false) {
       if (isSelected) {
-        return { color: SELECTED_COLOR, weight: 3, fillColor: color, fillOpacity: 0.45 };
+        return { color: SELECTED_COLOR, weight: 3.5, fillColor: fill, fillOpacity: 0.55 };
       }
       if (isHover) {
-        return { color: color, weight: 3, fillColor: color, fillOpacity: 0.35 };
+        return { color: stroke, weight: 3, fillColor: fill, fillOpacity: 0.45 };
       }
-      return { color: color, weight: 1.5, fillColor: color, fillOpacity: 0.18 };
+      return { color: stroke, weight: 1.5, fillColor: fill, fillOpacity: 0.30 };
     }
 
     Promise.all([
@@ -115,44 +134,48 @@ for (const [path, mod] of Object.entries(overlayModules)) {
       fetch('/data/parcels_full.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
     ])
       .then(([gj, fullData]) => {
-        // Compute heatmap: tax contribution per parcel (last_year_tax from
-        // current_assessment section of parcels_full.json).
+        // Per-parcel: tax magnitude + cohort tag.
         const taxByPin: Record<string, number> = {};
+        const cohortByPin: Record<string, string> = {};
         for (const [pin, rec] of Object.entries(fullData) as Array<[string, any]>) {
           const t = rec?.current_assessment?.last_year_tax;
           if (Number.isFinite(t) && t > 0) taxByPin[pin] = t;
+          const c = rec?.cohort?.cohort;
+          if (c) cohortByPin[pin] = c;
         }
-        const colorFn = makeColorFn(Object.values(taxByPin));
-
-        const colorByPin: Record<string, string> = {};
+        const taxColorFn = makeQuantileFn(Object.values(taxByPin), TAX_PALETTE);
+        const strokeByPin: Record<string, string> = {};
         for (const pin of Object.keys(taxByPin)) {
-          colorByPin[pin] = colorFn(taxByPin[pin]);
+          strokeByPin[pin] = taxColorFn(taxByPin[pin]);
         }
 
         const layer = L.geoJSON(gj, {
           style: (f: any) => {
             const pin = f?.properties?.pams_pin;
-            const c = colorByPin[pin] || FALLBACK_COLOR;
-            return styleFor(c);
+            const fill = COHORT_FILL[cohortByPin[pin]] || FALLBACK_FILL;
+            const stroke = strokeByPin[pin] || FALLBACK_STROKE;
+            return styleFor(fill, stroke);
           },
           onEachFeature: (feature, lyr) => {
             const props = (feature.properties || {}) as Record<string, any>;
             const pin = props.pams_pin;
-            const c = colorByPin[pin] || FALLBACK_COLOR;
+            const fill = COHORT_FILL[cohortByPin[pin]] || FALLBACK_FILL;
+            const stroke = strokeByPin[pin] || FALLBACK_STROKE;
             lyr.on('mouseover', () => {
-              if (lyr !== selectedLyr) (lyr as any).setStyle(styleFor(c, true));
+              if (lyr !== selectedLyr) (lyr as any).setStyle(styleFor(fill, stroke, true));
             });
             lyr.on('mouseout', () => {
-              if (lyr !== selectedLyr) (lyr as any).setStyle(styleFor(c));
+              if (lyr !== selectedLyr) (lyr as any).setStyle(styleFor(fill, stroke));
             });
             lyr.on('click', () => {
               if (selectedLyr && selectedLyr !== lyr) {
                 const prevPin = (selectedLyr as any).feature?.properties?.pams_pin;
-                const prevColor = colorByPin[prevPin] || FALLBACK_COLOR;
-                (selectedLyr as any).setStyle(styleFor(prevColor));
+                const prevFill = COHORT_FILL[cohortByPin[prevPin]] || FALLBACK_FILL;
+                const prevStroke = strokeByPin[prevPin] || FALLBACK_STROKE;
+                (selectedLyr as any).setStyle(styleFor(prevFill, prevStroke));
               }
               selectedLyr = lyr;
-              (lyr as any).setStyle(styleFor(c, false, true));
+              (lyr as any).setStyle(styleFor(fill, stroke, false, true));
               window.dispatchEvent(
                 new CustomEvent('parcel:select', { detail: { pin, props } })
               );
@@ -167,22 +190,44 @@ for (const [path, mod] of Object.entries(overlayModules)) {
           /* keep default view */
         }
 
-        // Heatmap legend (bottom-right)
+        // Dual-scale legend (bottom-right): tenure cohort fill + tax outline.
         const legend = (L as any).control({ position: 'bottomright' });
         legend.onAdd = () => {
           const div = (L as any).DomUtil.create('div', 'pd-heatmap-legend');
-          const sorted = Object.values(taxByPin).filter((v) => v > 0).sort((a, b) => a - b);
-          const pct = (q: number) => sorted[Math.floor(q * sorted.length)] || 0;
+          const sortedTax = Object.values(taxByPin).filter((v) => v > 0).sort((a, b) => a - b);
+          const pct = (q: number) => sortedTax[Math.floor(q * sortedTax.length)] || 0;
           const fmt = (n: number) => '$' + Math.round(n / 1000) + 'K';
+          // Cohort counts
+          const cohortCounts: Record<string, number> = {};
+          for (const c of Object.values(cohortByPin)) cohortCounts[c] = (cohortCounts[c] || 0) + 1;
+
+          const cohortRows = [
+            'never_sold',
+            'tenure_pre_2015',
+            'tenure_2015_2019',
+            'tenure_pandemic_2020_2022',
+            'tenure_post_pandemic_2023plus',
+          ]
+            .map((c) => {
+              const n = cohortCounts[c] || 0;
+              const fill = COHORT_FILL[c];
+              return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:1px"><span style="display:inline-block;width:18px;height:11px;background:${fill};opacity:0.55;border:1px solid #555"></span><span style="flex:1">${COHORT_LABEL[c]}</span><span style="color:#5b6270;font-variant-numeric:tabular-nums">${n}</span></div>`;
+            })
+            .join('');
+
+          const taxRows = TAX_PALETTE.map((c, i) => {
+            const lo = i === 0 ? 0 : pct(i / TAX_PALETTE.length);
+            const hi = i === TAX_PALETTE.length - 1 ? sortedTax[sortedTax.length - 1] : pct((i + 1) / TAX_PALETTE.length);
+            return `<div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:18px;height:0;border-top:3px solid ${c}"></span>${fmt(lo)} – ${fmt(hi)}</div>`;
+          }).join('');
+
           div.innerHTML =
-            '<div style="background:rgba(255,255,255,0.95);padding:6px 8px;border:1px solid #c8cdd4;border-radius:4px;font:11px/1.4 system-ui,sans-serif;color:#0e1116;box-shadow:0 1px 3px rgba(0,0,0,0.1)">' +
-            '<div style="font-weight:600;margin-bottom:3px">Last-year tax</div>' +
-            PALETTE.map((c, i) => {
-              const lo = i === 0 ? 0 : pct(i / PALETTE.length);
-              const hi = i === PALETTE.length - 1 ? sorted[sorted.length - 1] : pct((i + 1) / PALETTE.length);
-              return `<div style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:14px;height:10px;background:${c};border:1px solid #888"></span>${fmt(lo)} – ${fmt(hi)}</div>`;
-            }).join('') +
-            `<div style="margin-top:4px;color:#5b6270;font-size:10px">${sorted.length} parcels</div>` +
+            '<div style="background:rgba(255,255,255,0.97);padding:8px 10px;border:1px solid #c8cdd4;border-radius:5px;font:11px/1.45 system-ui,-apple-system,sans-serif;color:#0e1116;box-shadow:0 2px 6px rgba(0,0,0,0.12);min-width:230px">' +
+            '<div style="font-weight:700;font-size:11px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;color:#5b6270">Fill: tenure cohort</div>' +
+            cohortRows +
+            '<div style="font-weight:700;font-size:11px;margin:8px 0 4px;text-transform:uppercase;letter-spacing:0.04em;color:#5b6270">Outline: last-year tax</div>' +
+            taxRows +
+            `<div style="margin-top:6px;color:#5b6270;font-size:10px;border-top:1px solid #e3e6ea;padding-top:4px">${Object.keys(cohortByPin).length} parcels classified · ${sortedTax.length} with tax data</div>` +
             '</div>';
           return div;
         };

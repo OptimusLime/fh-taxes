@@ -77,6 +77,172 @@ def _row_to_dict(row, cols):
     return out
 
 
+# NU codes that mark an arms-length transfer (vs family/foreclosure/etc.).
+# Phase 1 convention: blank, "0", "00" all = arms-length.
+ARMS_LENGTH_NU = frozenset({"", "0", "00"})
+
+
+def _is_arms_length(nu) -> bool:
+    if nu is None:
+        return True
+    s = str(nu).strip()
+    return s in ARMS_LENGTH_NU
+
+
+def _build_unified_sales(
+    sales_records: list[dict],
+    hist_records: list[dict],
+) -> list[dict]:
+    """Merge SR1A 2018-2025 sales (rich grantor/grantee detail) with the
+    full Bloustein deed-event history (1989+), dedup by (deed_date,
+    deed_book, deed_page), preferring SR1A when both sources cover the
+    same deed. Returns reverse-chronological list.
+    """
+    by_key: dict[tuple, dict] = {}
+
+    # First pass: SR1A (richer detail; preferred)
+    for s in sales_records:
+        sd = s.get("sale_date")
+        if not sd:
+            continue
+        key = (str(sd)[:10], s.get("deed_book"), s.get("deed_page"))
+        by_key[key] = {
+            "date": str(sd)[:10],
+            "year": int(str(sd)[:4]) if str(sd)[:4].isdigit() else None,
+            "price": s.get("sale_price"),
+            "nu_code": s.get("nu_code"),
+            "deed_book": s.get("deed_book"),
+            "deed_page": s.get("deed_page"),
+            "grantor": s.get("grantor"),
+            "grantee": s.get("grantee"),
+            "family_sale": bool(s.get("family_sale_flag")),
+            "sales_ratio_assessor": s.get("sales_ratio_assessor"),
+            "remarks": s.get("remarks"),
+            "is_arms_length": _is_arms_length(s.get("nu_code")),
+            "source": "SR1A+sr.cgi",
+        }
+
+    # Second pass: Bloustein historical deed events (dedup by key)
+    seen_hist: set[tuple] = set()
+    for h in hist_records:
+        deed_date = h.get("deed_date")
+        if not deed_date:
+            continue
+        sp = h.get("sale_price")
+        if sp is None:
+            continue
+        try:
+            sp_n = float(sp)
+        except (TypeError, ValueError):
+            continue
+        key = (str(deed_date)[:10], h.get("deed_book"), h.get("deed_page"))
+        if key in seen_hist:
+            continue
+        seen_hist.add(key)
+        if key in by_key:
+            # SR1A already covers this; just augment sale_assessment if missing
+            if "sale_assessment" not in by_key[key]:
+                by_key[key]["sale_assessment"] = h.get("sale_assessment")
+            continue
+        by_key[key] = {
+            "date": str(deed_date)[:10],
+            "year": int(str(deed_date)[:4]) if str(deed_date)[:4].isdigit() else None,
+            "price": sp_n if sp_n > 0 else None,
+            "nu_code": h.get("sale_nu_code"),
+            "deed_book": h.get("deed_book"),
+            "deed_page": h.get("deed_page"),
+            "sale_assessment": h.get("sale_assessment"),
+            "is_arms_length": _is_arms_length(h.get("sale_nu_code")) and (sp_n is not None and sp_n > 1000),
+            "source": "Bloustein",
+        }
+
+    sales = list(by_key.values())
+    # Sort reverse-chrono by date
+    sales.sort(key=lambda s: s.get("date") or "", reverse=True)
+    return sales
+
+
+def _cohort_tags(latest_arms_year: int | None) -> dict:
+    """Map the latest arms-length sale year to the multi-tag cohort schema
+    locked in CONTEXT.md D-53. Returns a dict with primary `cohort` (one of
+    five tenure buckets) and any orthogonal tags like `never_sold`.
+    """
+    tags: list[str] = []
+    if latest_arms_year is None:
+        cohort = "never_sold"
+        tags.append("never_sold")
+        tags.append("tenure_pre_2015")
+    elif latest_arms_year < 2015:
+        cohort = "tenure_pre_2015"
+        tags.append("tenure_pre_2015")
+    elif latest_arms_year < 2020:
+        cohort = "tenure_2015_2019"
+        tags.append("tenure_2015_2019")
+    elif latest_arms_year < 2023:
+        cohort = "tenure_pandemic_2020_2022"
+        tags.append("tenure_pandemic_2020_2022")
+    else:
+        cohort = "tenure_post_pandemic_2023plus"
+        tags.append("tenure_post_pandemic_2023plus")
+    return {
+        "cohort": cohort,
+        "tags": tags,
+        "latest_arms_length_year": latest_arms_year,
+    }
+
+
+def _latest_arms_length_year(
+    sales_records: list[dict],
+    hist_records: list[dict],
+) -> int | None:
+    """Find the year of the most recent arms-length sale across both SR1A
+    (sales_history) and Bloustein (modiv_history) deed events.
+
+    Bloustein hist `sale_*` columns are per-parcel-frozen (carry forward),
+    so unique deed events are deduped by (deed_date, deed_book, deed_page).
+    """
+    years: list[int] = []
+    for s in sales_records:
+        if _is_arms_length(s.get("nu_code")):
+            d = s.get("sale_date")
+            if d and len(str(d)) >= 4:
+                try:
+                    years.append(int(str(d)[:4]))
+                except ValueError:
+                    pass
+    seen_deeds: set[tuple] = set()
+    for h in hist_records:
+        deed_date = h.get("deed_date")
+        if not deed_date:
+            continue
+        # Need actual sale price > 0 to count as a deed event we can attribute
+        sp = h.get("sale_price")
+        if sp is None:
+            continue
+        try:
+            sp_n = float(sp)
+        except (TypeError, ValueError):
+            continue
+        # Deed events with sale_price=1 are family transfers / token amounts
+        # — they have an NU code that excludes them. Carry forward each unique
+        # deed_date once.
+        key = (str(deed_date)[:10], h.get("deed_book"), h.get("deed_page"))
+        if key in seen_deeds:
+            continue
+        seen_deeds.add(key)
+        if not _is_arms_length(h.get("sale_nu_code")):
+            continue
+        # Only count if there's a meaningful price (> $1000) — guards against
+        # nominal-consideration deeds that slipped through with blank NU.
+        if sp_n < 1000:
+            continue
+        try:
+            years.append(int(str(deed_date)[:4]))
+        except (ValueError, TypeError):
+            pass
+    return max(years) if years else None
+
+
 def main() -> int:
     for path in (PARCELS, PRC, SALES, MODIV_HIST):
         if not path.exists():
@@ -245,7 +411,9 @@ def main() -> int:
                 "source": _clean(p.get("last_sale_source")),
             },
             "history": hist_records,  # 37 years
+            "unified_sales": _build_unified_sales(sales_records, hist_records),
             "data_quality_flags": dq.get(pin, []),
+            "cohort": _cohort_tags(_latest_arms_length_year(sales_records, hist_records)),
         }
         out[pin] = record
 
@@ -259,6 +427,74 @@ def main() -> int:
     print(f"   file size: {OUT.stat().st_size / 1024 / 1024:.2f} MB")
     print(f"   sample PIN with sales: {next((p for p, r in out.items() if r['sales_history']), '(none)')}")
     print(f"   sample PIN with bedrooms: {next((p for p, r in out.items() if r['building'].get('bedrooms')), '(none)')}")
+
+    # ----- Town aggregates: cohort breakdown of count + tax pool -----
+    AGG_OUT = ROOT / "viz" / "src" / "data" / "town_aggregates.json"
+    cohort_count: dict[str, int] = defaultdict(int)
+    cohort_tax: dict[str, float] = defaultdict(float)
+    cohort_assessed: dict[str, float] = defaultdict(float)
+    total_tax = 0.0
+    total_assessed = 0.0
+    parcels_with_tax = 0
+    for pin, rec in out.items():
+        c = rec.get("cohort", {}).get("cohort", "unknown")
+        cohort_count[c] += 1
+        ca = rec.get("current_assessment") or {}
+        t = ca.get("last_year_tax")
+        a = ca.get("net_value")
+        try:
+            tn = float(t) if t is not None else 0.0
+        except (TypeError, ValueError):
+            tn = 0.0
+        try:
+            an = float(a) if a is not None else 0.0
+        except (TypeError, ValueError):
+            an = 0.0
+        if tn > 0:
+            cohort_tax[c] += tn
+            total_tax += tn
+            parcels_with_tax += 1
+        if an > 0:
+            cohort_assessed[c] += an
+            total_assessed += an
+
+    cohort_breakdown = []
+    for c in [
+        "never_sold",
+        "tenure_pre_2015",
+        "tenure_2015_2019",
+        "tenure_pandemic_2020_2022",
+        "tenure_post_pandemic_2023plus",
+    ]:
+        n = cohort_count[c]
+        tax = cohort_tax[c]
+        assessed = cohort_assessed[c]
+        cohort_breakdown.append({
+            "cohort": c,
+            "n_parcels": n,
+            "pct_of_parcels": (100 * n / len(out)) if len(out) else 0,
+            "sum_tax": tax,
+            "pct_of_tax_pool": (100 * tax / total_tax) if total_tax else 0,
+            "sum_assessed": assessed,
+            "pct_of_assessed": (100 * assessed / total_assessed) if total_assessed else 0,
+            "avg_tax_per_parcel": (tax / n) if n else 0,
+            "avg_assessed_per_parcel": (assessed / n) if n else 0,
+        })
+
+    aggregates = {
+        "total_parcels": len(out),
+        "parcels_with_tax_data": parcels_with_tax,
+        "total_tax_pool": total_tax,
+        "total_assessed_value": total_assessed,
+        "cohorts": cohort_breakdown,
+    }
+    AGG_OUT.parent.mkdir(parents=True, exist_ok=True)
+    tmp_agg = AGG_OUT.with_suffix(AGG_OUT.suffix + ".tmp")
+    with open(tmp_agg, "w") as f:
+        json.dump(aggregates, f, indent=2)
+    tmp_agg.replace(AGG_OUT)
+    print(f"wrote town aggregates to {AGG_OUT}")
+    print(f"   total tax pool: ${total_tax:,.0f}  across {parcels_with_tax} parcels")
     return 0
 
 

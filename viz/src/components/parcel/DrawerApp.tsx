@@ -1,6 +1,6 @@
 /** @jsxImportSource preact */
 import { useEffect, useState } from 'preact/hooks';
-import ParcelDetail, { type ParcelRecord } from './ParcelDetail';
+import ParcelDetail, { type ParcelRecord, type Aggregates } from './ParcelDetail';
 
 type State =
   | { kind: 'idle' }
@@ -11,6 +11,8 @@ type State =
 
 let cache: Record<string, ParcelRecord> | null = null;
 let inflight: Promise<Record<string, ParcelRecord>> | null = null;
+let aggCache: Aggregates = null;
+let aggInflight: Promise<Aggregates> | null = null;
 
 function loadAll(): Promise<Record<string, ParcelRecord>> {
   if (cache) return Promise.resolve(cache);
@@ -28,15 +30,29 @@ function loadAll(): Promise<Record<string, ParcelRecord>> {
   return inflight;
 }
 
+function loadAggregates(): Promise<Aggregates> {
+  if (aggCache) return Promise.resolve(aggCache);
+  if (!aggInflight) {
+    aggInflight = fetch('/data/town_aggregates.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        aggCache = data;
+        return data;
+      })
+      .catch(() => null);
+  }
+  return aggInflight;
+}
+
 export default function DrawerApp() {
   const [state, setState] = useState<State>({ kind: 'idle' });
+  const [agg, setAgg] = useState<Aggregates>(null);
 
   useEffect(() => {
     const onSelect = (ev: Event) => {
       const ce = ev as CustomEvent<{ pin: string }>;
       const pin = ce.detail?.pin;
       if (!pin) return;
-      // Open the drawer container immediately for snappy UI.
       document.getElementById('layout')?.classList.add('drawer-open');
       document.getElementById('drawer')?.setAttribute('aria-hidden', 'false');
       setState({ kind: 'loading', pin });
@@ -56,8 +72,9 @@ export default function DrawerApp() {
 
     window.addEventListener('parcel:select', onSelect);
     document.getElementById('drawer-close')?.addEventListener('click', onClose);
-    // Pre-warm cache so first click is instant.
+    // Pre-warm caches so first click is instant.
     loadAll().catch(() => {});
+    loadAggregates().then((a) => setAgg(a)).catch(() => {});
     return () => {
       window.removeEventListener('parcel:select', onSelect);
       document.getElementById('drawer-close')?.removeEventListener('click', onClose);
@@ -80,7 +97,7 @@ export default function DrawerApp() {
         </div>
       );
     case 'ready':
-      return <ParcelDetail pin={state.pin} record={state.record} variant="drawer" />;
+      return <ParcelDetail pin={state.pin} record={state.record} variant="drawer" aggregates={agg} />;
     case 'missing':
       return (
         <div class="pd pd-drawer">

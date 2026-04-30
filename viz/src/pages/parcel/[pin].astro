@@ -13,10 +13,19 @@ import ParcelDetail from '../../components/parcel/ParcelDetail';
 import '../../components/parcel/parcel.css';
 
 const DATA_PATH = path.resolve('./src/data/parcels_full.json');
+const AGG_PATH = path.resolve('./src/data/town_aggregates.json');
 
 function loadAll(): Record<string, any> {
   const raw = fs.readFileSync(DATA_PATH, 'utf-8');
   return JSON.parse(raw);
+}
+
+function loadAggregates(): any {
+  try {
+    return JSON.parse(fs.readFileSync(AGG_PATH, 'utf-8'));
+  } catch {
+    return null;
+  }
 }
 
 export async function getStaticPaths() {
@@ -40,6 +49,7 @@ if (!record && pin) {
   }
 }
 
+const aggregates = loadAggregates();
 const propertyLocation = record?.identity?.property_location ?? pin;
 ---
 
@@ -78,7 +88,7 @@ const propertyLocation = record?.identity?.property_location ?? pin;
     </div>
     <div class="page-card">
       {record ? (
-        <ParcelDetail pin={pin!} record={record} variant="page" />
+        <ParcelDetail pin={pin!} record={record} variant="page" aggregates={aggregates} />
       ) : (
         <div style="padding: 3rem; text-align: center; color: #5b6270;">
           No record found for parcel <strong>{pin}</strong>.

@@ -1,0 +1,63 @@
+{
+  "total_parcels": 2061,
+  "parcels_with_tax_data": 2060,
+  "total_tax_pool": 36983302.84999993,
+  "total_assessed_value": 2735202500.0,
+  "cohorts": [
+    {
+      "cohort": "never_sold",
+      "n_parcels": 685,
+      "pct_of_parcels": 33.23629306162057,
+      "sum_tax": 10968944.449999986,
+      "pct_of_tax_pool": 29.659180237332446,
+      "sum_assessed": 812102000.0,
+      "pct_of_assessed": 29.69074501796485,
+      "avg_tax_per_parcel": 16013.057591240855,
+      "avg_assessed_per_parcel": 1185550.3649635036
+    },
+    {
+      "cohort": "tenure_pre_2015",
+      "n_parcels": 652,
+      "pct_of_parcels": 31.63512857836002,
+      "sum_tax": 11856014.1,
+      "pct_of_tax_pool": 32.05774819000522,
+      "sum_assessed": 874927100.0,
+      "pct_of_assessed": 31.98765356495543,
+      "avg_tax_per_parcel": 18184.070705521473,
+      "avg_assessed_per_parcel": 1341912.7300613497
+    },
+    {
+      "cohort": "tenure_2015_2019",
+      "n_parcels": 333,
+      "pct_of_parcels": 16.157205240174672,
+      "sum_tax": 6456760.66,
+      "pct_of_tax_pool": 17.45858309677718,
+      "sum_assessed": 474148000.0,
+      "pct_of_assessed": 17.335023640845606,
+      "avg_tax_per_parcel": 19389.671651651654,
+      "avg_assessed_per_parcel": 1423867.867867868
+    },
+    {
+      "cohort": "tenure_pandemic_2020_2022",
+      "n_parcels": 234,
+      "pct_of_parcels": 11.353711790393014,
+      "sum_tax": 4857543.909999997,
+      "pct_of_tax_pool": 13.134424282497546,
+      "sum_assessed": 356412600.0,
+      "pct_of_assessed": 13.030574518705654,
+      "avg_tax_per_parcel": 20758.734658119647,
+      "avg_assessed_per_parcel": 1523130.7692307692
+    },
+    {
+      "cohort": "tenure_post_pandemic_2023plus",
+      "n_parcels": 157,
+      "pct_of_parcels": 7.617661329451723,
+      "sum_tax": 2844039.73,
+      "pct_of_tax_pool": 7.690064193387761,
+      "sum_assessed": 217612800.0,
+      "pct_of_assessed": 7.956003257528464,
+      "avg_tax_per_parcel": 18114.902738853503,
+      "avg_assessed_per_parcel": 1386068.789808917
+    }
+  ]
+}

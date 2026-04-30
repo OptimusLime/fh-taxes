@@ -1,0 +1,2 @@
+# Vega-Lite specs (Altair → JSON via chart.save(path, format="json")).
+# Astro pages render these via vega-embed in VegaChart.astro.

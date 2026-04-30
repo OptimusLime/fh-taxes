@@ -1,0 +1,4 @@
+# Per-PIN overlay JSONs keyed by PAMS_PIN (D-60 / NP5).
+# Schema: { "1314_30_1": { "<metric>": ..., ... }, ... }
+# ParcelMap.astro reads ALL files matching *.json here on parcel click and
+# displays the union of values in a popup.

@@ -1,0 +1,30 @@
+---
+// Phase 2 vega-embed wrapper (D-61, NP3).
+// Accepts a `spec` URL pointing at a Vega-Lite JSON file written by
+// Altair via chart.save(path, format="json") in the modeling scripts.
+//
+// Usage:
+//   <VegaChart spec="/data/charts/data_quality.vl.json" />
+interface Props {
+  spec: string;
+  height?: string;
+}
+const { spec, height = '400px' } = Astro.props;
+const id = 'vc-' + Math.random().toString(36).slice(2, 10);
+---
+
+<div id={id} style={`height:${height};width:100%;`}></div>
+
+<script define:vars={{ id, spec }}>
+  (async () => {
+    const mod = await import('vega-embed');
+    const vegaEmbed = mod.default ?? mod;
+    try {
+      await vegaEmbed('#' + id, spec, { actions: false });
+    } catch (err) {
+      console.error('vegaEmbed failed for', spec, err);
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = `<pre style="color:#a00">chart load failed: ${spec}</pre>`;
+    }
+  })();
+</script>

@@ -1,0 +1,4 @@
+# Phase 2 viz data sink (D-63).
+# Modeling scripts atomic-write parquet outputs as JSON/GeoJSON/Vega-Lite
+# JSON into this directory and its subdirs (charts/, overlays/).
+# Astro's Vite watcher reloads pages on .tmp+rename events here.

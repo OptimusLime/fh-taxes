@@ -1,0 +1,42 @@
+---
+import ParcelMap from '../components/ParcelMap.astro';
+
+const pages = [
+  { href: '/data-quality', label: 'Data Quality (Plan 1)' },
+  { href: '/hedonic', label: 'Hedonic OLS (Plan 4)' },
+  { href: '/tax-shift', label: 'Berry Tax Shift (Plan 5)' },
+  { href: '/ratio-study', label: 'IAAO Ratio Study (Plan 6)' },
+  { href: '/cdf-gap-test', label: 'CDF Gap Test (Plan 7)' },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Fair Haven Tax Assessment Analysis</title>
+    <style>
+      body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 1rem; max-width: 1100px; }
+      h1 { font-size: 1.4rem; }
+      h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+      ul { line-height: 1.8; }
+      .note { color: #555; font-size: 0.9rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Fair Haven Tax Assessment Analysis — Phase 2</h1>
+    <p class="note">
+      Parcel-level Berry tax-shift + IAAO sales-chasing CDF gap test.
+      Click any parcel for overlay details, or use the analysis links below.
+    </p>
+    <ParcelMap />
+    <h2>Analyses</h2>
+    <ul>
+      {pages.map((p) => <li><a href={p.href}>{p.label}</a></li>)}
+    </ul>
+    <p class="note">
+      Phase 2 staging environment — local-only. Owner names suppressed
+      from base GeoJSON per Daniel's Law (D-65).
+    </p>
+  </body>
+</html>

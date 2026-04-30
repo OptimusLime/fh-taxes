@@ -1,0 +1,92 @@
+---
+// Phase 2 Astro Leaflet map component (D-59, D-60).
+//
+// - Renders a Leaflet map of all Fair Haven parcels (parcels.geojson).
+// - Reads ALL JSON files under viz/src/data/overlays/ at build/HMR time
+//   via import.meta.glob (eager) and looks each clicked parcel's PAMS_PIN
+//   up across every overlay. Popup body is the union of overlay values.
+// - Daniel's Law (D-65): the GeoJSON shipped here contains NO owner names
+//   (enforced by scripts/build_parcels_geojson.py PROPERTY_COLS whitelist).
+//   Overlays may contain richer per-PIN data — Phase 3 build pipeline strips
+//   anything sensitive at deploy time.
+// - Leaflet default-icon fix (researcher-flagged): vendored marker PNGs at
+//   /leaflet/* override the default URL resolution that breaks under
+//   Astro/Vite static builds.
+import 'leaflet/dist/leaflet.css';
+
+const {
+  center = [40.3604, -74.0410],
+  zoom = 14,
+  height = '600px',
+} = Astro.props;
+
+// Eager glob: loaded at build/dev time so the script payload below has
+// the overlay data already inlined (no extra fetch round-trips).
+const overlayModules = import.meta.glob('/src/data/overlays/*.json', { eager: true });
+const overlays: Record<string, Record<string, unknown>> = {};
+for (const [path, mod] of Object.entries(overlayModules)) {
+  const name = path.split('/').pop()!.replace('.json', '');
+  overlays[name] = ((mod as { default?: unknown }).default ?? mod) as Record<string, unknown>;
+}
+---
+
+<div id="parcel-map" style={`height:${height};width:100%;`}></div>
+
+<script define:vars={{ center, zoom, overlays }}>
+  (async () => {
+    const Lmod = await import('leaflet');
+    const L = Lmod.default ?? Lmod;
+
+    // Researcher-flagged: Leaflet's default icon paths break under
+    // Astro/Vite static builds. Override with our vendored absolute URLs.
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconUrl: '/leaflet/marker-icon.png',
+      iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+      shadowUrl: '/leaflet/marker-shadow.png',
+    });
+
+    const map = L.map('parcel-map').setView(center, zoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // viz/public/data symlinks to viz/src/data, so this URL resolves to
+    // the canonical GeoJSON sink (D-63 atomic-write target).
+    const resp = await fetch('/data/parcels.geojson');
+    if (!resp.ok) {
+      console.error('parcels.geojson fetch failed:', resp.status);
+      return;
+    }
+    const gj = await resp.json();
+
+    const layer = L.geoJSON(gj, {
+      style: { color: '#3388ff', weight: 1, fillOpacity: 0.1 },
+      onEachFeature: (feature, lyr) => {
+        const props = feature.properties || {};
+        const pin = props.pams_pin;
+        const lines = [`<strong>${pin ?? '(no PIN)'}</strong>`];
+        if (props.property_location) {
+          lines.push(`<em>loc</em>: ${props.property_location}`);
+        }
+        for (const [name, dict] of Object.entries(overlays)) {
+          const val = dict?.[pin];
+          if (val !== undefined) {
+            lines.push(`<em>${name}</em>: ${JSON.stringify(val)}`);
+          }
+        }
+        lines.push(`<a href="/parcel/${pin}">detail →</a>`);
+        lyr.bindPopup(lines.join('<br/>'));
+      },
+    }).addTo(map);
+
+    // Fit map to data bounds if features exist.
+    try {
+      const b = layer.getBounds();
+      if (b.isValid()) map.fitBounds(b, { padding: [20, 20] });
+    } catch (_) {
+      /* keep default view if bounds invalid */
+    }
+  })();
+</script>

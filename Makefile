@@ -1,4 +1,4 @@
-.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test
+.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson viz-install viz-dev
 
 PYTHON := uv run python
 TODAY := $(shell date +%Y-%m-%d)
@@ -58,3 +58,13 @@ test:
 
 clean:
 	rm -rf data/processed/
+
+# Phase 2 viz targets
+build-geojson:
+	$(PYTHON) scripts/build_parcels_geojson.py
+
+viz-install:
+	cd viz && npm install
+
+viz-dev: viz-install
+	cd viz && npm run dev

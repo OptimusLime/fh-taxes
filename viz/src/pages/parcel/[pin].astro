@@ -1,0 +1,62 @@
+---
+// Per-parcel detail page (D-60). One static route per PAMS_PIN, enumerated
+// from parcels.geojson at build time via getStaticPaths.
+//
+// LOCKED idiom (per plan checker issue #5): .geojson is NOT a Vite-default
+// JSON module extension, so we use ?raw + JSON.parse instead of a default
+// JSON import.
+import gjRaw from '../../data/parcels.geojson?raw';
+
+const gj = JSON.parse(gjRaw);
+
+export async function getStaticPaths() {
+  const raw = (await import('../../data/parcels.geojson?raw')).default;
+  const parsed = JSON.parse(raw);
+  const features = parsed.features ?? [];
+  return features.map((f: any) => ({
+    params: { pin: String(f.properties?.pams_pin ?? '') },
+    props: { feature: f },
+  }));
+}
+
+const { feature } = Astro.props;
+const pin = feature?.properties?.pams_pin ?? '';
+
+// Eager-load every overlay JSON; pull this PIN's values out of each.
+const overlayModules = import.meta.glob('/src/data/overlays/*.json', { eager: true });
+const values: Record<string, unknown> = {};
+for (const [path, mod] of Object.entries(overlayModules)) {
+  const name = path.split('/').pop()!.replace('.json', '');
+  const dict = ((mod as { default?: unknown }).default ?? mod) as Record<string, unknown>;
+  if (dict[pin] !== undefined) values[name] = dict[pin];
+}
+
+// Suppress unused-import warning on `gj` — the variable exists to make the
+// top-level ?raw import sticky for typecheck even though getStaticPaths
+// re-imports it. Both calls hit the same Vite module cache.
+void gj;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Parcel {pin}</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; padding: 1rem; max-width: 900px; }
+      h1 { font-size: 1.3rem; }
+      pre { background: #f5f5f5; padding: 0.75rem; border-radius: 4px; overflow-x: auto; }
+      a { color: #3388ff; }
+    </style>
+  </head>
+  <body>
+    <p><a href="/">← back to map</a></p>
+    <h1>Parcel {pin}</h1>
+    <h2>Identity (D-60)</h2>
+    <pre>{JSON.stringify(feature.properties, null, 2)}</pre>
+    <h2>Overlay values</h2>
+    {Object.keys(values).length === 0
+      ? <p><em>no overlay data for this parcel yet</em></p>
+      : <pre>{JSON.stringify(values, null, 2)}</pre>}
+  </body>
+</html>

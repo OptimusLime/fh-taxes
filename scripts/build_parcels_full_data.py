@@ -27,6 +27,7 @@ PRC = ROOT / "data" / "processed" / "prc.parquet"
 SALES = ROOT / "data" / "processed" / "sales.parquet"
 MODIV_HIST = ROOT / "data" / "processed" / "modiv_history.parquet"
 DATA_QUALITY_OVERLAY = ROOT / "viz" / "src" / "data" / "overlays" / "data_quality.json"
+RENOVATIONS_OVERLAY = ROOT / "viz" / "src" / "data" / "overlays" / "renovations.json"
 OUT = ROOT / "viz" / "src" / "data" / "parcels_full.json"
 
 
@@ -367,6 +368,14 @@ def main() -> int:
     else:
         dq = {}
 
+    # Renovation overlay (produced by scripts/derive_renovation_events.py).
+    # Per-pin: tier (high/medium/low/weak), confidence score, list of events.
+    if RENOVATIONS_OVERLAY.exists():
+        with open(RENOVATIONS_OVERLAY) as f:
+            renos = json.load(f)
+    else:
+        renos = {}
+
     # Build per-parcel records
     out: dict[str, dict] = {}
     for _, p in parcels.iterrows():
@@ -467,6 +476,7 @@ def main() -> int:
             "history": hist_records,  # 37 years
             "unified_sales": _build_unified_sales(sales_records, hist_records),
             "data_quality_flags": dq.get(pin, []),
+            "renovations": renos.get(pin),
             "cohort": _cohort_tags(
                 _latest_arms_length_year(sales_records, hist_records),
                 _latest_any_deed_year(sales_records, hist_records),

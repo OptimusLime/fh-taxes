@@ -1,6 +1,7 @@
 ---
 import TownComposition from '../components/TownComposition.tsx';
 import aggregates from '../data/town_aggregates.json';
+import history from '../data/cohort_history.json';
 ---
 
 <html lang="en">
@@ -38,6 +39,6 @@ import aggregates from '../data/town_aggregates.json';
         <a href="/town-composition" class="active">Town Composition</a>
       </nav>
     </div>
-    <TownComposition aggregates={aggregates} />
+    <TownComposition aggregates={aggregates} history={history} />
   </body>
 </html>

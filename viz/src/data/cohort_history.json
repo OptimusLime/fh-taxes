@@ -1,0 +1,2015 @@
+{
+  "summary": {
+    "current_effective_rate": 0.01427,
+    "year_min": 1989,
+    "year_max": 2025,
+    "adp_start": 2014,
+    "cumulative_position_full_history": [
+      {
+        "cohort": "no_deed_since_1989",
+        "dollars": -1500266.557956217
+      },
+      {
+        "cohort": "tenure_pre_2015",
+        "dollars": -700621.5937378318
+      },
+      {
+        "cohort": "tenure_2015_2019",
+        "dollars": 100172.93470720538
+      },
+      {
+        "cohort": "tenure_pandemic_2020_2022",
+        "dollars": 1366034.0328777134
+      },
+      {
+        "cohort": "tenure_post_pandemic_2023plus",
+        "dollars": 734681.1841091303
+      }
+    ],
+    "cumulative_position_adp_era": [
+      {
+        "cohort": "no_deed_since_1989",
+        "dollars": -5429155.953252887
+      },
+      {
+        "cohort": "tenure_pre_2015",
+        "dollars": 0.0
+      },
+      {
+        "cohort": "tenure_2015_2019",
+        "dollars": -103886.60422760388
+      },
+      {
+        "cohort": "tenure_pandemic_2020_2022",
+        "dollars": 350280.2802760259
+      },
+      {
+        "cohort": "tenure_post_pandemic_2023plus",
+        "dollars": 5182762.277204466
+      }
+    ]
+  },
+  "annual": [
+    {
+      "year": 1989,
+      "total_assessed": 330059561.0,
+      "total_parcels": 2120,
+      "implied_levy": 4709949.93547,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 452,
+          "sum_assessed": 76468561.0,
+          "avg_assessed": 169178.23230088496,
+          "share_of_assessed": 0.2316810964915511,
+          "share_of_parcels": 0.21320754716981133,
+          "implied_dollar_position": 87009.49243583014
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 2495500.0,
+          "avg_assessed": 103979.16666666667,
+          "share_of_assessed": 0.007560756587202756,
+          "share_of_parcels": 0.011320754716981131,
+          "implied_dollar_position": -17709.40294871698
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 18,
+          "sum_assessed": 2612500.0,
+          "avg_assessed": 145138.88888888888,
+          "share_of_assessed": 0.00791523806213873,
+          "share_of_parcels": 0.008490566037735849,
+          "implied_dollar_position": -2709.7659615377374
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 135,
+          "sum_assessed": 18556500.0,
+          "avg_assessed": 137455.55555555556,
+          "share_of_assessed": 0.05622167085170425,
+          "share_of_parcels": 0.06367924528301887,
+          "implied_dollar_position": -35124.802211533
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1491,
+          "sum_assessed": 229926500.0,
+          "avg_assessed": 154209.59087860497,
+          "share_of_assessed": 0.6966212380074032,
+          "share_of_parcels": 0.7033018867924529,
+          "implied_dollar_position": -31465.521314042584
+        }
+      ]
+    },
+    {
+      "year": 1990,
+      "total_assessed": 332310137.0,
+      "total_parcels": 2131,
+      "implied_levy": 4742065.65499,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 455,
+          "sum_assessed": 77126037.0,
+          "avg_assessed": 169507.77362637362,
+          "share_of_assessed": 0.23209053354878548,
+          "share_of_parcels": 0.21351478179258565,
+          "implied_dollar_position": 88087.43441869537
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 2534900.0,
+          "avg_assessed": 105620.83333333333,
+          "share_of_assessed": 0.00762811517844248,
+          "share_of_parcels": 0.011262318160488035,
+          "implied_dollar_position": -17233.629144420465
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 18,
+          "sum_assessed": 2612500.0,
+          "avg_assessed": 145138.88888888888,
+          "share_of_assessed": 0.007861631979044924,
+          "share_of_parcels": 0.008446738620366025,
+          "implied_dollar_position": -2774.6141083153434
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 140,
+          "sum_assessed": 19092900.0,
+          "avg_assessed": 136377.85714285713,
+          "share_of_assessed": 0.057455063430701184,
+          "share_of_parcels": 0.0656968559361802,
+          "implied_dollar_position": -39083.12117578603
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1494,
+          "sum_assessed": 230943800.0,
+          "avg_assessed": 154580.85676037482,
+          "share_of_assessed": 0.6949646558630259,
+          "share_of_parcels": 0.7010793054903801,
+          "implied_dollar_position": -28996.069990173735
+        }
+      ]
+    },
+    {
+      "year": 1991,
+      "total_assessed": 335154433.0,
+      "total_parcels": 2131,
+      "implied_levy": 4782653.75891,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 455,
+          "sum_assessed": 77539333.0,
+          "avg_assessed": 170416.1164835165,
+          "share_of_assessed": 0.23135404268992618,
+          "share_of_parcels": 0.21351478179258565,
+          "implied_dollar_position": 85319.00818684188
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 2534900.0,
+          "avg_assessed": 105620.83333333333,
+          "share_of_assessed": 0.007563378999077718,
+          "share_of_parcels": 0.011262318160488035,
+          "implied_dollar_position": -17690.745284298457
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 18,
+          "sum_assessed": 2731200.0,
+          "avg_assessed": 151733.33333333334,
+          "share_of_assessed": 0.008149079144061329,
+          "share_of_parcels": 0.008446738620366025,
+          "implied_dollar_position": -1423.6022132238356
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 140,
+          "sum_assessed": 19484000.0,
+          "avg_assessed": 139171.42857142858,
+          "share_of_assessed": 0.05813439442109363,
+          "share_of_parcels": 0.0656968559361802,
+          "implied_dollar_position": -36168.634991741
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1494,
+          "sum_assessed": 232865000.0,
+          "avg_assessed": 155866.80053547522,
+          "share_of_assessed": 0.6947991047458412,
+          "share_of_parcels": 0.7010793054903801,
+          "implied_dollar_position": -30036.025697578563
+        }
+      ]
+    },
+    {
+      "year": 1992,
+      "total_assessed": 337534318.0,
+      "total_parcels": 2134,
+      "implied_levy": 4816614.71786,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 456,
+          "sum_assessed": 78294618.0,
+          "avg_assessed": 171698.72368421053,
+          "share_of_assessed": 0.23196046690576808,
+          "share_of_parcels": 0.21368322399250234,
+          "implied_dollar_position": 88034.43721793815
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 2536500.0,
+          "avg_assessed": 105687.5,
+          "share_of_assessed": 0.007514791429296976,
+          "share_of_parcels": 0.011246485473289597,
+          "implied_dollar_position": -17974.132454845363
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 2864300.0,
+          "avg_assessed": 150752.63157894736,
+          "share_of_assessed": 0.00848595193807819,
+          "share_of_parcels": 0.008903467666354265,
+          "implied_dollar_position": -2011.01240175258
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 141,
+          "sum_assessed": 19934700.0,
+          "avg_assessed": 141380.8510638298,
+          "share_of_assessed": 0.059059772405127706,
+          "share_of_parcels": 0.06607310215557638,
+          "implied_dollar_position": -33780.507297216485
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1494,
+          "sum_assessed": 233904200.0,
+          "avg_assessed": 156562.3828647925,
+          "share_of_assessed": 0.6929790173217291,
+          "share_of_parcels": 0.7000937207122774,
+          "implied_dollar_position": -34268.78506412346
+        }
+      ]
+    },
+    {
+      "year": 1993,
+      "total_assessed": 478642700.0,
+      "total_parcels": 2132,
+      "implied_levy": 6830231.329,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 454,
+          "sum_assessed": 112849900.0,
+          "avg_assessed": 248568.06167400882,
+          "share_of_assessed": 0.23577064896215905,
+          "share_of_parcels": 0.2129455909943715,
+          "implied_dollar_position": 155900.42601782363
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3579900.0,
+          "avg_assessed": 149162.5,
+          "share_of_assessed": 0.00747927420599959,
+          "share_of_parcels": 0.01125703564727955,
+          "implied_dollar_position": -25802.984549718574
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 4336300.0,
+          "avg_assessed": 228226.31578947368,
+          "share_of_assessed": 0.009059576172372418,
+          "share_of_parcels": 0.008911819887429643,
+          "implied_dollar_position": 1009.2096064727918
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 141,
+          "sum_assessed": 29913000.0,
+          "avg_assessed": 212148.93617021278,
+          "share_of_assessed": 0.06249546895836915,
+          "share_of_parcels": 0.06613508442776736,
+          "implied_dollar_position": -24859.41560459667
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1494,
+          "sum_assessed": 327963600.0,
+          "avg_assessed": 219520.48192771085,
+          "share_of_assessed": 0.6851950317010997,
+          "share_of_parcels": 0.700750469043152,
+          "implied_dollar_position": -106247.23546998159
+        }
+      ]
+    },
+    {
+      "year": 1994,
+      "total_assessed": 480917927.0,
+      "total_parcels": 2138,
+      "implied_levy": 6862698.81829,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 456,
+          "sum_assessed": 113741327.0,
+          "avg_assessed": 249432.7346491228,
+          "share_of_assessed": 0.23650881078508848,
+          "share_of_parcels": 0.21328344246959777,
+          "implied_dollar_position": 159388.7076930681
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3562000.0,
+          "avg_assessed": 148416.66666666666,
+          "share_of_assessed": 0.0074066692049098845,
+          "share_of_parcels": 0.011225444340505144,
+          "implied_dollar_position": -26207.103610364822
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5094500.0,
+          "avg_assessed": 268131.5789473684,
+          "share_of_assessed": 0.010593283622799946,
+          "share_of_parcels": 0.008886810102899906,
+          "implied_dollar_position": 11711.013808461179
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 144,
+          "sum_assessed": 31384000.0,
+          "avg_assessed": 217944.44444444444,
+          "share_of_assessed": 0.0652585363073812,
+          "share_of_parcels": 0.06735266604303088,
+          "implied_dollar_position": -14371.38166218901
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1495,
+          "sum_assessed": 327136100.0,
+          "avg_assessed": 218820.1337792642,
+          "share_of_assessed": 0.6802327000798205,
+          "share_of_parcels": 0.6992516370439663,
+          "implied_dollar_position": -130521.23622897541
+        }
+      ]
+    },
+    {
+      "year": 1995,
+      "total_assessed": 483515771.0,
+      "total_parcels": 2138,
+      "implied_levy": 6899770.05217,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 456,
+          "sum_assessed": 114844271.0,
+          "avg_assessed": 251851.47149122806,
+          "share_of_assessed": 0.23751918321605273,
+          "share_of_parcels": 0.21328344246959777,
+          "implied_dollar_position": 167221.03819454613
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3562000.0,
+          "avg_assessed": 148416.66666666666,
+          "share_of_assessed": 0.0073668744922903455,
+          "share_of_parcels": 0.011225444340505144,
+          "implied_dollar_position": -26623.244682918612
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5053700.0,
+          "avg_assessed": 265984.2105263158,
+          "share_of_assessed": 0.01045198585673434,
+          "share_of_parcels": 0.008886810102899906,
+          "implied_dollar_position": 10799.352792689435
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 144,
+          "sum_assessed": 31963500.0,
+          "avg_assessed": 221968.75,
+          "share_of_assessed": 0.06610642696078677,
+          "share_of_parcels": 0.06735266604303088,
+          "implied_dollar_position": -8598.763097511739
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1495,
+          "sum_assessed": 328092300.0,
+          "avg_assessed": 219459.73244147157,
+          "share_of_assessed": 0.6785555294741358,
+          "share_of_parcels": 0.6992516370439663,
+          "implied_dollar_position": -142798.38320680556
+        }
+      ]
+    },
+    {
+      "year": 1996,
+      "total_assessed": 548160694.0,
+      "total_parcels": 2139,
+      "implied_levy": 7822253.10338,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 455,
+          "sum_assessed": 129978794.0,
+          "avg_assessed": 285667.6791208791,
+          "share_of_assessed": 0.2371180484531421,
+          "share_of_parcels": 0.21271622253389436,
+          "implied_dollar_position": 190877.25852497423
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 4000800.0,
+          "avg_assessed": 166700.0,
+          "share_of_assessed": 0.007298589708805352,
+          "share_of_parcels": 0.011220196353436185,
+          "implied_dollar_position": -30675.799746199158
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5417600.0,
+          "avg_assessed": 285136.84210526315,
+          "share_of_assessed": 0.009883233254954979,
+          "share_of_parcels": 0.008882655446470314,
+          "implied_dollar_position": 7826.772867592334
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 146,
+          "sum_assessed": 38934400.0,
+          "avg_assessed": 266673.9726027397,
+          "share_of_assessed": 0.07102734732016375,
+          "share_of_parcels": 0.06825619448340346,
+          "implied_dollar_position": 21676.65887728843
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1495,
+          "sum_assessed": 369829100.0,
+          "avg_assessed": 247377.32441471572,
+          "share_of_assessed": 0.6746727812629338,
+          "share_of_parcels": 0.6989247311827957,
+          "implied_dollar_position": -189704.89052365613
+        }
+      ]
+    },
+    {
+      "year": 1997,
+      "total_assessed": 548775694.0,
+      "total_parcels": 2141,
+      "implied_levy": 7831029.15338,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 453,
+          "sum_assessed": 129738994.0,
+          "avg_assessed": 286399.54525386315,
+          "share_of_assessed": 0.23641534313289028,
+          "share_of_parcels": 0.21158337225595517,
+          "implied_dollar_position": 194459.88787316202
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3970800.0,
+          "avg_assessed": 165450.0,
+          "share_of_assessed": 0.007235743206950415,
+          "share_of_parcels": 0.011209715086408221,
+          "implied_dollar_position": -31120.28964274639
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5370700.0,
+          "avg_assessed": 282668.4210526316,
+          "share_of_assessed": 0.009786694379361489,
+          "share_of_parcels": 0.008874357776739842,
+          "implied_dollar_position": 7144.53453282578
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 146,
+          "sum_assessed": 38960600.0,
+          "avg_assessed": 266853.4246575342,
+          "share_of_assessed": 0.070995491283548,
+          "share_of_parcels": 0.06819243344231668,
+          "implied_dollar_position": 21950.82767329286
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1499,
+          "sum_assessed": 370734600.0,
+          "avg_assessed": 247321.2808539026,
+          "share_of_assessed": 0.6755667279972498,
+          "share_of_parcels": 0.7001401214385801,
+          "implied_dollar_position": -192434.96043653408
+        }
+      ]
+    },
+    {
+      "year": 1998,
+      "total_assessed": 551278416.0,
+      "total_parcels": 2147,
+      "implied_levy": 7866742.99632,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 451,
+          "sum_assessed": 129161816.0,
+          "avg_assessed": 286389.8359201774,
+          "share_of_assessed": 0.2342950716938644,
+          "share_of_parcels": 0.21006054960409873,
+          "implied_dollar_position": 190646.75691882646
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3970800.0,
+          "avg_assessed": 165450.0,
+          "share_of_assessed": 0.007202894009186095,
+          "share_of_parcels": 0.011178388448998603,
+          "implied_dollar_position": -31274.19304130415
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5373500.0,
+          "avg_assessed": 282815.7894736842,
+          "share_of_assessed": 0.009747343346016289,
+          "share_of_parcels": 0.008849557522123894,
+          "implied_dollar_position": 7062.650342300881
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 40225800.0,
+          "avg_assessed": 273644.89795918367,
+          "share_of_assessed": 0.07296821140191348,
+          "share_of_parcels": 0.06846762925011644,
+          "implied_dollar_position": 35404.92312201213
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1506,
+          "sum_assessed": 372546500.0,
+          "avg_assessed": 247374.83399734396,
+          "share_of_assessed": 0.6757864795490197,
+          "share_of_parcels": 0.7014438751746623,
+          "implied_dollar_position": -201840.13734183548
+        }
+      ]
+    },
+    {
+      "year": 1999,
+      "total_assessed": 555773443.0,
+      "total_parcels": 2151,
+      "implied_levy": 7930887.03161,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 446,
+          "sum_assessed": 128928543.0,
+          "avg_assessed": 289077.45067264576,
+          "share_of_assessed": 0.23198039529211545,
+          "share_of_parcels": 0.20734542073454207,
+          "implied_dollar_position": 195377.20024270102
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3967300.0,
+          "avg_assessed": 165304.16666666666,
+          "share_of_assessed": 0.0071383403614699165,
+          "share_of_parcels": 0.011157601115760111,
+          "implied_dollar_position": -31876.30299285913
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5400900.0,
+          "avg_assessed": 284257.8947368421,
+          "share_of_assessed": 0.00971780870069389,
+          "share_of_parcels": 0.008833100883310088,
+          "implied_dollar_position": 7016.517755653179
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 40698100.0,
+          "avg_assessed": 276857.8231292517,
+          "share_of_assessed": 0.07322786022361273,
+          "share_of_parcels": 0.06834030683403068,
+          "implied_dollar_position": 38762.633793737776
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1515,
+          "sum_assessed": 376778600.0,
+          "avg_assessed": 248698.74587458745,
+          "share_of_assessed": 0.677935595422108,
+          "share_of_parcels": 0.704323570432357,
+          "implied_dollar_position": -209280.0487992328
+        }
+      ]
+    },
+    {
+      "year": 2000,
+      "total_assessed": 560575938.0,
+      "total_parcels": 2153,
+      "implied_levy": 7999418.63526,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 442,
+          "sum_assessed": 128450638.0,
+          "avg_assessed": 290612.3031674208,
+          "share_of_assessed": 0.2291404773067516,
+          "share_of_parcels": 0.20529493729679518,
+          "implied_dollar_position": 190750.45712348333
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 24,
+          "sum_assessed": 3967300.0,
+          "avg_assessed": 165304.16666666666,
+          "share_of_assessed": 0.007077185678276473,
+          "share_of_parcels": 0.01114723641430562,
+          "implied_dollar_position": -32558.039704245242
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5400900.0,
+          "avg_assessed": 284257.8947368421,
+          "share_of_assessed": 0.009634555523858394,
+          "share_of_parcels": 0.008824895494658615,
+          "implied_dollar_position": 6476.809525805862
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 41237900.0,
+          "avg_assessed": 280529.9319727891,
+          "share_of_assessed": 0.07356345002449963,
+          "share_of_parcels": 0.06827682303762192,
+          "implied_dollar_position": 42289.94243649796
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1521,
+          "sum_assessed": 381519200.0,
+          "avg_assessed": 250834.45101906642,
+          "share_of_assessed": 0.6805843314666139,
+          "share_of_parcels": 0.7064561077566187,
+          "implied_dollar_position": -206959.1693815423
+        }
+      ]
+    },
+    {
+      "year": 2001,
+      "total_assessed": 564195204.0,
+      "total_parcels": 2160,
+      "implied_levy": 8051065.561079999,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 128619904.0,
+          "avg_assessed": 291655.1111111111,
+          "share_of_assessed": 0.22797057310682137,
+          "share_of_parcels": 0.20416666666666666,
+          "implied_dollar_position": 191646.81135949993
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 26,
+          "sum_assessed": 3817000.0,
+          "avg_assessed": 146807.6923076923,
+          "share_of_assessed": 0.006765388952154227,
+          "share_of_parcels": 0.012037037037037037,
+          "implied_dollar_position": -42442.384346333325
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5360900.0,
+          "avg_assessed": 282152.63157894736,
+          "share_of_assessed": 0.009501853191931777,
+          "share_of_parcels": 0.008796296296296297,
+          "implied_dollar_position": 5680.484823833331
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 41384400.0,
+          "avg_assessed": 281526.5306122449,
+          "share_of_assessed": 0.07335120842324637,
+          "share_of_parcels": 0.06805555555555555,
+          "implied_dollar_position": 42635.6484265001
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1527,
+          "sum_assessed": 385013000.0,
+          "avg_assessed": 252136.86967910937,
+          "share_of_assessed": 0.6824109763258462,
+          "share_of_parcels": 0.7069444444444445,
+          "implied_dollar_position": -197520.56026350046
+        }
+      ]
+    },
+    {
+      "year": 2002,
+      "total_assessed": 568996550.0,
+      "total_parcels": 2162,
+      "implied_levy": 8119580.7685,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 129036650.0,
+          "avg_assessed": 292600.1133786848,
+          "share_of_assessed": 0.2267793187849733,
+          "share_of_parcels": 0.20397779833487512,
+          "implied_dollar_position": 185138.78693917659
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 20,
+          "sum_assessed": 3442000.0,
+          "avg_assessed": 172100.0,
+          "share_of_assessed": 0.006049245817044057,
+          "share_of_parcels": 0.009250693802035153,
+          "implied_dollar_position": -25994.415490286774
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 5360900.0,
+          "avg_assessed": 282152.63157894736,
+          "share_of_assessed": 0.009421673997847614,
+          "share_of_parcels": 0.008788159111933395,
+          "implied_dollar_position": 5143.875284227562
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 42121800.0,
+          "avg_assessed": 286542.85714285716,
+          "share_of_assessed": 0.07402821686704428,
+          "share_of_parcels": 0.06799259944495838,
+          "implied_dollar_position": 49006.68314639223
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1535,
+          "sum_assessed": 389035200.0,
+          "avg_assessed": 253443.1270358306,
+          "share_of_assessed": 0.6837215445330908,
+          "share_of_parcels": 0.709990749306198,
+          "implied_dollar_position": -213294.92987950993
+        }
+      ]
+    },
+    {
+      "year": 2003,
+      "total_assessed": 1149655330.0,
+      "total_parcels": 2163,
+      "implied_levy": 16405581.5591,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 249548630.0,
+          "avg_assessed": 565869.9092970522,
+          "share_of_assessed": 0.21706386556743054,
+          "share_of_parcels": 0.20388349514563106,
+          "implied_dollar_position": 216231.64193398066
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 19,
+          "sum_assessed": 6628600.0,
+          "avg_assessed": 348873.6842105263,
+          "share_of_assessed": 0.005765728063905901,
+          "share_of_parcels": 0.00878409616273694,
+          "implied_dollar_position": -49518.08402075822
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 10972400.0,
+          "avg_assessed": 577494.7368421053,
+          "share_of_assessed": 0.009544077875931737,
+          "share_of_parcels": 0.00878409616273694,
+          "implied_dollar_position": 12467.941979241778
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 85412500.0,
+          "avg_assessed": 581037.4149659864,
+          "share_of_assessed": 0.07429400601308916,
+          "share_of_parcels": 0.06796116504854369,
+          "implied_dollar_position": 103893.93894466035
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1537,
+          "sum_assessed": 797093200.0,
+          "avg_assessed": 518603.25309043593,
+          "share_of_assessed": 0.6933323224796426,
+          "share_of_parcels": 0.7105871474803513,
+          "implied_dollar_position": -283075.43883712497
+        }
+      ]
+    },
+    {
+      "year": 2004,
+      "total_assessed": 1150544883.0,
+      "total_parcels": 2165,
+      "implied_levy": 16418275.48041,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 249506383.0,
+          "avg_assessed": 565774.1111111111,
+          "share_of_assessed": 0.21685932177580247,
+          "share_of_parcels": 0.20369515011547343,
+          "implied_dollar_position": 216132.99679068854
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 17,
+          "sum_assessed": 6330300.0,
+          "avg_assessed": 372370.5882352941,
+          "share_of_assessed": 0.005502001785009894,
+          "share_of_parcels": 0.007852193995381063,
+          "implied_dollar_position": -38586.103141787535
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 10972400.0,
+          "avg_assessed": 577494.7368421053,
+          "share_of_assessed": 0.009536698795608829,
+          "share_of_parcels": 0.008775981524249422,
+          "implied_dollar_position": 12489.665723884544
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 86293800.0,
+          "avg_assessed": 587032.6530612245,
+          "share_of_assessed": 0.07500254990052396,
+          "share_of_parcels": 0.06789838337182448,
+          "implied_dollar_position": 116638.16312689614
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1541,
+          "sum_assessed": 797442000.0,
+          "avg_assessed": 517483.45230369887,
+          "share_of_assessed": 0.6930994277430549,
+          "share_of_parcels": 0.7117782909930715,
+          "implied_dollar_position": -306674.72249968007
+        }
+      ]
+    },
+    {
+      "year": 2005,
+      "total_assessed": 1156262959.0,
+      "total_parcels": 2166,
+      "implied_levy": 16499872.424929999,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 249409059.0,
+          "avg_assessed": 565553.4217687075,
+          "share_of_assessed": 0.21570271455872175,
+          "share_of_parcels": 0.203601108033241,
+          "implied_dollar_position": 199674.96380713288
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 17,
+          "sum_assessed": 6337100.0,
+          "avg_assessed": 372770.5882352941,
+          "share_of_assessed": 0.005480673708929216,
+          "share_of_parcels": 0.007848568790397045,
+          "implied_dollar_position": -39069.966759838404
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 10671400.0,
+          "avg_assessed": 561652.6315789474,
+          "share_of_assessed": 0.009229215479867327,
+          "share_of_parcels": 0.008771929824561403,
+          "implied_dollar_position": 7545.154974298262
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 86575400.0,
+          "avg_assessed": 588948.2993197279,
+          "share_of_assessed": 0.0748751824367661,
+          "share_of_parcels": 0.06786703601108034,
+          "implied_dollar_position": 115633.52195904416
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1542,
+          "sum_assessed": 803270000.0,
+          "avg_assessed": 520927.3670557717,
+          "share_of_assessed": 0.6947122138157156,
+          "share_of_parcels": 0.7119113573407202,
+          "implied_dollar_position": -283783.6739806371
+        }
+      ]
+    },
+    {
+      "year": 2006,
+      "total_assessed": 1165413805.0,
+      "total_parcels": 2166,
+      "implied_levy": 16630454.99735,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 440,
+          "sum_assessed": 250051505.0,
+          "avg_assessed": 568298.875,
+          "share_of_assessed": 0.2145602737218305,
+          "share_of_parcels": 0.20313942751615882,
+          "implied_dollar_position": 189933.86885507847
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 17,
+          "sum_assessed": 6711000.0,
+          "avg_assessed": 394764.70588235295,
+          "share_of_assessed": 0.005758469627876083,
+          "share_of_parcels": 0.007848568790397045,
+          "implied_dollar_position": -34759.30006230378
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 10671400.0,
+          "avg_assessed": 561652.6315789474,
+          "share_of_assessed": 0.009156747546850965,
+          "share_of_parcels": 0.008771929824561403,
+          "implied_dollar_position": 6399.693812719296
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 87042900.0,
+          "avg_assessed": 592128.5714285715,
+          "share_of_assessed": 0.07468840649266206,
+          "share_of_parcels": 0.06786703601108034,
+          "implied_dollar_position": 113442.49481419659
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1543,
+          "sum_assessed": 810937000.0,
+          "avg_assessed": 525558.6519766689,
+          "share_of_assessed": 0.6958361026107804,
+          "share_of_parcels": 0.7123730378578024,
+          "implied_dollar_position": -275016.75741968927
+        }
+      ]
+    },
+    {
+      "year": 2007,
+      "total_assessed": 1175182485.0,
+      "total_parcels": 2171,
+      "implied_levy": 16769854.06095,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 440,
+          "sum_assessed": 251151185.0,
+          "avg_assessed": 570798.1477272727,
+          "share_of_assessed": 0.21371249844657103,
+          "share_of_parcels": 0.2026715799170889,
+          "implied_dollar_position": 185154.5924382541
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 14,
+          "sum_assessed": 4966500.0,
+          "avg_assessed": 354750.0,
+          "share_of_assessed": 0.004226152162232064,
+          "share_of_parcels": 0.006448641179180101,
+          "implied_dollar_position": -37270.81646628281
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 12075600.0,
+          "avg_assessed": 635557.8947368421,
+          "share_of_assessed": 0.010275510530604956,
+          "share_of_parcels": 0.008751727314601566,
+          "implied_dollar_position": 25553.622152901895
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 86326600.0,
+          "avg_assessed": 587255.7823129252,
+          "share_of_assessed": 0.07345803830628057,
+          "share_of_parcels": 0.06771073238139107,
+          "implied_dollar_position": 96381.48160403028
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1551,
+          "sum_assessed": 820662600.0,
+          "avg_assessed": 529118.3752417795,
+          "share_of_assessed": 0.6983278005543113,
+          "share_of_parcels": 0.7144173192077383,
+          "implied_dollar_position": -269818.87972890364
+        }
+      ]
+    },
+    {
+      "year": 2008,
+      "total_assessed": 1188335397.0,
+      "total_parcels": 2171,
+      "implied_levy": 16957546.11519,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 440,
+          "sum_assessed": 252350297.0,
+          "avg_assessed": 573523.4022727272,
+          "share_of_assessed": 0.21235612238520232,
+          "share_of_parcels": 0.2026715799170889,
+          "implied_dollar_position": 164226.07550754942
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 14,
+          "sum_assessed": 5256000.0,
+          "avg_assessed": 375428.5714285714,
+          "share_of_assessed": 0.004422993721527593,
+          "share_of_parcels": 0.006448641179180101,
+          "implied_dollar_position": -34350.010176259784
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 12075600.0,
+          "avg_assessed": 635557.8947368421,
+          "share_of_assessed": 0.010161777584413738,
+          "share_of_parcels": 0.008751727314601566,
+          "implied_dollar_position": 23910.99247507601
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 86421700.0,
+          "avg_assessed": 587902.7210884354,
+          "share_of_assessed": 0.07272500694515624,
+          "share_of_parcels": 0.06771073238139107,
+          "implied_dollar_position": 85029.79214927214
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1551,
+          "sum_assessed": 832231800.0,
+          "avg_assessed": 536577.5628626692,
+          "share_of_assessed": 0.7003340993637001,
+          "share_of_parcels": 0.7144173192077383,
+          "implied_dollar_position": -238816.84995563776
+        }
+      ]
+    },
+    {
+      "year": 2009,
+      "total_assessed": 1200101574.0,
+      "total_parcels": 2173,
+      "implied_levy": 17125449.460979998,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 438,
+          "sum_assessed": 252872274.0,
+          "avg_assessed": 577333.9589041095,
+          "share_of_assessed": 0.21070905953165595,
+          "share_of_parcels": 0.20156465715600552,
+          "implied_dollar_position": 156602.00073506674
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 10,
+          "sum_assessed": 4095400.0,
+          "avg_assessed": 409540.0,
+          "share_of_assessed": 0.00341254447850595,
+          "share_of_parcels": 0.004601932811780948,
+          "implied_dollar_position": -20368.8097909802
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 12094900.0,
+          "avg_assessed": 636573.6842105263,
+          "share_of_assessed": 0.010078230261532846,
+          "share_of_parcels": 0.008743672342383801,
+          "implied_dollar_position": 22854.904197137603
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 86545500.0,
+          "avg_assessed": 588744.8979591837,
+          "share_of_assessed": 0.07211514581348262,
+          "share_of_parcels": 0.06764841233317993,
+          "implied_dollar_position": 76494.81847259097
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1559,
+          "sum_assessed": 844493500.0,
+          "avg_assessed": 541689.2238614496,
+          "share_of_assessed": 0.7036850199148227,
+          "share_of_parcels": 0.7174413253566498,
+          "implied_dollar_position": -235582.91361381506
+        }
+      ]
+    },
+    {
+      "year": 2010,
+      "total_assessed": 1206487699.0,
+      "total_parcels": 2173,
+      "implied_levy": 17216579.46473,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 438,
+          "sum_assessed": 252920299.0,
+          "avg_assessed": 577443.605022831,
+          "share_of_assessed": 0.20963354969108558,
+          "share_of_parcels": 0.20156465715600552,
+          "implied_dollar_position": 138918.7295225725
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 10,
+          "sum_assessed": 4095400.0,
+          "avg_assessed": 409540.0,
+          "share_of_assessed": 0.0033944813555865355,
+          "share_of_parcels": 0.004601932811780948,
+          "implied_dollar_position": -20788.183945375047
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 11726700.0,
+          "avg_assessed": 617194.7368421053,
+          "share_of_assessed": 0.009719701253249164,
+          "share_of_parcels": 0.008743672342383801,
+          "implied_dollar_position": 16803.879303787387
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 87375300.0,
+          "avg_assessed": 594389.7959183673,
+          "share_of_assessed": 0.07242121081915813,
+          "share_of_parcels": 0.06764841233317993,
+          "implied_dollar_position": 82171.26440298665
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1559,
+          "sum_assessed": 850370000.0,
+          "avg_assessed": 545458.6273252085,
+          "share_of_assessed": 0.7048310568809206,
+          "share_of_parcels": 0.7174413253566498,
+          "implied_dollar_position": -217105.68928397165
+        }
+      ]
+    },
+    {
+      "year": 2011,
+      "total_assessed": 1210741164.0,
+      "total_parcels": 2175,
+      "implied_levy": 17277276.41028,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 438,
+          "sum_assessed": 252415864.0,
+          "avg_assessed": 576291.9269406393,
+          "share_of_assessed": 0.20848045107021734,
+          "share_of_parcels": 0.2013793103448276,
+          "implied_dollar_position": 122688.37114085502
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 9,
+          "sum_assessed": 3660700.0,
+          "avg_assessed": 406744.44444444444,
+          "share_of_assessed": 0.003023519897436972,
+          "share_of_parcels": 0.004137931034482759,
+          "implied_dollar_position": -19253.989249434482
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 11726700.0,
+          "avg_assessed": 617194.7368421053,
+          "share_of_assessed": 0.00968555488875738,
+          "share_of_parcels": 0.008735632183908045,
+          "implied_dollar_position": 16412.07714008277
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 86428100.0,
+          "avg_assessed": 587946.2585034013,
+          "share_of_assessed": 0.07138445653773114,
+          "share_of_parcels": 0.06758620689655172,
+          "implied_dollar_position": 65623.40892590364
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1562,
+          "sum_assessed": 856509800.0,
+          "avg_assessed": 548341.7413572343,
+          "share_of_assessed": 0.7074260176058572,
+          "share_of_parcels": 0.7181609195402299,
+          "implied_dollar_position": -185469.8679574058
+        }
+      ]
+    },
+    {
+      "year": 2012,
+      "total_assessed": 1213903800.0,
+      "total_parcels": 2181,
+      "implied_levy": 17322407.226,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 432,
+          "sum_assessed": 248841100.0,
+          "avg_assessed": 576021.0648148148,
+          "share_of_assessed": 0.20499243844528703,
+          "share_of_parcels": 0.19807427785419532,
+          "implied_dollar_position": 119839.19501375547
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 7,
+          "sum_assessed": 2512300.0,
+          "avg_assessed": 358900.0,
+          "share_of_assessed": 0.002069603868115414,
+          "share_of_parcels": 0.0032095369096744614,
+          "implied_dollar_position": -19746.384356258604
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 17,
+          "sum_assessed": 9159500.0,
+          "avg_assessed": 538794.1176470588,
+          "share_of_assessed": 0.007545490837082807,
+          "share_of_parcels": 0.007794589637780834,
+          "implied_dollar_position": -4314.990865199446
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 85499200.0,
+          "avg_assessed": 581627.2108843537,
+          "share_of_assessed": 0.07043325838505489,
+          "share_of_parcels": 0.06740027510316368,
+          "implied_dollar_position": 52538.57151856945
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1578,
+          "sum_assessed": 867891700.0,
+          "avg_assessed": 549994.7401774398,
+          "share_of_assessed": 0.7149592084644598,
+          "share_of_parcels": 0.7235213204951857,
+          "implied_dollar_position": -148316.39131086748
+        }
+      ]
+    },
+    {
+      "year": 2013,
+      "total_assessed": 1215860558.0,
+      "total_parcels": 2186,
+      "implied_levy": 17350330.16266,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 248763558.0,
+          "avg_assessed": 564089.7006802721,
+          "share_of_assessed": 0.20459875629915777,
+          "share_of_parcels": 0.20173833485818848,
+          "implied_dollar_position": 49629.25640516886
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 4,
+          "sum_assessed": 1403000.0,
+          "avg_assessed": 350750.0,
+          "share_of_assessed": 0.0011539152173073452,
+          "share_of_parcels": 0.0018298261665141812,
+          "implied_dollar_position": -11727.278129295517
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 10777000.0,
+          "avg_assessed": 567210.5263157894,
+          "share_of_assessed": 0.008863680895881155,
+          "share_of_parcels": 0.00869167429094236,
+          "implied_dollar_position": 2984.3713858463016
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 85137200.0,
+          "avg_assessed": 579164.6258503401,
+          "share_of_assessed": 0.07002217436845254,
+          "share_of_parcels": 0.06724611161939616,
+          "implied_dollar_position": 48165.60524838978
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1575,
+          "sum_assessed": 869779800.0,
+          "avg_assessed": 552241.1428571428,
+          "share_of_assessed": 0.7153614732192012,
+          "share_of_parcels": 0.7204940530649588,
+          "implied_dollar_position": -89051.95491010987
+        }
+      ]
+    },
+    {
+      "year": 2014,
+      "total_assessed": 1524526724.0,
+      "total_parcels": 2187,
+      "implied_levy": 21754996.35148,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 439,
+          "sum_assessed": 305493224.0,
+          "avg_assessed": 695884.3371298405,
+          "share_of_assessed": 0.2003856142307939,
+          "share_of_parcels": 0.2007315957933242,
+          "implied_dollar_position": -7526.827630525924
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 13675500.0,
+          "avg_assessed": 719763.1578947369,
+          "share_of_assessed": 0.008970324878345655,
+          "share_of_parcels": 0.008687700045724738,
+          "implied_dollar_position": 6148.502202505697
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 107965800.0,
+          "avg_assessed": 734461.224489796,
+          "share_of_assessed": 0.07081922428799615,
+          "share_of_parcels": 0.06721536351165981,
+          "implied_dollar_position": 78401.97804043902
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1582,
+          "sum_assessed": 1097392200.0,
+          "avg_assessed": 693673.9570164349,
+          "share_of_assessed": 0.7198248366028643,
+          "share_of_parcels": 0.7233653406492913,
+          "implied_dollar_position": -77023.65261241778
+        }
+      ]
+    },
+    {
+      "year": 2015,
+      "total_assessed": 1599293913.0,
+      "total_parcels": 2191,
+      "implied_levy": 22821924.13851,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 314517513.0,
+          "avg_assessed": 713191.6394557824,
+          "share_of_assessed": 0.19666023264605523,
+          "share_of_parcels": 0.2012779552715655,
+          "implied_dollar_position": -105385.31545207668
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 19,
+          "sum_assessed": 13932700.0,
+          "avg_assessed": 733300.0,
+          "share_of_assessed": 0.008711782047531622,
+          "share_of_parcels": 0.00867183934276586,
+          "implied_dollar_position": 911.569378051134
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 112815900.0,
+          "avg_assessed": 767455.1020408163,
+          "share_of_assessed": 0.07054106758174099,
+          "share_of_parcels": 0.0670926517571885,
+          "implied_dollar_position": 78699.48434597439
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1584,
+          "sum_assessed": 1158027800.0,
+          "avg_assessed": 731078.1565656565,
+          "share_of_assessed": 0.7240869177246722,
+          "share_of_parcels": 0.7229575536284801,
+          "implied_dollar_position": 25774.2617280512
+        }
+      ]
+    },
+    {
+      "year": 2016,
+      "total_assessed": 1643038718.0,
+      "total_parcels": 2194,
+      "implied_levy": 23446162.50586,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 441,
+          "sum_assessed": 319750018.0,
+          "avg_assessed": 725056.7301587302,
+          "share_of_assessed": 0.19460893678100166,
+          "share_of_parcels": 0.20100273473108476,
+          "implied_dollar_position": -149910.02576728296
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 12,
+          "sum_assessed": 5624100.0,
+          "avg_assessed": 468675.0,
+          "share_of_assessed": 0.0034229868951877007,
+          "share_of_parcels": 0.0054694621695533276,
+          "implied_dollar_position": -47981.99184700092
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 113783800.0,
+          "avg_assessed": 774039.4557823129,
+          "share_of_assessed": 0.06925205033421494,
+          "share_of_parcels": 0.06700091157702825,
+          "implied_dollar_position": 52780.565124238805
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1594,
+          "sum_assessed": 1203880800.0,
+          "avg_assessed": 755257.7164366373,
+          "share_of_assessed": 0.7327160259895957,
+          "share_of_parcels": 0.7265268915223336,
+          "implied_dollar_position": 145111.45249004653
+        }
+      ]
+    },
+    {
+      "year": 2017,
+      "total_assessed": 1707503647.0,
+      "total_parcels": 2206,
+      "implied_levy": 24366077.042689998,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 442,
+          "sum_assessed": 328212147.0,
+          "avg_assessed": 742561.4185520362,
+          "share_of_assessed": 0.19221753791076968,
+          "share_of_parcels": 0.20036264732547598,
+          "implied_dollar_position": -198464.36351987356
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 9,
+          "sum_assessed": 4036100.0,
+          "avg_assessed": 448455.55555555556,
+          "share_of_assessed": 0.0023637431211881916,
+          "share_of_parcels": 0.004079782411604714,
+          "implied_dollar_position": -41813.14555857207
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 149,
+          "sum_assessed": 117934400.0,
+          "avg_assessed": 791506.0402684563,
+          "share_of_assessed": 0.06906831514369234,
+          "share_of_parcels": 0.06754306436990028,
+          "implied_dollar_position": 37164.377863639966
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1606,
+          "sum_assessed": 1257321000.0,
+          "avg_assessed": 782889.7882938979,
+          "share_of_assessed": 0.7363504038243498,
+          "share_of_parcels": 0.7280145058930191,
+          "implied_dollar_position": 203113.1312148044
+        }
+      ]
+    },
+    {
+      "year": 2018,
+      "total_assessed": 1791128380.0,
+      "total_parcels": 2204,
+      "implied_levy": 25559401.9826,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 442,
+          "sum_assessed": 335434980.0,
+          "avg_assessed": 758902.6696832579,
+          "share_of_assessed": 0.18727578868467262,
+          "share_of_parcels": 0.20054446460980035,
+          "implied_dollar_position": -339139.4217471866
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 6,
+          "sum_assessed": 3479500.0,
+          "avg_assessed": 579916.6666666666,
+          "share_of_assessed": 0.001942630153624164,
+          "share_of_parcels": 0.0027223230490018148,
+          "implied_dollar_position": -19928.48413593466
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 150,
+          "sum_assessed": 124638600.0,
+          "avg_assessed": 830924.0,
+          "share_of_assessed": 0.06958663677697965,
+          "share_of_parcels": 0.06805807622504537,
+          "implied_dollar_position": 39069.093601633394
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1606,
+          "sum_assessed": 1327575300.0,
+          "avg_assessed": 826634.6824408468,
+          "share_of_assessed": 0.7411949443847236,
+          "share_of_parcels": 0.7286751361161524,
+          "implied_dollar_position": 319998.81228148885
+        }
+      ]
+    },
+    {
+      "year": 2019,
+      "total_assessed": 1861699311.0,
+      "total_parcels": 2205,
+      "implied_levy": 26566449.167969998,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 442,
+          "sum_assessed": 342381111.0,
+          "avg_assessed": 774617.8981900453,
+          "share_of_assessed": 0.18390784643739927,
+          "share_of_parcels": 0.20045351473922904,
+          "implied_dollar_position": -439559.655890653
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 1,
+          "sum_assessed": 758600.0,
+          "avg_assessed": 758600.0,
+          "share_of_assessed": 0.0004074771879206008,
+          "share_of_parcels": 0.00045351473922902497,
+          "implied_dollar_position": -1223.0542666530614
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 150,
+          "sum_assessed": 129573000.0,
+          "avg_assessed": 863820.0,
+          "share_of_assessed": 0.06959931672875824,
+          "share_of_parcels": 0.06802721088435375,
+          "implied_dollar_position": 41765.27000204057
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1612,
+          "sum_assessed": 1388986600.0,
+          "avg_assessed": 861654.2183622828,
+          "share_of_assessed": 0.7460853596459219,
+          "share_of_parcels": 0.7310657596371882,
+          "implied_dollar_position": 399017.4401552656
+        }
+      ]
+    },
+    {
+      "year": 2020,
+      "total_assessed": 1905374415.0,
+      "total_parcels": 2197,
+      "implied_levy": 27189692.90205,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 433,
+          "sum_assessed": 345121815.0,
+          "avg_assessed": 797048.0715935335,
+          "share_of_assessed": 0.18113070705843398,
+          "share_of_parcels": 0.19708693673190714,
+          "implied_dollar_position": -433844.98469631263
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 150,
+          "sum_assessed": 131714300.0,
+          "avg_assessed": 878095.3333333334,
+          "share_of_assessed": 0.069127778227252,
+          "share_of_parcels": 0.06827492034592626,
+          "implied_dollar_position": 23188.94388233969
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1614,
+          "sum_assessed": 1428538300.0,
+          "avg_assessed": 885091.8835192069,
+          "share_of_assessed": 0.749741514714314,
+          "share_of_parcels": 0.7346381429221666,
+          "implied_dollar_position": 410656.0408139748
+        }
+      ]
+    },
+    {
+      "year": 2021,
+      "total_assessed": 1955236523.0,
+      "total_parcels": 2197,
+      "implied_levy": 27901225.18321,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 433,
+          "sum_assessed": 349575523.0,
+          "avg_assessed": 807333.7713625866,
+          "share_of_assessed": 0.17878937861882402,
+          "share_of_parcels": 0.19708693673190714,
+          "implied_dollar_position": -510524.28921600315
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 149,
+          "sum_assessed": 132925500.0,
+          "avg_assessed": 892117.4496644295,
+          "share_of_assessed": 0.06798435812565885,
+          "share_of_parcels": 0.06781975421028676,
+          "implied_dollar_position": 4592.650908834916
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1615,
+          "sum_assessed": 1472735500.0,
+          "avg_assessed": 911910.5263157894,
+          "share_of_assessed": 0.7532262632555171,
+          "share_of_parcels": 0.7350933090578061,
+          "implied_dollar_position": 505931.63830716745
+        }
+      ]
+    },
+    {
+      "year": 2022,
+      "total_assessed": 2177348352.0,
+      "total_parcels": 2196,
+      "implied_levy": 31070760.983039998,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 430,
+          "sum_assessed": 381034852.0,
+          "avg_assessed": 886127.5627906977,
+          "share_of_assessed": 0.17499949038930818,
+          "share_of_parcels": 0.19581056466302368,
+          "implied_dollar_position": -646615.9145589073
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 147,
+          "sum_assessed": 145374300.0,
+          "avg_assessed": 988940.8163265307,
+          "share_of_assessed": 0.06676667050840379,
+          "share_of_parcels": 0.06693989071038252,
+          "implied_dollar_position": -5382.083493114942
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1619,
+          "sum_assessed": 1650939200.0,
+          "avg_assessed": 1019727.7331686226,
+          "share_of_assessed": 0.758233839102288,
+          "share_of_parcels": 0.7372495446265938,
+          "implied_dollar_position": 651997.9980520235
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "total_assessed": 2433095959.0,
+      "total_parcels": 2199,
+      "implied_levy": 34720279.33493,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 422,
+          "sum_assessed": 414057459.0,
+          "avg_assessed": 981178.8127962085,
+          "share_of_assessed": 0.17017720056145144,
+          "share_of_parcels": 0.19190541155070487,
+          "implied_dollar_position": -754409.5549951748
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1777,
+          "sum_assessed": 2019038500.0,
+          "avg_assessed": 1136206.2464828363,
+          "share_of_assessed": 0.8298227994385485,
+          "share_of_parcels": 0.8080945884492952,
+          "implied_dollar_position": 754409.5549951728
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "total_assessed": 2665658346.0,
+      "total_parcels": 2199,
+      "implied_levy": 38038944.59742,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 421,
+          "sum_assessed": 449228646.0,
+          "avg_assessed": 1067051.4156769596,
+          "share_of_assessed": 0.1685244647627472,
+          "share_of_parcels": 0.1914506593906321,
+          "implied_dollar_position": -872088.2472797815
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1778,
+          "sum_assessed": 2216429700.0,
+          "avg_assessed": 1246585.883014623,
+          "share_of_assessed": 0.8314755352372528,
+          "share_of_parcels": 0.8085493406093679,
+          "implied_dollar_position": 872088.2472797825
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "total_assessed": 2914040016.0,
+      "total_parcels": 2198,
+      "implied_levy": 41583351.02832,
+      "cohorts": [
+        {
+          "cohort": "no_deed_since_1989",
+          "n_parcels": 420,
+          "sum_assessed": 488729916.0,
+          "avg_assessed": 1163642.657142857,
+          "share_of_assessed": 0.16771558156941932,
+          "share_of_parcels": 0.1910828025477707,
+          "implied_dollar_position": -971687.3524991091
+        },
+        {
+          "cohort": "tenure_pre_2015",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_2015_2019",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_pandemic_2020_2022",
+          "n_parcels": 0,
+          "sum_assessed": 0.0,
+          "avg_assessed": 0.0,
+          "share_of_assessed": 0.0,
+          "share_of_parcels": 0.0,
+          "implied_dollar_position": 0.0
+        },
+        {
+          "cohort": "tenure_post_pandemic_2023plus",
+          "n_parcels": 1778,
+          "sum_assessed": 2425310100.0,
+          "avg_assessed": 1364066.4229471316,
+          "share_of_assessed": 0.8322844184305807,
+          "share_of_parcels": 0.8089171974522293,
+          "implied_dollar_position": 971687.3524991056
+        }
+      ]
+    }
+  ]
+}

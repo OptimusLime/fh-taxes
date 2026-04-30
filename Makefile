@@ -1,4 +1,4 @@
-.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson viz-install viz-dev
+.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson build-renovations build-cohort-history build-parcels-full viz-data viz-install viz-dev
 
 PYTHON := uv run python
 TODAY := $(shell date +%Y-%m-%d)
@@ -62,6 +62,27 @@ clean:
 # Phase 2 viz targets
 build-geojson:
 	$(PYTHON) scripts/build_parcels_geojson.py
+
+# Renovation derivation: triangulates 3 signals (improvement-value step-up
+# w/ MAD residualization, eff_age compression, building-description change).
+# Outputs renovation_events.parquet, renovation_summary.parquet, and the
+# viz overlay JSON. Reproducible from data/processed/* — no manual steps.
+build-renovations:
+	$(PYTHON) scripts/derive_renovation_events.py
+
+# Cohort time-series: per-cohort annual avg assessed value, share of total,
+# tax-bill trajectory. Powers the cumulative-undertaxation view on
+# /town-composition.
+build-cohort-history:
+	$(PYTHON) scripts/build_cohort_history.py
+
+# Aggregator: combines all per-parcel sources into viz/src/data/parcels_full.json
+# and viz/src/data/town_aggregates.json. Depends on renovations overlay.
+build-parcels-full: build-renovations
+	$(PYTHON) scripts/build_parcels_full_data.py
+
+# Run the full viz-data pipeline. After this, viz/src/data/* is up to date.
+viz-data: build-geojson build-cohort-history build-parcels-full
 
 viz-install:
 	cd viz && npm install

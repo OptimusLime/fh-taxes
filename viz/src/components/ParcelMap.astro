@@ -135,14 +135,19 @@ for (const [path, mod] of Object.entries(overlayModules)) {
       fetch('/data/parcels_full.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
     ])
       .then(([gj, fullData]) => {
-        // Per-parcel: tax magnitude + cohort tag.
+        // Per-parcel: tax magnitude + cohort tag + renovation tier.
         const taxByPin: Record<string, number> = {};
         const cohortByPin: Record<string, string> = {};
+        const renoByPin: Record<string, { tier: string; year: number | null }> = {};
         for (const [pin, rec] of Object.entries(fullData) as Array<[string, any]>) {
           const t = rec?.current_assessment?.last_year_tax;
           if (Number.isFinite(t) && t > 0) taxByPin[pin] = t;
           const c = rec?.cohort?.cohort;
           if (c) cohortByPin[pin] = c;
+          const r = rec?.renovations;
+          if (r && (r.tier === 'high' || r.tier === 'medium')) {
+            renoByPin[pin] = { tier: r.tier, year: r.last_event_year ?? null };
+          }
         }
         const taxColorFn = makeQuantileFn(Object.values(taxByPin), TAX_PALETTE);
         const strokeByPin: Record<string, string> = {};
@@ -190,6 +195,44 @@ for (const [path, mod] of Object.entries(overlayModules)) {
         } catch (_) {
           /* keep default view */
         }
+
+        // Renovation overlay — small circle markers at high/medium-tier parcel
+        // centroids. Toggleable via Leaflet layer-control. High = solid black ring,
+        // medium = lighter. Year label on hover.
+        const renoLayer = L.layerGroup();
+        let renoCount = 0;
+        for (const f of (gj.features || []) as any[]) {
+          const pin = f?.properties?.pams_pin;
+          const r = renoByPin[pin];
+          if (!r) continue;
+          let cx = 0, cy = 0, n = 0;
+          const accum = (coords: any) => {
+            if (typeof coords[0] === 'number') {
+              cx += coords[0]; cy += coords[1]; n++;
+            } else { for (const c of coords) accum(c); }
+          };
+          try { accum(f.geometry.coordinates); } catch (_) { continue; }
+          if (n === 0) continue;
+          const lat = cy / n;
+          const lng = cx / n;
+          const isHigh = r.tier === 'high';
+          const m = L.circleMarker([lat, lng], {
+            radius: isHigh ? 5 : 3.5,
+            color: '#0e1116',
+            weight: isHigh ? 2 : 1.5,
+            fillColor: isHigh ? '#0a7c2f' : '#0a7caa',
+            fillOpacity: 0.85,
+          });
+          const yearStr = r.year ? ` · ${r.year}` : '';
+          m.bindTooltip(`Renovation: ${r.tier}${yearStr}`, { direction: 'top', offset: [0, -4] });
+          renoLayer.addLayer(m);
+          renoCount++;
+        }
+        renoLayer.addTo(map);
+        // Layer control: lets user toggle renovation overlay off
+        (L as any).control.layers(undefined, {
+          [`Renovations (${renoCount})`]: renoLayer,
+        }, { collapsed: false, position: 'topright' }).addTo(map);
 
         // Dual-scale legend (bottom-right): tenure cohort fill + tax outline.
         const legend = (L as any).control({ position: 'bottomright' });

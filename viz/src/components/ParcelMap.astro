@@ -196,43 +196,7 @@ for (const [path, mod] of Object.entries(overlayModules)) {
           /* keep default view */
         }
 
-        // Renovation overlay — small circle markers at high/medium-tier parcel
-        // centroids. Toggleable via Leaflet layer-control. High = solid black ring,
-        // medium = lighter. Year label on hover.
-        const renoLayer = L.layerGroup();
-        let renoCount = 0;
-        for (const f of (gj.features || []) as any[]) {
-          const pin = f?.properties?.pams_pin;
-          const r = renoByPin[pin];
-          if (!r) continue;
-          let cx = 0, cy = 0, n = 0;
-          const accum = (coords: any) => {
-            if (typeof coords[0] === 'number') {
-              cx += coords[0]; cy += coords[1]; n++;
-            } else { for (const c of coords) accum(c); }
-          };
-          try { accum(f.geometry.coordinates); } catch (_) { continue; }
-          if (n === 0) continue;
-          const lat = cy / n;
-          const lng = cx / n;
-          const isHigh = r.tier === 'high';
-          const m = L.circleMarker([lat, lng], {
-            radius: isHigh ? 5 : 3.5,
-            color: '#0e1116',
-            weight: isHigh ? 2 : 1.5,
-            fillColor: isHigh ? '#0a7c2f' : '#0a7caa',
-            fillOpacity: 0.85,
-          });
-          const yearStr = r.year ? ` · ${r.year}` : '';
-          m.bindTooltip(`Renovation: ${r.tier}${yearStr}`, { direction: 'top', offset: [0, -4] });
-          renoLayer.addLayer(m);
-          renoCount++;
-        }
-        renoLayer.addTo(map);
-        // Layer control: lets user toggle renovation overlay off
-        (L as any).control.layers(undefined, {
-          [`Renovations (${renoCount})`]: renoLayer,
-        }, { collapsed: false, position: 'topright' }).addTo(map);
+        // (Renovation indicator lives in the drawer's Assessment section, not on the map.)
 
         // Dual-scale legend (bottom-right): tenure cohort fill + tax outline.
         const legend = (L as any).control({ position: 'bottomright' });

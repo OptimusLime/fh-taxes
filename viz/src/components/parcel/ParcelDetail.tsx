@@ -6,7 +6,6 @@ import Assessment from './sections/Assessment';
 import TaxContext from './sections/TaxContext';
 import Sales from './sections/Sales';
 import History from './sections/History';
-import Renovations from './sections/Renovations';
 import DataQuality from './sections/DataQuality';
 
 export type ParcelRecord = {
@@ -50,7 +49,7 @@ export default function ParcelDetail({ pin, record, variant = 'page', aggregates
   return (
     <article class={cls}>
       <Header pin={pin} identity={record.identity} cohort={record.cohort} />
-      <Assessment ca={record.current_assessment} />
+      <Assessment ca={record.current_assessment} renovations={record.renovations as any} />
       <TaxContext
         parcelCohort={record.cohort?.cohort || 'unknown'}
         parcelTax={record.current_assessment?.last_year_tax}
@@ -61,7 +60,6 @@ export default function ParcelDetail({ pin, record, variant = 'page', aggregates
       <Identity identity={record.identity} lot={record.lot_geometry} />
       <Building building={record.building} />
       <Sales unifiedSales={(record.unified_sales || []) as any} modivLast={record.modiv_last_sale} />
-      <Renovations renovations={record.renovations as any} />
       <History history={record.history as any} />
       <DataQuality flags={record.data_quality_flags || []} />
     </article>

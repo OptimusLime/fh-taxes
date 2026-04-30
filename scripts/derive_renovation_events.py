@@ -1,31 +1,41 @@
-"""Derive renovation events from existing data via three triangulating signals.
+"""Derive renovation events from existing data via four triangulating signals.
 
-Signal 1 — Improvement-value step-up (MAD-based):
+Signal 1 — Annual improvement-value step-up (MAD-based):
   YoY change in improvement_value, residualized against town-year median
   using MAD (robust to reval years). Flag non-sale years where the parcel
-  moved >= 3 MADs above its year's median AND in absolute terms moved at
-  least +20% AND +$50K.
+  moved >= 1.5 MADs above its year's median AND in absolute terms moved
+  at least +10% AND +$25K. Lower threshold than v0 to catch partial
+  renovations (kitchen/bath remodels, additions) that don't move the
+  whole improvement_value massively.
+
+Signal 1b — 3-year cumulative step-up:
+  Sum of pct_imp over a rolling 3-year window without a sale event in any
+  of those years. Flags slow-burn renovations where the assessor catches
+  up over multiple cycles. Threshold: cumulative >= 30% AND total dollar
+  delta over the window >= $75K. Year recorded = the LAST year of the
+  window (when the cumulative first crosses threshold).
 
 Signal 2 — Effective-age compression:
   prc.eff_age vs prc.notice_year - prc.year_built. The assessor's own
   estimate of "effective" build year (eff_reno_year = notice_year - eff_age)
   encodes their judgment of renovation. Flag parcels where:
-    eff_reno_year - year_built >= 40 (top quartile gap)
-    AND eff_age <= 20 (recent perceived freshness)
-  This catches gut renovations / teardowns that the assessor has
-  re-baselined.
+    EITHER reno_gap >= 25 AND eff_age <= 35  (broad: catches partial reno)
+    OR     reno_gap >= 40 AND eff_age <= 20  (strict: gut/rebuild)
+  We weight the strict variant higher.
 
 Signal 3 — Building-description change:
   modiv_history.building_description string transitions per parcel.
   Flag any (pin, year) where the description string changes vs the prior
-  year, EXCLUDING town-wide recoding events (e.g., 2003 when nearly every
-  parcel switched from old format `1SF2G1AB` to new format `1S-F-R-AG-1U`).
-  A recoding year is one where >25% of parcels see a description change.
+  year, EXCLUDING town-wide recoding events (a year where >25% of parcels
+  see a description change). Catches: garage added, story added, deck
+  added, etc.
 
 Confidence score = weighted sum of signals present:
-  - Signal 1 (step-up): +2 (most direct evidence of work being done)
-  - Signal 2 (eff_age compression): +1.5 (assessor's own conclusion)
-  - Signal 3 (desc change, non-recoding year): +1 (suggestive)
+  - Signal 1  (annual step-up):       +2.0
+  - Signal 1b (3-year cumulative):    +1.5
+  - Signal 2  (eff_age strict gut):   +1.5
+  - Signal 2  (eff_age broad partial):+0.75
+  - Signal 3  (desc change):          +1.0
 
 Outputs:
   data/processed/renovation_events.parquet  — per-(pin, year) event log
@@ -79,9 +89,9 @@ def main() -> None:
 
     sig1_mask = (
         (~mh["sale_event"])
-        & (mh["pct_imp"] >= 0.20)
-        & (mh["delta_imp"] >= 50_000)
-        & (mh["mad_z"] >= 3.0)
+        & (mh["pct_imp"] >= 0.10)
+        & (mh["delta_imp"] >= 25_000)
+        & (mh["mad_z"] >= 1.5)
         & (mh["year"] >= 2014)
     )
     sig1 = mh.loc[sig1_mask, ["parcel_pin", "year", "prop_loc", "prev_imp",
@@ -89,27 +99,95 @@ def main() -> None:
     sig1["signal"] = "step_up"
     sig1["weight"] = 2.0
 
-    print(f"Signal 1 (improvement step-up): {len(sig1)} events across "
+    print(f"Signal 1 (annual improvement step-up): {len(sig1)} events across "
           f"{sig1['parcel_pin'].nunique()} parcels")
 
-    # --- Signal 2: effective-age compression ---
+    # --- Signal 1b: 3-year cumulative step-up (no sale in window) ---
+    # For each parcel, slide a 3-year window. If sum(pct_imp) over window >= 30%
+    # AND sum(delta_imp) >= $75K AND no sale_event in window, flag the END year.
+    # Rolling done per parcel via groupby + apply.
+    def cum_flags(g: pd.DataFrame) -> pd.DataFrame:
+        g = g.sort_values("year").reset_index(drop=True)
+        out_idx = []
+        for i in range(2, len(g)):
+            window = g.iloc[i - 2 : i + 1]
+            if window["sale_event"].any():
+                continue
+            if window["year"].max() < 2014:
+                continue
+            cum_pct = window["pct_imp"].sum(skipna=True)
+            cum_delta = window["delta_imp"].sum(skipna=True)
+            if cum_pct >= 0.30 and cum_delta >= 75_000:
+                out_idx.append(g.index[i])
+        return g.loc[out_idx]
+
+    sig1b_rows = (
+        mh.groupby("parcel_pin", group_keys=False)
+        [["parcel_pin", "year", "prop_loc", "improvement_value", "delta_imp",
+          "pct_imp", "sale_event"]]
+        .apply(cum_flags)
+    )
+    sig1b = sig1b_rows.copy()
+    if len(sig1b):
+        # Recompute window-summed delta/pct for the event payload
+        cum_deltas = []
+        cum_pcts = []
+        for _, row in sig1b.iterrows():
+            pin = row["parcel_pin"]
+            yr = row["year"]
+            window = mh[(mh["parcel_pin"] == pin) & (mh["year"].between(yr - 2, yr))]
+            cum_deltas.append(float(window["delta_imp"].sum(skipna=True)))
+            cum_pcts.append(float(window["pct_imp"].sum(skipna=True)))
+        sig1b["cum_delta_imp"] = cum_deltas
+        sig1b["cum_pct_imp"] = cum_pcts
+        sig1b = sig1b[["parcel_pin", "year", "prop_loc", "cum_delta_imp", "cum_pct_imp"]]
+    else:
+        sig1b = pd.DataFrame(columns=["parcel_pin", "year", "prop_loc",
+                                       "cum_delta_imp", "cum_pct_imp"])
+    sig1b["signal"] = "cum_step_up"
+    sig1b["weight"] = 1.5
+    # Avoid double-counting parcels that already have an annual step_up at the
+    # same year (the annual event subsumes the cumulative for that year).
+    if len(sig1) and len(sig1b):
+        annual_keys = set(zip(sig1["parcel_pin"], sig1["year"]))
+        sig1b = sig1b[~sig1b.apply(
+            lambda r: (r["parcel_pin"], r["year"]) in annual_keys, axis=1
+        )]
+    print(f"Signal 1b (3-yr cumulative step-up): {len(sig1b)} events across "
+          f"{sig1b['parcel_pin'].nunique() if len(sig1b) else 0} parcels")
+
+    # --- Signal 2: effective-age compression (two tiers) ---
     prc = pd.read_parquet(PROC / "prc.parquet")
     prc["eff_reno_year"] = prc["notice_year"] - prc["eff_age"]
     prc["reno_gap"] = prc["eff_reno_year"] - prc["year_built"]
-    sig2_mask = (
-        prc["reno_gap"].notna()
-        & (prc["reno_gap"] >= 40)
-        & (prc["eff_age"].notna())
-        & (prc["eff_age"] <= 20)
+    base = prc[prc["reno_gap"].notna() & prc["eff_age"].notna()].copy()
+    # Strict: gut/teardown re-baseline
+    strict_mask = (base["reno_gap"] >= 40) & (base["eff_age"] <= 20)
+    sig2_strict = base.loc[strict_mask, ["pams_pin", "prop_loc", "year_built",
+                                          "eff_age", "notice_year",
+                                          "eff_reno_year", "reno_gap"]].copy()
+    sig2_strict = sig2_strict.rename(columns={"pams_pin": "parcel_pin",
+                                              "eff_reno_year": "year"})
+    sig2_strict["signal"] = "eff_age"
+    sig2_strict["weight"] = 1.5
+    # Broad: partial reno / kitchen+bath / addition
+    broad_mask = (
+        ((base["reno_gap"] >= 25) & (base["eff_age"] <= 35))
+        & ~strict_mask
     )
-    sig2 = prc.loc[sig2_mask, ["pams_pin", "prop_loc", "year_built", "eff_age",
-                                "notice_year", "eff_reno_year", "reno_gap"]].copy()
-    sig2 = sig2.rename(columns={"pams_pin": "parcel_pin", "eff_reno_year": "year"})
-    sig2["signal"] = "eff_age"
-    sig2["weight"] = 1.5
+    sig2_broad = base.loc[broad_mask, ["pams_pin", "prop_loc", "year_built",
+                                        "eff_age", "notice_year",
+                                        "eff_reno_year", "reno_gap"]].copy()
+    sig2_broad = sig2_broad.rename(columns={"pams_pin": "parcel_pin",
+                                            "eff_reno_year": "year"})
+    sig2_broad["signal"] = "eff_age_partial"
+    sig2_broad["weight"] = 0.75
+    sig2 = pd.concat([sig2_strict, sig2_broad], ignore_index=True)
 
-    print(f"Signal 2 (effective-age compression): {len(sig2)} parcels with "
-          f"reno_gap>=40 and eff_age<=20")
+    print(f"Signal 2 strict (eff_age gut, gap>=40 & eff_age<=20):  "
+          f"{len(sig2_strict)} parcels")
+    print(f"Signal 2 broad  (eff_age partial, gap>=25 & eff_age<=35): "
+          f"{len(sig2_broad)} parcels")
 
     # --- Signal 3: building-description change ---
     mh["prev_desc"] = mh.groupby("parcel_pin")["building_description"].shift(1)
@@ -134,12 +212,12 @@ def main() -> None:
 
     # --- Combine into events log ---
     events_cols = ["parcel_pin", "year", "prop_loc", "signal", "weight"]
-    events = pd.concat(
-        [sig1[events_cols + ["delta_imp", "pct_imp", "mad_z"]],
-         sig2[events_cols + ["reno_gap", "eff_age"]],
-         sig3[events_cols + ["prev_desc", "building_description"]]],
-        ignore_index=True,
-    )
+    parts = [sig1[events_cols + ["delta_imp", "pct_imp", "mad_z"]]]
+    if len(sig1b):
+        parts.append(sig1b[events_cols + ["cum_delta_imp", "cum_pct_imp"]])
+    parts.append(sig2[events_cols + ["reno_gap", "eff_age"]])
+    parts.append(sig3[events_cols + ["prev_desc", "building_description"]])
+    events = pd.concat(parts, ignore_index=True)
     events["year"] = events["year"].astype("Int64")
     events = events.sort_values(["parcel_pin", "year", "weight"], ascending=[True, True, False])
 
@@ -159,15 +237,18 @@ def main() -> None:
         )
         .reset_index()
     )
-    # Tier classification
+    # Tier classification — updated to handle 5 signal types.
+    # Strong = step_up (annual or cumulative) OR eff_age (strict).
+    # Soft   = eff_age_partial OR desc_change.
     def tier(row: pd.Series) -> str:
         c = row["confidence"]
         sigs = set(row["signals"])
-        if c >= 4.5 or {"step_up", "eff_age", "desc_change"}.issubset(sigs):
+        strong = sigs & {"step_up", "cum_step_up", "eff_age"}
+        if c >= 4.5 or len(strong) >= 2:
             return "high"
-        if c >= 2.5 or {"step_up", "eff_age"}.issubset(sigs):
+        if c >= 2.5 or strong:
             return "medium"
-        if c >= 1.5:
+        if c >= 1.0:
             return "low"
         return "weak"
 
@@ -179,15 +260,21 @@ def main() -> None:
     print(f"\nTotal flagged parcels: {len(summary)} / {len(prc)} ({len(summary)/len(prc)*100:.1f}%)")
 
     # --- Per-parcel JSON overlay ---
+    # Drop tier="weak" parcels (only soft signals fired, e.g., partial eff_age
+    # alone). They are recorded in the parquet but not exposed in the drawer
+    # overlay — too low confidence to assert as a "suspected renovation."
     OVERLAYS.mkdir(parents=True, exist_ok=True)
+    weak_pins = set(summary[summary["tier"] == "weak"]["parcel_pin"])
     overlay: dict[str, dict] = {}
     for pin, grp in events.groupby("parcel_pin"):
+        if pin in weak_pins:
+            continue
         evts = []
         for _, e in grp.iterrows():
             ev: dict = {"signal": e["signal"], "weight": float(e["weight"])}
             if pd.notna(e["year"]):
                 ev["year"] = int(e["year"])
-            for k in ("delta_imp", "pct_imp", "mad_z", "reno_gap", "eff_age"):
+            for k in ("delta_imp", "pct_imp", "mad_z", "cum_delta_imp", "cum_pct_imp", "reno_gap", "eff_age"):
                 v = e.get(k)
                 if pd.notna(v):
                     ev[k] = float(v)

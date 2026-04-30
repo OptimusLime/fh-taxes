@@ -1,9 +1,110 @@
 /** @jsxImportSource preact */
 import { money, pct, isPresent, deltaPct } from '../format';
 
-type Props = { ca: Record<string, any> };
+type Reno = {
+  tier: 'high' | 'medium' | 'low';
+  confidence: number;
+  signals: string[];
+  first_event_year: number | null;
+  last_event_year: number | null;
+  events: Array<Record<string, any>>;
+};
 
-export default function Assessment({ ca }: Props) {
+type Props = { ca: Record<string, any>; renovations?: Reno | null };
+
+const TIER_COLOR: Record<string, string> = {
+  high: '#0a7c2f',
+  medium: '#0a7caa',
+  low: '#9e6900',
+};
+const TIER_LABEL: Record<string, string> = {
+  high: 'High confidence',
+  medium: 'Medium confidence',
+  low: 'Low confidence',
+};
+const SIGNAL_LABEL: Record<string, string> = {
+  step_up: 'Annual improvement-value jump',
+  cum_step_up: '3-year cumulative jump',
+  eff_age: 'Assessor effective-age compression (gut/rebuild)',
+  eff_age_partial: 'Assessor effective-age compression (partial)',
+  desc_change: 'Building-description change',
+};
+
+function fmtMoney(v: number): string {
+  return '$' + Math.round(v).toLocaleString('en-US');
+}
+
+function RenovationBadge({ r }: { r: Reno }) {
+  const color = TIER_COLOR[r.tier] || '#5b6270';
+  const span =
+    r.first_event_year && r.last_event_year && r.first_event_year !== r.last_event_year
+      ? `${r.first_event_year}–${r.last_event_year}`
+      : `${r.last_event_year ?? r.first_event_year}`;
+  return (
+    <div
+      style={`background:${color}14;border-left:4px solid ${color};padding:0.6rem 0.8rem;border-radius:0 4px 4px 0;margin-bottom:0.7rem`}
+    >
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:0.6rem;flex-wrap:wrap">
+        <div>
+          <div
+            style={`font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:${color};font-weight:700`}
+          >
+            🛠 Suspected renovation · {TIER_LABEL[r.tier]} (score {r.confidence.toFixed(1)})
+          </div>
+          <div style="font-size:0.82rem;color:var(--pd-fg);margin-top:0.15rem">
+            Year{(r.first_event_year ?? 0) !== (r.last_event_year ?? 0) ? 's' : ''}: <strong>{span}</strong>{' '}
+            · signals: <strong>{r.signals.length}</strong> ({r.signals.map((s) => SIGNAL_LABEL[s] || s).join(', ')})
+          </div>
+        </div>
+      </div>
+      <details style="margin-top:0.4rem;font-size:0.78rem;color:var(--pd-muted)">
+        <summary style="cursor:pointer;font-weight:600">View {r.events.length} event{r.events.length !== 1 ? 's' : ''}</summary>
+        <table class="pd-table" style="margin-top:0.4rem">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Signal</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            {r.events.map((e) => {
+              const detail: string[] = [];
+              if (e.signal === 'step_up') {
+                if (isPresent(e.delta_imp)) detail.push(`+${fmtMoney(e.delta_imp)}`);
+                if (isPresent(e.pct_imp)) detail.push(`${(e.pct_imp * 100).toFixed(1)}%`);
+                if (isPresent(e.mad_z)) detail.push(`z=${Number(e.mad_z).toFixed(1)}`);
+              } else if (e.signal === 'cum_step_up') {
+                if (isPresent(e.cum_delta_imp)) detail.push(`3yr +${fmtMoney(e.cum_delta_imp)}`);
+                if (isPresent(e.cum_pct_imp)) detail.push(`${(e.cum_pct_imp * 100).toFixed(0)}%`);
+              } else if (e.signal === 'eff_age' || e.signal === 'eff_age_partial') {
+                if (isPresent(e.reno_gap)) detail.push(`${e.reno_gap}-yr gap`);
+                if (isPresent(e.eff_age)) detail.push(`eff_age ${e.eff_age}`);
+              } else if (e.signal === 'desc_change') {
+                if (e.prev_desc && e.building_description) {
+                  detail.push(`${e.prev_desc} → ${e.building_description}`);
+                }
+              }
+              return (
+                <tr>
+                  <td style="white-space:nowrap;font-variant-numeric:tabular-nums">{e.year ?? '—'}</td>
+                  <td>{SIGNAL_LABEL[e.signal] || e.signal}</td>
+                  <td style="font-variant-numeric:tabular-nums">{detail.join(' · ')}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <div style="margin-top:0.4rem;color:var(--pd-faint);font-size:0.72rem">
+          Derived from <code>scripts/derive_renovation_events.py</code> — improvement-value step-ups,
+          effective-age compression, and building-description changes. Not a permit record.
+        </div>
+      </details>
+    </div>
+  );
+}
+
+export default function Assessment({ ca, renovations }: Props) {
   if (!ca) return null;
 
   const tiles = [
@@ -19,6 +120,7 @@ export default function Assessment({ ca }: Props) {
     <section class="pd-section">
       <h2 class="pd-section-title">Current Assessment</h2>
       <p class="pd-section-subtitle">From MOD-IV / NJGIN tax-list snapshot.</p>
+      {renovations && <RenovationBadge r={renovations} />}
       <div class="pd-money-row">
         {tiles.map((t) => (
           <div class="pd-money-card">

@@ -1,7 +1,11 @@
 ---
 // Phase 2 vega-embed wrapper (D-61, NP3).
-// Accepts a `spec` URL pointing at a Vega-Lite JSON file written by
-// Altair via chart.save(path, format="json") in the modeling scripts.
+//
+// IMPORTANT: client-side script is `<script>` (no define:vars) so Astro
+// bundles it as an ES module. `define:vars` ships an INLINE CLASSIC script
+// where bare-specifier `import 'vega-embed'` doesn't resolve at runtime,
+// which silently breaks the chart. Spec URL travels via data-spec attribute
+// on the chart container instead. Same trap as ParcelMap.astro.
 //
 // Usage:
 //   <VegaChart spec="/data/charts/data_quality.vl.json" />
@@ -13,18 +17,27 @@ const { spec, height = '400px' } = Astro.props;
 const id = 'vc-' + Math.random().toString(36).slice(2, 10);
 ---
 
-<div id={id} style={`height:${height};width:100%;`}></div>
+<div
+  id={id}
+  class="vega-chart"
+  style={`height:${height};width:100%;`}
+  data-spec={spec}>
+</div>
 
-<script define:vars={{ id, spec }}>
-  (async () => {
-    const mod = await import('vega-embed');
-    const vegaEmbed = mod.default ?? mod;
-    try {
-      await vegaEmbed('#' + id, spec, { actions: false });
-    } catch (err) {
+<script>
+  // Astro-processed module script. Bundler resolves the vega-embed import.
+  // Runs once per page; idempotently embeds every .vega-chart on the page
+  // that hasn't been initialized yet.
+  import vegaEmbed from 'vega-embed';
+
+  const els = document.querySelectorAll<HTMLDivElement>('.vega-chart[data-spec]');
+  for (const el of els) {
+    if (el.dataset.embedded === '1') continue;
+    el.dataset.embedded = '1';
+    const spec = el.dataset.spec!;
+    vegaEmbed('#' + el.id, spec, { actions: false }).catch((err) => {
       console.error('vegaEmbed failed for', spec, err);
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = `<pre style="color:#a00">chart load failed: ${spec}</pre>`;
-    }
-  })();
+      el.innerHTML = `<pre style="color:#a00;padding:1rem">chart load failed: ${spec}<br>${err}</pre>`;
+    });
+  }
 </script>

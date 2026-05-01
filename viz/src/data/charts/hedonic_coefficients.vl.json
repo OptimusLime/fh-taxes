@@ -1,0 +1,275 @@
+{
+  "config": {
+    "view": {
+      "continuousWidth": 300,
+      "continuousHeight": 300
+    }
+  },
+  "layer": [
+    {
+      "data": {
+        "name": "data-d285a7403ed98ae579761d64a864032b"
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#999",
+        "strokeDash": [
+          4,
+          3
+        ]
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "data": {
+        "name": "data-3c268817d5062e80fa7e9af51c1c9c84"
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#1a56db"
+      },
+      "encoding": {
+        "x": {
+          "field": "ci_lo",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "ci_hi"
+        },
+        "y": {
+          "field": "term_short",
+          "sort": "-x",
+          "title": "Coefficient",
+          "type": "nominal"
+        }
+      }
+    },
+    {
+      "data": {
+        "name": "data-3c268817d5062e80fa7e9af51c1c9c84"
+      },
+      "mark": {
+        "type": "point",
+        "color": "#1a56db",
+        "filled": true,
+        "size": 70
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "term_short",
+            "title": "term",
+            "type": "nominal"
+          },
+          {
+            "field": "estimate",
+            "format": ".4f",
+            "type": "quantitative"
+          },
+          {
+            "field": "std_err_hc3",
+            "format": ".4f",
+            "type": "quantitative"
+          },
+          {
+            "field": "ci_lo",
+            "format": ".4f",
+            "type": "quantitative"
+          },
+          {
+            "field": "ci_hi",
+            "format": ".4f",
+            "type": "quantitative"
+          },
+          {
+            "field": "p_value",
+            "format": ".4g",
+            "type": "quantitative"
+          }
+        ],
+        "x": {
+          "field": "estimate",
+          "title": "Estimate (95% CI, HC3 robust SEs)",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "term_short",
+          "sort": "-x",
+          "title": "Coefficient",
+          "type": "nominal"
+        }
+      }
+    }
+  ],
+  "height": 374,
+  "title": "Hedonic coefficients (95% CI; n=155, R\u00b2=0.700)",
+  "width": 600,
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json",
+  "datasets": {
+    "data-d285a7403ed98ae579761d64a864032b": [
+      {
+        "x": 0
+      }
+    ],
+    "data-3c268817d5062e80fa7e9af51c1c9c84": [
+      {
+        "term": "C(neighborhood_fe)[T.1]",
+        "estimate": -0.1289161288251086,
+        "std_err_hc3": 0.08510371640021772,
+        "p_value": 0.12982002669262724,
+        "ci_lo": -0.2957163479200461,
+        "ci_hi": 0.037884090269828835,
+        "term_short": "neighborhood_fe=1"
+      },
+      {
+        "term": "C(neighborhood_fe)[T.2]",
+        "estimate": -0.1722999361809574,
+        "std_err_hc3": 0.07953600822065172,
+        "p_value": 0.03028723127880279,
+        "ci_lo": -0.3281876477675164,
+        "ci_hi": -0.016412224594398367,
+        "term_short": "neighborhood_fe=2"
+      },
+      {
+        "term": "C(neighborhood_fe)[T.3]",
+        "estimate": -0.018201058035910433,
+        "std_err_hc3": 0.11370849542979962,
+        "p_value": 0.8728277398666558,
+        "ci_lo": -0.24106561381455502,
+        "ci_hi": 0.20466349774273415,
+        "term_short": "neighborhood_fe=3"
+      },
+      {
+        "term": "C(neighborhood_fe)[T.4]",
+        "estimate": -0.038158422321267205,
+        "std_err_hc3": 0.1189625971102097,
+        "p_value": 0.7483924037629457,
+        "ci_lo": -0.27132082816462694,
+        "ci_hi": 0.19500398352209253,
+        "term_short": "neighborhood_fe=4"
+      },
+      {
+        "term": "C(neighborhood_fe)[T.5]",
+        "estimate": -0.11222975583123729,
+        "std_err_hc3": 0.08607224713950644,
+        "p_value": 0.1922670749732449,
+        "ci_lo": -0.2809282602931006,
+        "ci_hi": 0.05646874863062601,
+        "term_short": "neighborhood_fe=5"
+      },
+      {
+        "term": "C(sale_year)[T.2021]",
+        "estimate": 0.15674615280948825,
+        "std_err_hc3": 0.07544348930064401,
+        "p_value": 0.03774040123511055,
+        "ci_lo": 0.00887963091219307,
+        "ci_hi": 0.30461267470678344,
+        "term_short": "sale_year=2021"
+      },
+      {
+        "term": "C(sale_year)[T.2022]",
+        "estimate": 0.33085173558140685,
+        "std_err_hc3": 0.09239898334615725,
+        "p_value": 0.00034269343896504073,
+        "ci_lo": 0.1497530560148224,
+        "ci_hi": 0.5119504151479913,
+        "term_short": "sale_year=2022"
+      },
+      {
+        "term": "C(sale_year)[T.2023]",
+        "estimate": 0.35511156600740235,
+        "std_err_hc3": 0.08832056898463374,
+        "p_value": 5.802252139306953e-05,
+        "ci_lo": 0.1820064317034349,
+        "ci_hi": 0.5282167003113698,
+        "term_short": "sale_year=2023"
+      },
+      {
+        "term": "C(sale_year)[T.2024]",
+        "estimate": 0.4375737369990347,
+        "std_err_hc3": 0.07408618565284227,
+        "p_value": 3.4991960894343514e-09,
+        "ci_lo": 0.2923674813675158,
+        "ci_hi": 0.5827799926305536,
+        "term_short": "sale_year=2024"
+      },
+      {
+        "term": "C(sale_year)[T.2025]",
+        "estimate": 0.5511355939276519,
+        "std_err_hc3": 0.06978699649879395,
+        "p_value": 2.847889196123237e-15,
+        "ci_lo": 0.4143555942007929,
+        "ci_hi": 0.6879155936545109,
+        "term_short": "sale_year=2025"
+      },
+      {
+        "term": "np.log(livable_area)",
+        "estimate": 0.6487997071570961,
+        "std_err_hc3": 0.15340258498841802,
+        "p_value": 2.3432345461266336e-05,
+        "ci_lo": 0.34813616544445203,
+        "ci_hi": 0.9494632488697402,
+        "term_short": "np.log(livable_area)"
+      },
+      {
+        "term": "np.log(lot_size_clipped)",
+        "estimate": 0.004183697957960586,
+        "std_err_hc3": 0.016222977488557236,
+        "p_value": 0.7964939771688027,
+        "ci_lo": -0.027612753641615653,
+        "ci_hi": 0.035980149557536825,
+        "term_short": "np.log(lot_size_clipped)"
+      },
+      {
+        "term": "effective_build_year",
+        "estimate": 0.0034828915704718994,
+        "std_err_hc3": 0.004087660487827226,
+        "p_value": 0.3941862800842184,
+        "ci_lo": -0.0045287757666968905,
+        "ci_hi": 0.011494558907640689,
+        "term_short": "effective_build_year"
+      },
+      {
+        "term": "bedrooms",
+        "estimate": -0.010063709740954496,
+        "std_err_hc3": 0.041534323431976015,
+        "p_value": 0.8085487738478007,
+        "ci_lo": -0.09146948778986554,
+        "ci_hi": 0.07134206830795654,
+        "term_short": "bedrooms"
+      },
+      {
+        "term": "bathrooms",
+        "estimate": 0.02993247756941242,
+        "std_err_hc3": 0.047019202362395505,
+        "p_value": 0.5243846860025048,
+        "ci_lo": -0.0622234656426834,
+        "ci_hi": 0.12208842078150824,
+        "term_short": "bathrooms"
+      },
+      {
+        "term": "condition_ord",
+        "estimate": -0.07799214780038444,
+        "std_err_hc3": 0.06832129023699983,
+        "p_value": 0.25364124567606827,
+        "ci_lo": -0.21189941604221213,
+        "ci_hi": 0.055915120441443256,
+        "term_short": "condition_ord"
+      },
+      {
+        "term": "quality_grade_ord",
+        "estimate": 0.036284446734269823,
+        "std_err_hc3": 0.030965234958793407,
+        "p_value": 0.24128534622397346,
+        "ci_lo": -0.02440629855778588,
+        "ci_hi": 0.09697519202632553,
+        "term_short": "quality_grade_ord"
+      }
+    ]
+  }
+}

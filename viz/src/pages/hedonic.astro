@@ -1,0 +1,106 @@
+---
+// Phase 2 Plan 04 — Hedonic OLS results page (D-62: every plan ships viz).
+// Renders three Vega-Lite charts produced by `scripts/run_hedonic.py`:
+//   - hedonic_coefficients.vl.json (point + 95% CI)
+//   - hedonic_residuals.vl.json    (predicted-vs-actual scatter)
+//   - hedonic_choropleth.vl.json   (per-parcel estimated_true_value)
+import VegaChart from '../components/VegaChart.astro';
+
+const pages = [
+  { href: '/', label: 'Map' },
+  { href: '/town-composition', label: 'Town Composition' },
+  { href: '/data-quality', label: 'Data Quality (Plan 1)' },
+  { href: '/hedonic', label: 'Hedonic OLS (Plan 4)' },
+  { href: '/tax-shift', label: 'Berry Tax Shift (Plan 5)' },
+  { href: '/ratio-study', label: 'IAAO Ratio Study (Plan 6)' },
+  { href: '/cdf-gap-test', label: 'CDF Gap Test (Plan 7)' },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hedonic OLS — Fair Haven</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, system-ui, sans-serif;
+        color: #0e1116;
+        background: #f6f7f9;
+      }
+      .topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.5rem 1rem; border-bottom: 1px solid #e3e6ea;
+        background: #fff; height: 48px;
+      }
+      .topbar h1 { font-size: 1rem; margin: 0; font-weight: 600; }
+      .topbar nav a {
+        margin-left: 1rem; font-size: 0.85rem; color: #1a56db;
+        text-decoration: none;
+      }
+      .topbar nav a.active { color: #0e1116; font-weight: 600; }
+      .topbar nav a:hover { text-decoration: underline; }
+      main {
+        max-width: 1080px; margin: 0 auto; padding: 1.5rem 1rem;
+      }
+      h2 { margin-top: 2rem; font-size: 1.05rem; }
+      h2:first-of-type { margin-top: 0.5rem; }
+      .lede {
+        font-size: 0.92rem; color: #5b6270; line-height: 1.5;
+        max-width: 65ch;
+      }
+      .lede code {
+        background: #eef0f3; padding: 0.05rem 0.3rem; border-radius: 3px;
+        font-size: 0.85rem;
+      }
+      .chart-card {
+        background: #fff; border: 1px solid #e3e6ea; border-radius: 6px;
+        padding: 1rem; margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <h1>Fair Haven Tax Assessment Analysis — Hedonic OLS</h1>
+      <nav>
+        {pages.map((p) => (
+          <a href={p.href} class={p.href === '/hedonic' ? 'active' : ''}>{p.label}</a>
+        ))}
+      </nav>
+    </div>
+
+    <main>
+      <p class="lede">
+        Hedonic OLS replicating the Berry / Cook County methodology
+        (RESEARCH.md §1.5). Fitted on 2020–2025 arms-length sales
+        (filtered to <code>nu_code ∈ {'{'}'', '0', '00'{'}'}</code>),
+        applied to all class-2 parcels. Spec:
+        <code>log(price) ~ log(livable_area) + log(lot_size_clipped)
+        + effective_build_year + bedrooms + bathrooms + condition_ord
+        + quality_grade_ord + C(neighborhood_fe) + C(sale_year)</code>,
+        HC3 robust SEs, k-means neighborhood FE on EPSG:3424 centroids
+        (k chosen by silhouette across {'{'}5..8{'}'}; default k=6),
+        Duan's smearing for log-link retransformation, MODEL-03
+        calibration to <code>EXPECTED_AGGREGATE_ASSESSED</code>
+        (~$2.74B class-2 net value).
+      </p>
+
+      <h2>Estimated true value per parcel (choropleth)</h2>
+      <div class="chart-card">
+        <VegaChart spec="/data/charts/hedonic_choropleth.vl.json" height="600px" />
+      </div>
+
+      <h2>Coefficients (95% CI, HC3 robust SEs)</h2>
+      <div class="chart-card">
+        <VegaChart spec="/data/charts/hedonic_coefficients.vl.json" height="500px" />
+      </div>
+
+      <h2>Predicted vs actual sale price (training residuals)</h2>
+      <div class="chart-card">
+        <VegaChart spec="/data/charts/hedonic_residuals.vl.json" height="460px" />
+      </div>
+    </main>
+  </body>
+</html>

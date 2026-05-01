@@ -1,4 +1,4 @@
-.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson build-renovations build-cohort-history build-parcels-full viz-data viz-install viz-dev
+.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson build-renovations build-cohort-history build-parcels-full viz-data viz-install viz-dev run-hedonic
 
 PYTHON := uv run python
 TODAY := $(shell date +%Y-%m-%d)
@@ -89,3 +89,10 @@ viz-install:
 
 viz-dev: viz-install
 	cd viz && npm run dev
+
+# Phase 2 Plan 04 — Hedonic OLS (MODEL-01..03).
+# Reads sales/prc/parcels/modiv_history parquets, fits hedonic with HC3 SEs,
+# writes hedonic_fit.parquet, hedonic_predictions.parquet, three Vega-Lite
+# chart specs and the per-PIN estimated_true_value overlay.
+run-hedonic:
+	$(PYTHON) scripts/run_hedonic.py

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Hedonic estimated true value (predicted, $)",
+  "width": 720,
+  "height": 560,
+  "data": {
+    "url": "/data/parcels.geojson",
+    "format": {
+      "type": "json",
+      "property": "features"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.pams_pin",
+      "from": {
+        "data": {
+          "url": "/data/overlays/estimated_true_value.json"
+        },
+        "key": "pams_pin",
+        "fields": [
+          "estimated_true_value_float"
+        ]
+      },
+      "as": [
+        "estimated_true_value"
+      ]
+    }
+  ],
+  "projection": {
+    "type": "mercator"
+  },
+  "mark": {
+    "type": "geoshape",
+    "stroke": "#fff",
+    "strokeWidth": 0.3
+  },
+  "encoding": {
+    "color": {
+      "field": "estimated_true_value",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "viridis",
+        "type": "quantile"
+      },
+      "legend": {
+        "title": "estimated_true_value",
+        "format": "$,.0f"
+      }
+    },
+    "tooltip": [
+      {
+        "field": "properties.pams_pin",
+        "type": "nominal",
+        "title": "pin"
+      },
+      {
+        "field": "estimated_true_value",
+        "type": "quantitative",
+        "format": "$,.0f",
+        "title": "predicted"
+      }
+    ]
+  }
+}

@@ -176,6 +176,10 @@ def _coerce_features(prc_df: pd.DataFrame) -> pd.DataFrame:
     """
     df = pd.DataFrame({"pams_pin": prc_df["pams_pin"].astype(str)})
     df["livable_area"] = prc_df["livable_area"].map(_to_float)
+    # livable_area=0 → NaN so within-neighborhood median imputation fills it.
+    # Class-2 parcels with literal 0 livable_area are MOD-IV vacant-lot or
+    # data-quality artifacts; treating them as missing is the right call.
+    df.loc[df["livable_area"] <= 0, "livable_area"] = np.nan
     df["acreage"] = prc_df["acreage"].map(_to_float)
     df["lot_size_clipped"] = df["acreage"].fillna(_ACREAGE_FLOOR).clip(lower=_ACREAGE_FLOOR)
     df["year_built"] = pd.to_numeric(prc_df["year_built"], errors="coerce")

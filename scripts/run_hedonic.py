@@ -116,7 +116,11 @@ def main() -> int:
             return 2
 
     # ---- Fit -------------------------------------------------------------
-    fit = fit_hedonic(SALES, PRC, PARCELS)
+    # k_neighborhood=None → fit_hedonic sweeps {5,6,7,8} and picks max-silhouette
+    # (MODEL-01 contract per .planning/phases/02-statistical-pipeline/02-04-PLAN.md
+    # important_context: "Default k=6, but try {5,6,7,8} and pick the k with
+    # highest mean silhouette score.").
+    fit = fit_hedonic(SALES, PRC, PARCELS, k_neighborhood=None)
     if fit.n_obs == 0:
         print(
             "ERROR: zero observations after arms-length + window + "

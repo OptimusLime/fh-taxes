@@ -31,7 +31,7 @@
     },
     {
       "data": {
-        "name": "data-00e5f82b553e27d41cd0b68ab3568e0a"
+        "name": "data-9bab93dde656bb5f8a47d0052b96ab23"
       },
       "mark": {
         "type": "circle",
@@ -86,7 +86,7 @@
     }
   ],
   "height": 420,
-  "title": "Predicted vs actual (n=155, R\u00b2=0.700, Duan's smearing=1.031)",
+  "title": "Predicted vs actual (n=155, R\u00b2=0.715, Duan's smearing=1.029)",
   "width": 560,
   "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json",
   "datasets": {
@@ -100,1091 +100,1091 @@
         "y": 5100000.0
       }
     ],
-    "data-00e5f82b553e27d41cd0b68ab3568e0a": [
+    "data-9bab93dde656bb5f8a47d0052b96ab23": [
       {
         "pams_pin": "1314_51_11",
         "sale_year": 2020,
-        "predicted": 1816817.5320933864,
+        "predicted": 1969619.015989214,
         "actual": 3100000.0,
-        "residual": -1283182.4679066136
+        "residual": -1130380.984010786
       },
       {
         "pams_pin": "1314_77_101",
         "sale_year": 2020,
-        "predicted": 848918.5435920535,
+        "predicted": 906417.7254685737,
         "actual": 971700.0,
-        "residual": -122781.45640794653
+        "residual": -65282.27453142626
       },
       {
         "pams_pin": "1314_28_11",
         "sale_year": 2020,
-        "predicted": 920118.8506263465,
+        "predicted": 895986.535488582,
         "actual": 880000.0,
-        "residual": 40118.85062634654
+        "residual": 15986.535488581983
       },
       {
         "pams_pin": "1314_71_5",
         "sale_year": 2020,
-        "predicted": 1132041.1696252308,
+        "predicted": 1121345.1182956286,
         "actual": 1200000.0,
-        "residual": -67958.83037476917
+        "residual": -78654.88170437142
       },
       {
         "pams_pin": "1314_77_7",
         "sale_year": 2020,
-        "predicted": 583604.9204587188,
+        "predicted": 580313.0851709127,
         "actual": 523100.0,
-        "residual": 60504.920458718785
+        "residual": 57213.08517091267
       },
       {
         "pams_pin": "1314_68_10",
         "sale_year": 2020,
-        "predicted": 1320272.6627418986,
+        "predicted": 1353159.9117640925,
         "actual": 1610000.0,
-        "residual": -289727.33725810144
+        "residual": -256840.0882359075
       },
       {
         "pams_pin": "1314_48_5",
         "sale_year": 2020,
-        "predicted": 1102568.3148874573,
+        "predicted": 1153679.5259152534,
         "actual": 1240000.0,
-        "residual": -137431.6851125427
+        "residual": -86320.47408474656
       },
       {
         "pams_pin": "1314_12_6",
         "sale_year": 2020,
-        "predicted": 876988.1734289465,
+        "predicted": 893367.6055386398,
         "actual": 635000.0,
-        "residual": 241988.17342894652
+        "residual": 258367.60553863982
       },
       {
         "pams_pin": "1314_40_4",
         "sale_year": 2020,
-        "predicted": 867597.3430921694,
+        "predicted": 854987.7736889418,
         "actual": 915000.0,
-        "residual": -47402.65690783062
+        "residual": -60012.226311058155
       },
       {
         "pams_pin": "1314_15_10",
         "sale_year": 2020,
-        "predicted": 749668.7658615003,
+        "predicted": 751978.5186750302,
         "actual": 730000.0,
-        "residual": 19668.765861500287
+        "residual": 21978.51867503021
       },
       {
         "pams_pin": "1314_77.01_32",
         "sale_year": 2020,
-        "predicted": 871266.2820735379,
+        "predicted": 912249.7943994967,
         "actual": 910000.0,
-        "residual": -38733.717926462064
+        "residual": 2249.79439949675
       },
       {
         "pams_pin": "1314_57_12",
         "sale_year": 2020,
-        "predicted": 1500908.8354839878,
+        "predicted": 1391929.2614344468,
         "actual": 670000.0,
-        "residual": 830908.8354839878
+        "residual": 721929.2614344468
       },
       {
         "pams_pin": "1314_13_25",
         "sale_year": 2020,
-        "predicted": 524586.0303889397,
+        "predicted": 520769.4452315692,
         "actual": 451000.0,
-        "residual": 73586.03038893966
+        "residual": 69769.44523156917
       },
       {
         "pams_pin": "1314_53_11",
         "sale_year": 2020,
-        "predicted": 675064.1890685254,
+        "predicted": 710266.3479329131,
         "actual": 490000.0,
-        "residual": 185064.18906852545
+        "residual": 220266.3479329131
       },
       {
         "pams_pin": "1314_4_8",
         "sale_year": 2020,
-        "predicted": 855151.8364534196,
+        "predicted": 747779.1654165449,
         "actual": 978000.0,
-        "residual": -122848.16354658036
+        "residual": -230220.83458345511
       },
       {
         "pams_pin": "1314_74_13",
         "sale_year": 2020,
-        "predicted": 911373.8534620632,
+        "predicted": 910475.0103624248,
         "actual": 930000.0,
-        "residual": -18626.14653793676
+        "residual": -19524.98963757523
       },
       {
         "pams_pin": "1314_36_5",
         "sale_year": 2020,
-        "predicted": 754756.6048552882,
+        "predicted": 765792.1697742144,
         "actual": 680000.0,
-        "residual": 74756.60485528817
+        "residual": 85792.16977421439
       },
       {
         "pams_pin": "1314_27_41",
         "sale_year": 2020,
-        "predicted": 673198.6788093876,
+        "predicted": 767813.712855402,
         "actual": 495000.0,
-        "residual": 178198.6788093876
+        "residual": 272813.71285540203
       },
       {
         "pams_pin": "1314_20_23",
         "sale_year": 2020,
-        "predicted": 1075515.200147579,
+        "predicted": 915676.1581220072,
         "actual": 525000.0,
-        "residual": 550515.200147579
+        "residual": 390676.15812200715
       },
       {
         "pams_pin": "1314_70_17",
         "sale_year": 2020,
-        "predicted": 1294953.7479143483,
+        "predicted": 1276856.1385285098,
         "actual": 1620000.0,
-        "residual": -325046.25208565174
+        "residual": -343143.86147149024
       },
       {
         "pams_pin": "1314_39_25",
         "sale_year": 2020,
-        "predicted": 659002.0826765998,
+        "predicted": 650481.667318566,
         "actual": 585000.0,
-        "residual": 74002.08267659985
+        "residual": 65481.667318566004
       },
       {
         "pams_pin": "1314_37_5",
         "sale_year": 2020,
-        "predicted": 566177.1635866942,
+        "predicted": 552119.9853503793,
         "actual": 539900.0,
-        "residual": 26277.163586694165
+        "residual": 12219.985350379255
       },
       {
         "pams_pin": "1314_10_7",
         "sale_year": 2020,
-        "predicted": 1238839.7898567184,
+        "predicted": 1340266.456796953,
         "actual": 1385000.0,
-        "residual": -146160.2101432816
+        "residual": -44733.54320304701
       },
       {
         "pams_pin": "1314_60_15",
         "sale_year": 2020,
-        "predicted": 1345467.6530097981,
+        "predicted": 1385317.557571391,
         "actual": 1500000.0,
-        "residual": -154532.34699020186
+        "residual": -114682.44242860889
       },
       {
         "pams_pin": "1314_25_32.12",
         "sale_year": 2020,
-        "predicted": 997057.3764029472,
+        "predicted": 1006424.0943322794,
         "actual": 1105000.0,
-        "residual": -107942.62359705276
+        "residual": -98575.9056677206
       },
       {
         "pams_pin": "1314_70_2",
         "sale_year": 2020,
-        "predicted": 757529.2464620544,
+        "predicted": 764002.5724442872,
         "actual": 785000.0,
-        "residual": -27470.753537945566
+        "residual": -20997.427555712755
       },
       {
         "pams_pin": "1314_27_18",
         "sale_year": 2020,
-        "predicted": 1128731.2356006568,
+        "predicted": 1128321.2451281548,
         "actual": 1515000.0,
-        "residual": -386268.76439934317
+        "residual": -386678.75487184525
       },
       {
         "pams_pin": "1314_51_7",
         "sale_year": 2020,
-        "predicted": 740186.6709733543,
+        "predicted": 807228.1897919587,
         "actual": 1340000.0,
-        "residual": -599813.3290266457
+        "residual": -532771.8102080413
       },
       {
         "pams_pin": "1314_2_26",
         "sale_year": 2020,
-        "predicted": 754477.3832999076,
+        "predicted": 657125.4981474034,
         "actual": 750000.0,
-        "residual": 4477.383299907553
+        "residual": -92874.50185259664
       },
       {
         "pams_pin": "1314_72_15",
         "sale_year": 2020,
-        "predicted": 1085845.5275810938,
+        "predicted": 1095880.6011456246,
         "actual": 714000.0,
-        "residual": 371845.52758109383
+        "residual": 381880.60114562465
       },
       {
         "pams_pin": "1314_27_32.01",
         "sale_year": 2020,
-        "predicted": 1011765.3219322535,
+        "predicted": 983561.1107309524,
         "actual": 965000.0,
-        "residual": 46765.321932253544
+        "residual": 18561.11073095235
       },
       {
         "pams_pin": "1314_6_8",
         "sale_year": 2020,
-        "predicted": 509887.3112131592,
+        "predicted": 460505.7972442225,
         "actual": 426500.0,
-        "residual": 83387.31121315918
+        "residual": 34005.797244222485
       },
       {
         "pams_pin": "1314_38_12",
         "sale_year": 2021,
-        "predicted": 1025676.2119876618,
+        "predicted": 992139.7465441466,
         "actual": 1015000.0,
-        "residual": 10676.21198766178
+        "residual": -22860.25345585344
       },
       {
         "pams_pin": "1314_22_20",
         "sale_year": 2021,
-        "predicted": 982371.1817961789,
+        "predicted": 994873.716321851,
         "actual": 1375000.0,
-        "residual": -392628.8182038211
+        "residual": -380126.283678149
       },
       {
         "pams_pin": "1314_18_5",
         "sale_year": 2021,
-        "predicted": 756227.8827025526,
+        "predicted": 762012.7988591952,
         "actual": 845000.0,
-        "residual": -88772.1172974474
+        "residual": -82987.2011408048
       },
       {
         "pams_pin": "1314_34_18.03",
         "sale_year": 2021,
-        "predicted": 968626.6591357278,
+        "predicted": 977087.6951939503,
         "actual": 1110000.0,
-        "residual": -141373.3408642722
+        "residual": -132912.30480604968
       },
       {
         "pams_pin": "1314_10_18",
         "sale_year": 2021,
-        "predicted": 710813.1255762234,
+        "predicted": 747710.2568842202,
         "actual": 720000.0,
-        "residual": -9186.874423776637
+        "residual": 27710.256884220173
       },
       {
         "pams_pin": "1314_77_48",
         "sale_year": 2021,
-        "predicted": 869487.8204396412,
+        "predicted": 840763.0356902799,
         "actual": 740000.0,
-        "residual": 129487.82043964125
+        "residual": 100763.03569027991
       },
       {
         "pams_pin": "1314_67_36",
         "sale_year": 2021,
-        "predicted": 1602452.3027225793,
+        "predicted": 1648502.5000054766,
         "actual": 1699000.0,
-        "residual": -96547.69727742067
+        "residual": -50497.49999452336
       },
       {
         "pams_pin": "1314_70_10",
         "sale_year": 2021,
-        "predicted": 1549366.4838359824,
+        "predicted": 1564615.26332572,
         "actual": 1750000.0,
-        "residual": -200633.5161640176
+        "residual": -185384.7366742799
       },
       {
         "pams_pin": "1314_9_29",
         "sale_year": 2021,
-        "predicted": 704158.413566037,
+        "predicted": 741056.1651542629,
         "actual": 740000.0,
-        "residual": -35841.586433963035
+        "residual": 1056.1651542629115
       },
       {
         "pams_pin": "1314_75_7",
         "sale_year": 2021,
-        "predicted": 1266947.2197456222,
+        "predicted": 1249045.1195477943,
         "actual": 1225000.0,
-        "residual": 41947.21974562225
+        "residual": 24045.11954779434
       },
       {
         "pams_pin": "1314_3_15",
         "sale_year": 2021,
-        "predicted": 853513.7250866239,
+        "predicted": 761928.5687599764,
         "actual": 835000.0,
-        "residual": 18513.72508662392
+        "residual": -73071.43124002358
       },
       {
         "pams_pin": "1314_10_34",
         "sale_year": 2021,
-        "predicted": 559578.8323560631,
+        "predicted": 597856.3126857377,
         "actual": 616000.0,
-        "residual": -56421.16764393693
+        "residual": -18143.687314262264
       },
       {
         "pams_pin": "1314_22_43",
         "sale_year": 2021,
-        "predicted": 1557882.9861547376,
+        "predicted": 1556708.5780159621,
         "actual": 2199000.0,
-        "residual": -641117.0138452624
+        "residual": -642291.4219840379
       },
       {
         "pams_pin": "1314_34_18.02",
         "sale_year": 2021,
-        "predicted": 952646.9291117399,
+        "predicted": 951229.962045799,
         "actual": 987000.0,
-        "residual": -34353.07088826015
+        "residual": -35770.03795420099
       },
       {
         "pams_pin": "1314_71_9",
         "sale_year": 2021,
-        "predicted": 1678492.4214481146,
+        "predicted": 1678318.15693067,
         "actual": 2190000.0,
-        "residual": -511507.57855188544
+        "residual": -511681.8430693301
       },
       {
         "pams_pin": "1314_40_8",
         "sale_year": 2021,
-        "predicted": 890098.0898667602,
+        "predicted": 888518.4576476826,
         "actual": 880000.0,
-        "residual": 10098.089866760187
+        "residual": 8518.457647682633
       },
       {
         "pams_pin": "1314_9_32",
         "sale_year": 2021,
-        "predicted": 670474.0806688275,
+        "predicted": 688186.17141301,
         "actual": 806500.0,
-        "residual": -136025.91933117248
+        "residual": -118313.82858699001
       },
       {
         "pams_pin": "1314_12_78",
         "sale_year": 2021,
-        "predicted": 440509.5282642781,
+        "predicted": 443509.90678349085,
         "actual": 499000.0,
-        "residual": -58490.47173572192
+        "residual": -55490.09321650915
       },
       {
         "pams_pin": "1314_67_3",
         "sale_year": 2021,
-        "predicted": 985372.6778791161,
+        "predicted": 952304.2330519205,
         "actual": 999999.0,
-        "residual": -14626.322120883851
+        "residual": -47694.76694807946
       },
       {
         "pams_pin": "1314_67_8",
         "sale_year": 2021,
-        "predicted": 1587059.853896352,
+        "predicted": 1608360.952433474,
         "actual": 1525000.0,
-        "residual": 62059.853896352
+        "residual": 83360.9524334739
       },
       {
         "pams_pin": "1314_12_22",
         "sale_year": 2021,
-        "predicted": 566855.8092653591,
+        "predicted": 594160.0830274749,
         "actual": 585000.0,
-        "residual": -18144.190734640928
+        "residual": 9160.083027474931
       },
       {
         "pams_pin": "1314_31_6.01",
         "sale_year": 2021,
-        "predicted": 791981.7349976872,
+        "predicted": 766813.458856714,
         "actual": 671000.0,
-        "residual": 120981.73499768716
+        "residual": 95813.45885671396
       },
       {
         "pams_pin": "1314_22_8",
         "sale_year": 2021,
-        "predicted": 908825.1439600461,
+        "predicted": 878295.0010814128,
         "actual": 600000.0,
-        "residual": 308825.1439600461
+        "residual": 278295.0010814128
       },
       {
         "pams_pin": "1314_15_8",
         "sale_year": 2021,
-        "predicted": 642300.5006080187,
+        "predicted": 635486.5078376884,
         "actual": 575000.0,
-        "residual": 67300.50060801872
+        "residual": 60486.507837688434
       },
       {
         "pams_pin": "1314_73_4",
         "sale_year": 2021,
-        "predicted": 891171.496782303,
+        "predicted": 886696.4656112794,
         "actual": 742000.0,
-        "residual": 149171.49678230297
+        "residual": 144696.46561127936
       },
       {
         "pams_pin": "1314_78_4",
         "sale_year": 2021,
-        "predicted": 1449309.087652294,
+        "predicted": 1479983.68303152,
         "actual": 1600000.0,
-        "residual": -150690.91234770603
+        "residual": -120016.31696847989
       },
       {
         "pams_pin": "1314_77_11",
         "sale_year": 2021,
-        "predicted": 1285531.5099875461,
+        "predicted": 1306909.558091298,
         "actual": 520000.0,
-        "residual": 765531.5099875461
+        "residual": 786909.558091298
       },
       {
         "pams_pin": "1314_2_9",
         "sale_year": 2021,
-        "predicted": 1388849.9293016952,
+        "predicted": 1253705.4182238288,
         "actual": 725000.0,
-        "residual": 663849.9293016952
+        "residual": 528705.4182238288
       },
       {
         "pams_pin": "1314_67_38.01",
         "sale_year": 2021,
-        "predicted": 2140188.5768097127,
+        "predicted": 2146775.4217750193,
         "actual": 1775000.0,
-        "residual": 365188.5768097127
+        "residual": 371775.42177501926
       },
       {
         "pams_pin": "1314_27_39",
         "sale_year": 2022,
-        "predicted": 519809.6572369745,
+        "predicted": 530870.7524914228,
         "actual": 310000.0,
-        "residual": 209809.6572369745
+        "residual": 220870.7524914228
       },
       {
         "pams_pin": "1314_22_37",
         "sale_year": 2022,
-        "predicted": 1343768.4238046338,
+        "predicted": 1352472.856726793,
         "actual": 1782000.0,
-        "residual": -438231.5761953662
+        "residual": -429527.1432732069
       },
       {
         "pams_pin": "1314_79_23",
         "sale_year": 2022,
-        "predicted": 3023155.0352421724,
+        "predicted": 3110286.6355342846,
         "actual": 5100000.0,
-        "residual": -2076844.9647578276
+        "residual": -1989713.3644657154
       },
       {
         "pams_pin": "1314_76_17",
         "sale_year": 2022,
-        "predicted": 1070320.005434787,
+        "predicted": 1071670.4432016434,
         "actual": 1178000.0,
-        "residual": -107679.9945652131
+        "residual": -106329.55679835659
       },
       {
         "pams_pin": "1314_78_17",
         "sale_year": 2022,
-        "predicted": 2216379.8033034373,
+        "predicted": 2222209.2967155636,
         "actual": 2450000.0,
-        "residual": -233620.1966965627
+        "residual": -227790.70328443637
       },
       {
         "pams_pin": "1314_16_10",
         "sale_year": 2022,
-        "predicted": 595881.4191332896,
+        "predicted": 595542.8753084462,
         "actual": 700000.0,
-        "residual": -104118.5808667104
+        "residual": -104457.12469155376
       },
       {
         "pams_pin": "1314_22_39",
         "sale_year": 2022,
-        "predicted": 1202387.5792503932,
+        "predicted": 1189450.769225152,
         "actual": 814000.0,
-        "residual": 388387.5792503932
+        "residual": 375450.769225152
       },
       {
         "pams_pin": "1314_53_9",
         "sale_year": 2022,
-        "predicted": 1151481.5992259006,
+        "predicted": 1175545.9335440889,
         "actual": 902000.0,
-        "residual": 249481.5992259006
+        "residual": 273545.93354408885
       },
       {
         "pams_pin": "1314_73_2",
         "sale_year": 2022,
-        "predicted": 1287754.2635467092,
+        "predicted": 1275709.9989461552,
         "actual": 1230000.0,
-        "residual": 57754.263546709204
+        "residual": 45709.99894615519
       },
       {
         "pams_pin": "1314_38_4.04",
         "sale_year": 2022,
-        "predicted": 1311410.032377644,
+        "predicted": 1241511.198558539,
         "actual": 995000.0,
-        "residual": 316410.032377644
+        "residual": 246511.19855853892
       },
       {
         "pams_pin": "1314_10_4",
         "sale_year": 2022,
-        "predicted": 792793.6201776983,
+        "predicted": 833747.9697307384,
         "actual": 773500.0,
-        "residual": 19293.62017769832
+        "residual": 60247.969730738434
       },
       {
         "pams_pin": "1314_17_15",
         "sale_year": 2022,
-        "predicted": 1062086.7434511133,
+        "predicted": 1054435.9462821146,
         "actual": 868000.0,
-        "residual": 194086.74345111335
+        "residual": 186435.9462821146
       },
       {
         "pams_pin": "1314_38_4.01",
         "sale_year": 2022,
-        "predicted": 687443.6730287654,
+        "predicted": 659595.9017674247,
         "actual": 700000.0,
-        "residual": -12556.326971234637
+        "residual": -40404.09823257534
       },
       {
         "pams_pin": "1314_67_44",
         "sale_year": 2022,
-        "predicted": 1652648.4744617075,
+        "predicted": 1633426.7882967251,
         "actual": 1660000.0,
-        "residual": -7351.525538292481
+        "residual": -26573.211703274865
       },
       {
         "pams_pin": "1314_36_12",
         "sale_year": 2022,
-        "predicted": 723661.8567752129,
+        "predicted": 728884.0025001494,
         "actual": 680000.0,
-        "residual": 43661.85677521292
+        "residual": 48884.00250014942
       },
       {
         "pams_pin": "1314_13_7",
         "sale_year": 2022,
-        "predicted": 1133819.4916396805,
+        "predicted": 1101615.0173808238,
         "actual": 960000.0,
-        "residual": 173819.49163968046
+        "residual": 141615.01738082385
       },
       {
         "pams_pin": "1314_22_20",
         "sale_year": 2022,
-        "predicted": 1169199.7334301248,
+        "predicted": 1168335.0590670537,
         "actual": 1375000.0,
-        "residual": -205800.26656987518
+        "residual": -206664.94093294628
       },
       {
         "pams_pin": "1314_25_32.01",
         "sale_year": 2022,
-        "predicted": 893928.9313734485,
+        "predicted": 891354.1988632189,
         "actual": 930000.0,
-        "residual": -36071.06862655154
+        "residual": -38645.80113678111
       },
       {
         "pams_pin": "1314_4_26",
         "sale_year": 2023,
-        "predicted": 1338051.7580611676,
+        "predicted": 1427001.5461832122,
         "actual": 1675000.0,
-        "residual": -336948.24193883245
+        "residual": -247998.4538167878
       },
       {
         "pams_pin": "1314_10_14",
         "sale_year": 2023,
-        "predicted": 912152.341144699,
+        "predicted": 953522.0164771507,
         "actual": 1060000.0,
-        "residual": -147847.65885530098
+        "residual": -106477.98352284927
       },
       {
         "pams_pin": "1314_23_18",
         "sale_year": 2023,
-        "predicted": 1569347.9490213639,
+        "predicted": 1580118.0880268512,
         "actual": 1950000.0,
-        "residual": -380652.05097863614
+        "residual": -369881.9119731488
       },
       {
         "pams_pin": "1314_41_10",
         "sale_year": 2023,
-        "predicted": 633232.3116646339,
+        "predicted": 608279.8620654943,
         "actual": 695000.0,
-        "residual": -61767.68833536608
+        "residual": -86720.1379345057
       },
       {
         "pams_pin": "1314_77_72.01",
         "sale_year": 2023,
-        "predicted": 1247621.044943278,
+        "predicted": 1197630.045549592,
         "actual": 1203000.0,
-        "residual": 44621.04494327796
+        "residual": -5369.954450407997
       },
       {
         "pams_pin": "1314_25_7",
         "sale_year": 2023,
-        "predicted": 1751476.0138181795,
+        "predicted": 1782671.075069404,
         "actual": 1700000.0,
-        "residual": 51476.01381817949
+        "residual": 82671.07506940397
       },
       {
         "pams_pin": "1314_77_96",
         "sale_year": 2023,
-        "predicted": 1366975.4632399252,
+        "predicted": 1345974.1797803834,
         "actual": 1555000.0,
-        "residual": -188024.53676007478
+        "residual": -209025.82021961664
       },
       {
         "pams_pin": "1314_66_14",
         "sale_year": 2023,
-        "predicted": 1917995.0377125477,
+        "predicted": 1875803.0329842118,
         "actual": 2112000.0,
-        "residual": -194004.9622874523
+        "residual": -236196.9670157882
       },
       {
         "pams_pin": "1314_23_10",
         "sale_year": 2023,
-        "predicted": 1236394.5068164435,
+        "predicted": 1243526.2699374878,
         "actual": 1501000.0,
-        "residual": -264605.4931835565
+        "residual": -257473.73006251222
       },
       {
         "pams_pin": "1314_57_1",
         "sale_year": 2023,
-        "predicted": 968035.9351246924,
+        "predicted": 1043043.467886813,
         "actual": 1050000.0,
-        "residual": -81964.06487530761
+        "residual": -6956.532113187015
       },
       {
         "pams_pin": "1314_42_16",
         "sale_year": 2023,
-        "predicted": 1388231.7919826098,
+        "predicted": 1341779.3354318505,
         "actual": 1700000.0,
-        "residual": -311768.2080173902
+        "residual": -358220.6645681495
       },
       {
         "pams_pin": "1314_19_14",
         "sale_year": 2023,
-        "predicted": 474462.09373246133,
+        "predicted": 485913.98107401334,
         "actual": 1099000.0,
-        "residual": -624537.9062675387
+        "residual": -613086.0189259867
       },
       {
         "pams_pin": "1314_42_9",
         "sale_year": 2023,
-        "predicted": 1272079.4178584134,
+        "predicted": 1223730.4277159052,
         "actual": 1059000.0,
-        "residual": 213079.41785841342
+        "residual": 164730.42771590524
       },
       {
         "pams_pin": "1314_10_27",
         "sale_year": 2023,
-        "predicted": 786766.2473317484,
+        "predicted": 818595.5565431886,
         "actual": 781000.0,
-        "residual": 5766.247331748367
+        "residual": 37595.556543188635
       },
       {
         "pams_pin": "1314_72_7",
         "sale_year": 2023,
-        "predicted": 1350438.699603485,
+        "predicted": 1332232.4901480654,
         "actual": 1150000.0,
-        "residual": 200438.69960348494
+        "residual": 182232.49014806538
       },
       {
         "pams_pin": "1314_12_31",
         "sale_year": 2023,
-        "predicted": 1279940.5030722574,
+        "predicted": 1331914.392574067,
         "actual": 903000.0,
-        "residual": 376940.5030722574
+        "residual": 428914.392574067
       },
       {
         "pams_pin": "1314_23_30.02",
         "sale_year": 2023,
-        "predicted": 1876440.9939335708,
+        "predicted": 1924191.3419343869,
         "actual": 1707000.0,
-        "residual": 169440.9939335708
+        "residual": 217191.34193438687
       },
       {
         "pams_pin": "1314_22_49",
         "sale_year": 2023,
-        "predicted": 2453107.8498398815,
+        "predicted": 2315681.772050403,
         "actual": 1300000.0,
-        "residual": 1153107.8498398815
+        "residual": 1015681.7720504031
       },
       {
         "pams_pin": "1314_10_21",
         "sale_year": 2023,
-        "predicted": 770106.602758335,
+        "predicted": 806418.0277146467,
         "actual": 746350.0,
-        "residual": 23756.60275833495
+        "residual": 60068.027714646654
       },
       {
         "pams_pin": "1314_4_45",
         "sale_year": 2023,
-        "predicted": 784378.8456017572,
+        "predicted": 687448.1719154926,
         "actual": 735000.0,
-        "residual": 49378.84560175717
+        "residual": -47551.828084507375
       },
       {
         "pams_pin": "1314_9_26",
         "sale_year": 2023,
-        "predicted": 1406429.253159676,
+        "predicted": 1505890.6785888316,
         "actual": 1600000.0,
-        "residual": -193570.74684032402
+        "residual": -94109.32141116844
       },
       {
         "pams_pin": "1314_73_1",
         "sale_year": 2023,
-        "predicted": 1413855.2201335528,
+        "predicted": 1399353.079801851,
         "actual": 937431.0,
-        "residual": 476424.2201335528
+        "residual": 461922.07980185095
       },
       {
         "pams_pin": "1314_2_11",
         "sale_year": 2023,
-        "predicted": 867854.3765207491,
+        "predicted": 764484.9607648845,
         "actual": 725000.0,
-        "residual": 142854.37652074907
+        "residual": 39484.96076488448
       },
       {
         "pams_pin": "1314_51_19",
         "sale_year": 2023,
-        "predicted": 985784.4501078245,
+        "predicted": 1034320.1286091723,
         "actual": 700000.0,
-        "residual": 285784.4501078245
+        "residual": 334320.1286091723
       },
       {
         "pams_pin": "1314_22_15",
         "sale_year": 2023,
-        "predicted": 941277.1055750048,
+        "predicted": 927632.187630576,
         "actual": 525000.0,
-        "residual": 416277.1055750048
+        "residual": 402632.18763057597
       },
       {
         "pams_pin": "1314_2_4",
         "sale_year": 2024,
-        "predicted": 960528.070257344,
+        "predicted": 835849.2984737142,
         "actual": 1049000.0,
-        "residual": -88471.92974265595
+        "residual": -213150.70152628585
       },
       {
         "pams_pin": "1314_68_8",
         "sale_year": 2024,
-        "predicted": 1688553.8727930218,
+        "predicted": 1647821.779368559,
         "actual": 1900000.0,
-        "residual": -211446.12720697816
+        "residual": -252178.2206314411
       },
       {
         "pams_pin": "1314_2_6",
         "sale_year": 2024,
-        "predicted": 2044948.7653719368,
+        "predicted": 1841948.9174159889,
         "actual": 1799000.0,
-        "residual": 245948.76537193684
+        "residual": 42948.917415988864
       },
       {
         "pams_pin": "1314_77_4.02",
         "sale_year": 2024,
-        "predicted": 1623723.0023389938,
+        "predicted": 1634126.7570160723,
         "actual": 1650000.0,
-        "residual": -26276.99766100617
+        "residual": -15873.242983927717
       },
       {
         "pams_pin": "1314_56_9",
         "sale_year": 2024,
-        "predicted": 1174669.5041666196,
+        "predicted": 1229129.124047364,
         "actual": 1260000.0,
-        "residual": -85330.49583338038
+        "residual": -30870.87595263589
       },
       {
         "pams_pin": "1314_47_9",
         "sale_year": 2024,
-        "predicted": 1461878.693746661,
+        "predicted": 1491948.1426873805,
         "actual": 1600000.0,
-        "residual": -138121.30625333893
+        "residual": -108051.85731261945
       },
       {
         "pams_pin": "1314_12_81",
         "sale_year": 2024,
-        "predicted": 1028310.0120205773,
+        "predicted": 1031909.031893503,
         "actual": 999999.0,
-        "residual": 28311.012020577327
+        "residual": 31910.031893503037
       },
       {
         "pams_pin": "1314_62_83",
         "sale_year": 2024,
-        "predicted": 1512696.2617796597,
+        "predicted": 1626325.8656877019,
         "actual": 1610000.0,
-        "residual": -97303.73822034034
+        "residual": 16325.865687701851
       },
       {
         "pams_pin": "1314_25_37.10",
         "sale_year": 2024,
-        "predicted": 1851084.8205305822,
+        "predicted": 1906455.6380596661,
         "actual": 1925000.0,
-        "residual": -73915.17946941778
+        "residual": -18544.361940333853
       },
       {
         "pams_pin": "1314_35_30",
         "sale_year": 2024,
-        "predicted": 1083031.434605706,
+        "predicted": 1051462.347432813,
         "actual": 1135000.0,
-        "residual": -51968.56539429398
+        "residual": -83537.65256718709
       },
       {
         "pams_pin": "1314_31_9.01",
         "sale_year": 2024,
-        "predicted": 1285297.1537507954,
+        "predicted": 1230693.5803319295,
         "actual": 1125000.0,
-        "residual": 160297.1537507954
+        "residual": 105693.5803319295
       },
       {
         "pams_pin": "1314_25_37.04",
         "sale_year": 2024,
-        "predicted": 1563619.71819733,
+        "predicted": 1546985.6510474463,
         "actual": 1650000.0,
-        "residual": -86380.2818026701
+        "residual": -103014.3489525537
       },
       {
         "pams_pin": "1314_25_47",
         "sale_year": 2024,
-        "predicted": 1556752.9793854642,
+        "predicted": 1575385.124008299,
         "actual": 561000.0,
-        "residual": 995752.9793854642
+        "residual": 1014385.1240082991
       },
       {
         "pams_pin": "1314_13_34",
         "sale_year": 2024,
-        "predicted": 1014732.4560028992,
+        "predicted": 1025039.7523544269,
         "actual": 1027900.0,
-        "residual": -13167.543997100787
+        "residual": -2860.2476455731085
       },
       {
         "pams_pin": "1314_16_5",
         "sale_year": 2024,
-        "predicted": 874532.0975506597,
+        "predicted": 865579.6466602299,
         "actual": 930000.0,
-        "residual": -55467.90244934033
+        "residual": -64420.35333977011
       },
       {
         "pams_pin": "1314_34_18.03",
         "sale_year": 2024,
-        "predicted": 1282679.8961998858,
+        "predicted": 1278246.787839961,
         "actual": 1325000.0,
-        "residual": -42320.103800114244
+        "residual": -46753.212160038995
       },
       {
         "pams_pin": "1314_24_2",
         "sale_year": 2024,
-        "predicted": 1215260.031168391,
+        "predicted": 1198285.0511097338,
         "actual": 1872500.0,
-        "residual": -657239.968831609
+        "residual": -674214.9488902662
       },
       {
         "pams_pin": "1314_77_60",
         "sale_year": 2024,
-        "predicted": 1281481.9264660834,
+        "predicted": 1245443.369840754,
         "actual": 1325000.0,
-        "residual": -43518.07353391661
+        "residual": -79556.63015924604
       },
       {
         "pams_pin": "1314_10_30",
         "sale_year": 2024,
-        "predicted": 802639.9291199133,
+        "predicted": 835795.0059095775,
         "actual": 816900.0,
-        "residual": -14260.070880086743
+        "residual": 18895.005909577478
       },
       {
         "pams_pin": "1314_65_4.01",
         "sale_year": 2024,
-        "predicted": 1970078.8816055467,
+        "predicted": 2102949.446458064,
         "actual": 2249000.0,
-        "residual": -278921.1183944533
+        "residual": -146050.55354193598
       },
       {
         "pams_pin": "1314_15_1",
         "sale_year": 2024,
-        "predicted": 1226725.4568287297,
+        "predicted": 1192109.496971667,
         "actual": 1320000.0,
-        "residual": -93274.54317127028
+        "residual": -127890.50302833295
       },
       {
         "pams_pin": "1314_76_12",
         "sale_year": 2024,
-        "predicted": 2512895.4476277987,
+        "predicted": 2494996.998340602,
         "actual": 2440000.0,
-        "residual": 72895.44762779865
+        "residual": 54996.99834060203
       },
       {
         "pams_pin": "1314_62_80",
         "sale_year": 2024,
-        "predicted": 1754709.2507859846,
+        "predicted": 1839925.1427157382,
         "actual": 1450000.0,
-        "residual": 304709.25078598456
+        "residual": 389925.14271573815
       },
       {
         "pams_pin": "1314_17_11.01",
         "sale_year": 2024,
-        "predicted": 1083761.217658581,
+        "predicted": 1061695.2856689263,
         "actual": 925000.0,
-        "residual": 158761.21765858098
+        "residual": 136695.2856689263
       },
       {
         "pams_pin": "1314_71_8",
         "sale_year": 2024,
-        "predicted": 1273182.6973816066,
+        "predicted": 1261881.5286983233,
         "actual": 1100000.0,
-        "residual": 173182.69738160656
+        "residual": 161881.5286983233
       },
       {
         "pams_pin": "1314_9_21",
         "sale_year": 2024,
-        "predicted": 1486038.2782688602,
+        "predicted": 1595613.322322329,
         "actual": 1268700.0,
-        "residual": 217338.2782688602
+        "residual": 326913.32232232904
       },
       {
         "pams_pin": "1314_23_28",
         "sale_year": 2024,
-        "predicted": 1893803.6318286147,
+        "predicted": 1901744.5593216887,
         "actual": 1550000.0,
-        "residual": 343803.63182861474
+        "residual": 351744.5593216887
       },
       {
         "pams_pin": "1314_27_23",
         "sale_year": 2025,
-        "predicted": 2049080.9630431791,
+        "predicted": 2063548.4295427278,
         "actual": 2000000.0,
-        "residual": 49080.96304317913
+        "residual": 63548.42954272777
       },
       {
         "pams_pin": "1314_3_13",
         "sale_year": 2025,
-        "predicted": 1234572.1962705147,
+        "predicted": 1101322.1597473517,
         "actual": 995000.0,
-        "residual": 239572.19627051475
+        "residual": 106322.15974735166
       },
       {
         "pams_pin": "1314_13_13",
         "sale_year": 2025,
-        "predicted": 905933.3969654717,
+        "predicted": 938931.2164377139,
         "actual": 675000.0,
-        "residual": 230933.39696547168
+        "residual": 263931.21643771394
       },
       {
         "pams_pin": "1314_33_11",
         "sale_year": 2025,
-        "predicted": 831072.1142049864,
+        "predicted": 820668.3512720276,
         "actual": 649000.0,
-        "residual": 182072.11420498637
+        "residual": 171668.3512720276
       },
       {
         "pams_pin": "1314_38_15",
         "sale_year": 2025,
-        "predicted": 960512.430183282,
+        "predicted": 954819.9981925077,
         "actual": 999000.0,
-        "residual": -38487.569816717994
+        "residual": -44180.00180749234
       },
       {
         "pams_pin": "1314_13_27",
         "sale_year": 2025,
-        "predicted": 1127817.4808344431,
+        "predicted": 1128548.0139665196,
         "actual": 927000.0,
-        "residual": 200817.48083444312
+        "residual": 201548.01396651962
       },
       {
         "pams_pin": "1314_38_7",
         "sale_year": 2025,
-        "predicted": 1467481.023490609,
+        "predicted": 1468253.5262300565,
         "actual": 1529000.0,
-        "residual": -61518.9765093911
+        "residual": -60746.47376994346
       },
       {
         "pams_pin": "1314_74_10",
         "sale_year": 2025,
-        "predicted": 1961354.6856768457,
+        "predicted": 1954682.8669684688,
         "actual": 1780000.0,
-        "residual": 181354.68567684572
+        "residual": 174682.86696846876
       },
       {
         "pams_pin": "1314_10_15",
         "sale_year": 2025,
-        "predicted": 1969022.8630049194,
+        "predicted": 2175474.7409776086,
         "actual": 2175000.0,
-        "residual": -205977.13699508063
+        "residual": 474.74097760859877
       },
       {
         "pams_pin": "1314_46_2",
         "sale_year": 2025,
-        "predicted": 883544.2076095049,
+        "predicted": 863148.4671097592,
         "actual": 814000.0,
-        "residual": 69544.20760950493
+        "residual": 49148.46710975922
       },
       {
         "pams_pin": "1314_12_29",
         "sale_year": 2025,
-        "predicted": 1102107.6506426039,
+        "predicted": 1155400.1828275118,
         "actual": 1025000.0,
-        "residual": 77107.65064260387
+        "residual": 130400.1828275118
       },
       {
         "pams_pin": "1314_79_8",
         "sale_year": 2025,
-        "predicted": 1949047.3433772032,
+        "predicted": 2017612.1380775073,
         "actual": 2300000.0,
-        "residual": -350952.6566227968
+        "residual": -282387.86192249274
       },
       {
         "pams_pin": "1314_38_4.01",
         "sale_year": 2025,
-        "predicted": 856850.7542714026,
+        "predicted": 834098.3250690401,
         "actual": 999999.0,
-        "residual": -143148.2457285974
+        "residual": -165900.67493095994
       },
       {
         "pams_pin": "1314_12_36",
         "sale_year": 2025,
-        "predicted": 2041915.108998581,
+        "predicted": 1770561.6469401657,
         "actual": 2232000.0,
-        "residual": -190084.89100141893
+        "residual": -461438.35305983433
       },
       {
         "pams_pin": "1314_40_2",
         "sale_year": 2025,
-        "predicted": 869645.1645918671,
+        "predicted": 858292.942045164,
         "actual": 932500.0,
-        "residual": -62854.83540813287
+        "residual": -74207.05795483605
       },
       {
         "pams_pin": "1314_68_2",
         "sale_year": 2025,
-        "predicted": 1737870.0766506116,
+        "predicted": 1694152.926131446,
         "actual": 2202064.0,
-        "residual": -464193.9233493884
+        "residual": -507911.0738685541
       },
       {
         "pams_pin": "1314_73_11",
         "sale_year": 2025,
-        "predicted": 2333270.0218674624,
+        "predicted": 2379845.9789333604,
         "actual": 2825000.0,
-        "residual": -491729.97813253757
+        "residual": -445154.0210666396
       },
       {
         "pams_pin": "1314_55_9",
         "sale_year": 2025,
-        "predicted": 1356118.4661928685,
+        "predicted": 1406474.6896501805,
         "actual": 1275000.0,
-        "residual": 81118.46619286854
+        "residual": 131474.68965018052
       },
       {
         "pams_pin": "1314_37_11",
         "sale_year": 2025,
-        "predicted": 1494190.2880117989,
+        "predicted": 1486413.157104591,
         "actual": 1500000.0,
-        "residual": -5809.711988201132
+        "residual": -13586.842895409092
       },
       {
         "pams_pin": "1314_53_8",
         "sale_year": 2025,
-        "predicted": 1773097.0068999436,
+        "predicted": 1880314.9494449303,
         "actual": 1500000.0,
-        "residual": 273097.0068999436
+        "residual": 380314.9494449303
       },
       {
         "pams_pin": "1314_28_17.03",
         "sale_year": 2025,
-        "predicted": 1642629.726746225,
+        "predicted": 1637397.0501202485,
         "actual": 1690000.0,
-        "residual": -47370.27325377497
+        "residual": -52602.94987975154
       },
       {
         "pams_pin": "1314_45_13.01",
         "sale_year": 2025,
-        "predicted": 2085010.6834112536,
+        "predicted": 2049317.7963047377,
         "actual": 1800000.0,
-        "residual": 285010.6834112536
+        "residual": 249317.79630473768
       },
       {
         "pams_pin": "1314_22_19",
         "sale_year": 2025,
-        "predicted": 1494143.6097834422,
+        "predicted": 1519854.0318001457,
         "actual": 1150000.0,
-        "residual": 344143.6097834422
+        "residual": 369854.03180014575
       },
       {
         "pams_pin": "1314_13_19",
         "sale_year": 2025,
-        "predicted": 1036156.3388033157,
+        "predicted": 1031535.7356647847,
         "actual": 1063000.0,
-        "residual": -26843.66119668435
+        "residual": -31464.264335215325
       }
     ]
   }

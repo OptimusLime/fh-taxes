@@ -33,9 +33,9 @@ Out-of-scope OPRS endpoints (tax appeals, deed images, tax map sheets, subdivisi
 
 ### Statistical Pipeline
 
-- [ ] **MODEL-01**: Generate neighborhood fixed-effect labels via k-means (k=5-8) on parcel centroids
-- [ ] **MODEL-02** [REVISED 2026-04-29 against real MOD-IV schema]: Fit hedonic OLS on Fair Haven 2020-2025 arms-length sales (~197 sales total; ~92 in 2023-2025). **Available real features:** `log(sqft)` (from SR1A `LIVING-SPACE`, populated only on sale; or from MOD-IV `BLDG_DESC` text-extraction if needed), `log(lot_size_acres)` (MOD-IV `CALC_ACRE`), `year_built` (MOD-IV `YR_CONSTR`), `dwellings` (MOD-IV `DWELL`), property classification (`bldg_class`, `prop_use`), `neighborhood_FE` (k-means k=5-8). **NOT available:** `bedrooms`, `bathrooms`, `waterfront_flag` — these fields do not exist in MOD-IV's standard distribution. Original spec must be revised. statsmodels HC3 robust SEs; report R² (target ≥ 0.7).
-- [ ] **MODEL-03** [CORRECTED 2026-04-29]: Apply hedonic to all 2,061 class-2 residential parcels with geometry; produce per-parcel `estimated_true_value`; aggregate within 5% of real measured $2.74B (was $2.83B from PROJECT.md narrative; real DLGS-published Net Valuation Taxable across ALL classes is $2.83B but class-2-only is $2.74B). Apply constant correction if needed.
+- [x] **MODEL-01**: Generate neighborhood fixed-effect labels via k-means (k=5-8) on parcel centroids
+- [x] **MODEL-02** [REVISED 2026-04-29 against real MOD-IV schema]: Fit hedonic OLS on Fair Haven 2020-2025 arms-length sales (~197 sales total; ~92 in 2023-2025). **Available real features:** `log(sqft)` (from SR1A `LIVING-SPACE`, populated only on sale; or from MOD-IV `BLDG_DESC` text-extraction if needed), `log(lot_size_acres)` (MOD-IV `CALC_ACRE`), `year_built` (MOD-IV `YR_CONSTR`), `dwellings` (MOD-IV `DWELL`), property classification (`bldg_class`, `prop_use`), `neighborhood_FE` (k-means k=5-8). **NOT available:** `bedrooms`, `bathrooms`, `waterfront_flag` — these fields do not exist in MOD-IV's standard distribution. Original spec must be revised. statsmodels HC3 robust SEs; report R² (target ≥ 0.7).
+- [x] **MODEL-03** [CORRECTED 2026-04-29]: Apply hedonic to all 2,061 class-2 residential parcels with geometry; produce per-parcel `estimated_true_value`; aggregate within 5% of real measured $2.74B (was $2.83B from PROJECT.md narrative; real DLGS-published Net Valuation Taxable across ALL classes is $2.83B but class-2-only is $2.74B). Apply constant correction if needed.
 - [ ] **CALC-01**: Compute Berry tax-shift per parcel — `fair_bill_i = (true_value_i / Σ true_value) × total_levy`; `actual_bill_i = assessed_value_i × tax_rate`; `delta_i = actual_bill_i − fair_bill_i`; verify Σ delta ≈ 0 within rounding
 - [ ] **CALC-02**: Tag each parcel with `tenure_cohort` ∈ {pre-2010, 2010-2015, 2016-2019, 2020-2022, 2023-2026} from last arms-length sale date
 - [ ] **CALC-03**: Tabulate cohort summaries — sum of positive deltas, sum of negative deltas, median delta, mean delta, share in over/underpaying tail per cohort; report COD and PRD overall and by cohort against IAAO standards (COD ≤15% acceptable, PRD 0.98-1.03 acceptable)
@@ -117,9 +117,9 @@ Conditional on MVP signal (Berry shift > ~$200K cohort-correlated AND/OR CDF gap
 | DATA-04 | Phase 1 | Complete |
 | STORE-01 | Phase 1 | Complete |
 | STORE-02 | Phase 1 | Complete |
-| MODEL-01 | Phase 2 | Pending |
-| MODEL-02 | Phase 2 | Pending |
-| MODEL-03 | Phase 2 | Pending |
+| MODEL-01 | Phase 2 | Complete |
+| MODEL-02 | Phase 2 | Complete |
+| MODEL-03 | Phase 2 | Complete |
 | CALC-01 | Phase 2 | Pending |
 | CALC-02 | Phase 2 | Pending |
 | CALC-03 | Phase 2 | Pending |

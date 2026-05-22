@@ -1,0 +1,395 @@
+/* ============================================================================
+   Fair for Fairhaven — brand sheet
+   ----------------------------------------------------------------------------
+   Single source of truth for the /purpose deck. All slides derive from these
+   tokens. Style philosophy: pastel + ink, hard contrast, thick borders,
+   sharp corners, low color count, no gradients except hatching for empty
+   image slots. No "modern UI" softness. Inspired by Flower Power posters,
+   Swiss editorial, and Saul Bass.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------- Paper + ink ---------- */
+  --p-paper: #FAFAF5;        /* warm off-white */
+  --p-ink: #0B0B0B;          /* near-black */
+  --p-ink-soft: #2A2A28;
+  --p-muted: #6B6B66;
+
+  /* ---------- Pastel palette (pick ONE accent per slide) ---------- */
+  --p-petal: #FFB7C5;        /* cherry blossom pink */
+  --p-bloom: #FFE94A;        /* sunflower / sun */
+  --p-sky:   #A8D8F0;        /* horizon / water */
+  --p-leaf:  #B8E0A8;        /* new-growth green */
+  --p-plum:  #D6A3D9;        /* wild aster */
+  --p-blush: #FFD9C2;        /* peach */
+
+  /* ---------- Borders + lines ---------- */
+  --p-border-w: 5px;
+  --p-border: var(--p-border-w) solid var(--p-ink);
+  --p-rule: 3px solid var(--p-ink);
+  --p-accent-bar-h: 14px;
+
+  /* ---------- Type ---------- */
+  --p-font-display: 'Archivo Black', 'Helvetica Neue', Impact, sans-serif;
+  --p-font-body: 'Inter', -apple-system, system-ui, sans-serif;
+
+  --p-size-hero:    clamp(3rem, 8vw, 7.5rem);
+  --p-size-title:   clamp(1.8rem, 4.5vw, 3.8rem);
+  --p-size-quote:   clamp(1.6rem, 3.6vw, 3rem);
+  --p-size-body:    clamp(1rem, 1.3vw, 1.25rem);
+  --p-size-eyebrow: 0.78rem;
+  --p-size-tag:     0.72rem;
+
+  --p-track-tight: -0.02em;
+  --p-track-wide:   0.10em;
+
+  /* ---------- Spacing ---------- */
+  --p-gap: clamp(1rem, 2vw, 2rem);
+  --p-pad: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+/* No rounded corners anywhere in the deck. Keep edges sharp. */
+.p-stage * { box-sizing: border-box; }
+.p-stage button, .p-stage a, .p-stage div, .p-stage section { border-radius: 0 !important; }
+
+/* ---------- Layout shell ---------- */
+
+.p-stage {
+  background: var(--p-paper);
+  color: var(--p-ink);
+  font-family: var(--p-font-body);
+  height: calc(100vh - 48px); /* topbar is 48px */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.p-chrome {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.65rem 1.2rem;
+  border-bottom: var(--p-border);
+  flex-shrink: 0;
+}
+.p-chrome-title {
+  font-family: var(--p-font-display);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: var(--p-track-wide);
+}
+.p-chrome-counter {
+  font-family: var(--p-font-display);
+  font-size: 0.85rem;
+  letter-spacing: var(--p-track-wide);
+}
+
+/* ---------- Slide ---------- */
+
+.p-slide {
+  flex: 1 1 0;
+  padding: var(--p-pad);
+  display: flex; flex-direction: column;
+  border-top: var(--p-accent-bar-h) solid var(--p-accent, var(--p-petal));
+  overflow: hidden;
+  min-height: 0;
+  gap: var(--p-gap);
+  position: relative;
+}
+
+/* The accent variable is set inline on each slide via style="--p-accent: var(--p-leaf)" */
+
+.p-slide--split {
+  padding: 0;
+  border-top: none;
+}
+
+/* ---------- Typographic primitives ---------- */
+
+.p-eyebrow {
+  font-family: var(--p-font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-wide);
+  font-size: var(--p-size-eyebrow);
+  background: var(--p-accent);
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border: var(--p-border);
+  color: var(--p-ink);
+  align-self: flex-start;
+}
+
+.p-hero {
+  font-family: var(--p-font-display);
+  font-size: var(--p-size-hero);
+  line-height: 0.9;
+  letter-spacing: var(--p-track-tight);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.p-title {
+  font-family: var(--p-font-display);
+  font-size: var(--p-size-title);
+  line-height: 0.96;
+  letter-spacing: var(--p-track-tight);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.p-body {
+  font-size: var(--p-size-body);
+  line-height: 1.45;
+  max-width: 60ch;
+  margin: 0;
+}
+
+.p-body strong { background: var(--p-accent); padding: 0 4px; }
+
+.p-quote {
+  font-family: var(--p-font-display);
+  font-size: var(--p-size-quote);
+  line-height: 1.05;
+  letter-spacing: var(--p-track-tight);
+  max-width: 22ch;
+  margin: 0;
+  text-transform: uppercase;
+}
+.p-attribution {
+  margin: 1rem 0 0;
+  font-family: var(--p-font-display);
+  font-size: 0.78rem;
+  letter-spacing: var(--p-track-wide);
+  text-transform: uppercase;
+  color: var(--p-ink-soft);
+}
+
+.p-tag {
+  font-family: var(--p-font-display);
+  font-size: var(--p-size-tag);
+  letter-spacing: var(--p-track-wide);
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border: 3px solid var(--p-ink);
+  display: inline-block;
+  background: var(--p-paper);
+}
+
+/* ---------- Compositions ---------- */
+
+.p-row {
+  display: flex; gap: var(--p-gap);
+  align-items: flex-start;
+  flex: 1; min-height: 0;
+}
+.p-col {
+  display: flex; flex-direction: column; gap: var(--p-gap);
+  flex: 1; min-height: 0;
+}
+
+.p-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  flex: 1;
+  align-items: stretch;
+}
+.p-grid-2 > * {
+  padding: var(--p-pad);
+  display: flex; flex-direction: column;
+  gap: var(--p-gap);
+  justify-content: center;
+  min-height: 0;
+}
+.p-grid-2 > *:first-child { border-right: var(--p-border); }
+
+.p-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  flex: 1;
+}
+.p-grid-3 > * {
+  padding: var(--p-pad);
+  display: flex; flex-direction: column;
+  gap: 0.8rem;
+}
+.p-grid-3 > * + * { border-left: var(--p-border); }
+
+.p-panel {
+  background: var(--p-paper);
+  border: var(--p-border);
+  padding: var(--p-pad);
+  display: flex; flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+  min-height: 0;
+}
+.p-panel--filled { background: var(--p-accent); }
+
+/* ---------- Image slot (placeholder for later sourcing) ---------- */
+
+.p-image-slot {
+  border: var(--p-border);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 18px,
+      rgba(11, 11, 11, 0.06) 18px 19px
+    ),
+    var(--p-paper);
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 1.2rem;
+  font-family: var(--p-font-display);
+  font-size: 0.78rem;
+  letter-spacing: var(--p-track-wide);
+  text-transform: uppercase;
+  color: var(--p-ink-soft);
+  flex: 1;
+  min-height: 140px;
+  position: relative;
+}
+.p-image-slot::before {
+  content: '[ IMG ]';
+  position: absolute;
+  top: 0.5rem; left: 0.5rem;
+  font-size: 0.65rem;
+  background: var(--p-ink);
+  color: var(--p-paper);
+  padding: 0.15rem 0.4rem;
+  letter-spacing: 0.12em;
+}
+
+/* ---------- Bookends diagram ---------- */
+
+.p-bookends {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr;
+  gap: 0;
+  flex: 1;
+  border: var(--p-border);
+  background: var(--p-paper);
+}
+.p-bookend-cell {
+  padding: clamp(1rem, 2vw, 1.8rem);
+  display: flex; flex-direction: column; gap: 0.8rem;
+  position: relative;
+}
+.p-bookend-cell + .p-bookend-cell { border-left: var(--p-border); }
+.p-bookend-cell--north { background: var(--p-petal); }
+.p-bookend-cell--heart { background: var(--p-bloom); }
+.p-bookend-cell--south { background: var(--p-sky); }
+.p-bookend-cell h3 {
+  font-family: var(--p-font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-tight);
+  font-size: clamp(1.2rem, 2.4vw, 2rem);
+  margin: 0;
+  line-height: 1;
+}
+.p-bookend-cell ul {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 0.35rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+.p-bookend-cell li {
+  padding-left: 1.1rem;
+  position: relative;
+}
+.p-bookend-cell li::before {
+  content: '✺';
+  position: absolute; left: 0; top: 0;
+  font-family: var(--p-font-display);
+}
+
+/* ---------- Big stat ---------- */
+.p-stat {
+  font-family: var(--p-font-display);
+  font-size: clamp(6rem, 18vw, 16rem);
+  line-height: 0.85;
+  letter-spacing: var(--p-track-tight);
+  margin: 0;
+}
+
+/* ---------- Nav ---------- */
+
+.p-nav {
+  border-top: var(--p-border);
+  padding: 0.6rem 1.2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+  background: var(--p-paper);
+  flex-shrink: 0;
+}
+.p-nav-btn {
+  font-family: var(--p-font-display);
+  background: var(--p-paper);
+  border: var(--p-border);
+  padding: 0.5rem 1.2rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: var(--p-track-wide);
+  cursor: pointer;
+  color: var(--p-ink);
+}
+.p-nav-btn:hover:not(:disabled) { background: var(--p-bloom); }
+.p-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.p-dots {
+  display: flex; gap: 5px; align-items: center;
+  flex: 1; justify-content: center;
+  flex-wrap: wrap;
+}
+.p-dot {
+  width: 22px; height: 10px;
+  background: var(--p-paper);
+  border: 2px solid var(--p-ink);
+  cursor: pointer;
+  padding: 0;
+}
+.p-dot:hover { background: var(--p-bloom); }
+.p-dot--current { background: var(--p-ink); }
+
+/* ---------- Flowers (decorative SVG silhouettes via CSS) ---------- */
+.p-flower-strip {
+  display: flex; gap: 0.5rem;
+  font-family: var(--p-font-display);
+  font-size: 1.2rem;
+  color: var(--p-ink);
+  opacity: 0.85;
+}
+
+/* ---------- Cover slide variant ---------- */
+.p-cover {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0;
+  flex: 1;
+  border-top: none;
+  padding: 0;
+}
+.p-cover > .p-cover-text {
+  padding: var(--p-pad);
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: var(--p-gap);
+  background: var(--p-accent);
+  border-right: var(--p-border);
+}
+.p-cover > .p-cover-art {
+  padding: var(--p-pad);
+  display: flex; flex-direction: column; gap: var(--p-gap);
+}
+
+/* ---------- Responsive: stack on narrow ---------- */
+@media (max-width: 760px) {
+  .p-grid-2, .p-grid-3, .p-bookends, .p-cover {
+    grid-template-columns: 1fr;
+  }
+  .p-grid-2 > *:first-child { border-right: none; border-bottom: var(--p-border); }
+  .p-grid-3 > * + * { border-left: none; border-top: var(--p-border); }
+  .p-bookend-cell + .p-bookend-cell { border-left: none; border-top: var(--p-border); }
+  .p-cover > .p-cover-text { border-right: none; border-bottom: var(--p-border); }
+}

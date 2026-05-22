@@ -1,0 +1,58 @@
+---
+import Deck from '../components/purpose/Deck.tsx';
+import '../styles/purpose-brand.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Purpose — Fair for Fairhaven</title>
+    <style>
+      :root {
+        --shell-bg: #FAFAF5;
+        --shell-fg: #0B0B0B;
+        --shell-border: #0B0B0B;
+        --shell-accent: #0B0B0B;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; height: 100%; background: var(--shell-bg); }
+      body {
+        font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        color: var(--shell-fg);
+        overflow: hidden;
+      }
+      .topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.5rem 1rem;
+        border-bottom: 5px solid var(--shell-border);
+        background: var(--shell-bg);
+        height: 48px;
+        font-family: 'Archivo Black', 'Helvetica Neue', Impact, sans-serif;
+      }
+      .topbar h1 { font-size: 0.9rem; margin: 0; font-weight: normal; text-transform: uppercase; letter-spacing: 0.08em; }
+      .topbar nav a {
+        margin-left: 1rem;
+        font-size: 0.78rem;
+        color: var(--shell-fg);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .topbar nav a:hover { text-decoration: underline; }
+      .topbar nav a.active { background: #FFE94A; padding: 0.25rem 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <h1>Fair Haven Tax Assessment Analysis</h1>
+      <nav>
+        <a href="/purpose" class="active">Purpose</a>
+        <a href="/">Map</a>
+        <a href="/town-composition">Town Composition</a>
+        <a href="/hedonic">Hedonic</a>
+      </nav>
+    </div>
+    <Deck client:load />
+  </body>
+</html>

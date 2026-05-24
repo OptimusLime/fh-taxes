@@ -60,10 +60,14 @@
   background: var(--p-paper);
   color: var(--p-ink);
   font-family: var(--p-font-body);
-  height: calc(100vh - 48px); /* topbar is 48px */
+  height: calc(100dvh - 48px); /* dvh respects iOS Safari toolbar */
+  height: calc(100vh - 48px); /* fallback for older browsers */
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+@supports (height: 100dvh) {
+  .p-stage { height: calc(100dvh - 48px); }
 }
 
 .p-chrome {

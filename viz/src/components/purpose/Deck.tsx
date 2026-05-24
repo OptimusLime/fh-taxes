@@ -104,8 +104,19 @@ export default function Deck() {
         </div>
       </div>
 
-      <div style="flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column">
+      <div style="flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;position:relative">
         <Slide />
+        {/* Edge tap zones for mobile nav */}
+        <div
+          onClick={() => go(-1)}
+          style="position:absolute;top:0;left:0;width:44px;bottom:0;cursor:pointer;z-index:5"
+          aria-label="Previous slide"
+        />
+        <div
+          onClick={() => go(1)}
+          style="position:absolute;top:0;right:0;width:44px;bottom:0;cursor:pointer;z-index:5"
+          aria-label="Next slide"
+        />
       </div>
 
       <div class="p-nav">

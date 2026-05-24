@@ -60,7 +60,8 @@ html = f'''<!DOCTYPE html>
 <style>
 html, body {{ margin: 0; padding: 0; height: 100%; background: #FAFAF5; overflow: hidden; }}
 body {{ font-family: 'Inter', -apple-system, system-ui, sans-serif; color: #0B0B0B; }}
-.p-stage {{ height: 100vh !important; }}
+.p-stage {{ height: 100dvh !important; height: 100vh !important; }}
+@supports (height: 100dvh) {{ .p-stage {{ height: 100dvh !important; }} }}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

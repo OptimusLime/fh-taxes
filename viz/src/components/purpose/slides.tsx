@@ -399,7 +399,7 @@ function Slide10Taxes() {
           <h2 class="p-title">Raise taxes.<br />Aim for a surplus.</h2>
           <p class="p-body">
             Schools determine asset values. Equalize assessments first — fix
-            the historical inaccuracies — then fund the future.
+            the historical inaccuracies. Then fund the future.
           </p>
           <p class="p-body">
             Fixed-income owners use state and federal programs. That's the right

@@ -384,7 +384,7 @@
   display: flex; flex-direction: column; gap: var(--p-gap);
 }
 
-/* ---------- Responsive: stack on narrow ---------- */
+/* ---------- Responsive: stack on narrow (iPhone / small tablet) ---------- */
 @media (max-width: 760px) {
   .p-grid-2, .p-grid-3, .p-bookends, .p-cover {
     grid-template-columns: 1fr;
@@ -393,4 +393,35 @@
   .p-grid-3 > * + * { border-left: none; border-top: var(--p-border); }
   .p-bookend-cell + .p-bookend-cell { border-left: none; border-top: var(--p-border); }
   .p-cover > .p-cover-text { border-right: none; border-bottom: var(--p-border); }
+
+  /* Stack .p-row horizontally laid-out slides to vertical */
+  .p-row {
+    flex-direction: column !important;
+  }
+
+  /* Let slide content scroll naturally instead of clipping */
+  .p-slide {
+    overflow: visible;
+    min-height: auto;
+  }
+
+  /* Tame oversized stat on small screens */
+  .p-stat {
+    font-size: clamp(4rem, 22vw, 8rem);
+  }
+
+  /* Reduce hero font so it doesn't overflow */
+  .p-hero {
+    font-size: clamp(2rem, 10vw, 4rem);
+  }
+
+  /* Bookends: ensure all cells are visible when stacked */
+  .p-bookends {
+    min-height: auto;
+  }
+
+  /* Image slots shrink on mobile */
+  .p-image-slot {
+    min-height: 100px;
+  }
 }

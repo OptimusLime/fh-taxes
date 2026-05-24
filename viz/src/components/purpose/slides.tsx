@@ -109,7 +109,7 @@ function Slide01Cover() {
       <div class="p-cover" style={accentStyle('petal')}>
         <div class="p-cover-text">
           <div>
-            <div class="p-tag">A vision · 2026</div>
+            <div class="p-tag">A vision for the decade</div>
           </div>
           <div>
             <h1 class="p-hero">Fair for<br />Fair Haven</h1>

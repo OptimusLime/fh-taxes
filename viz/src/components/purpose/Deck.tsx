@@ -3,7 +3,7 @@
 // slides.tsx. State is local; URL hash mirrors current slide for shareable
 // links (e.g. /purpose#05).
 
-import { useEffect, useState, useCallback } from 'preact/hooks';
+import { useEffect, useState, useCallback, useRef } from 'preact/hooks';
 import { SLIDES } from './slides';
 
 function parseHashIndex(): number {
@@ -40,9 +40,9 @@ export default function Deck() {
     }
   }, [i]);
 
+  // Keyboard navigation
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
-      // Don't steal keys from form fields
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       switch (e.key) {
@@ -63,6 +63,36 @@ export default function Deck() {
     return () => window.removeEventListener('keydown', h);
   }, [go, jump, last]);
 
+  // Touch swipe navigation (iPad / mobile)
+  const touchRef = useRef<{ x: number; y: number; t: number } | null>(null);
+  useEffect(() => {
+    const SWIPE_MIN = 50;
+    const SWIPE_MAX_MS = 400;
+    const onStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchRef.current = { x: touch.clientX, y: touch.clientY, t: Date.now() };
+    };
+    const onEnd = (e: TouchEvent) => {
+      if (!touchRef.current) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchRef.current.x;
+      const dy = touch.clientY - touchRef.current.y;
+      const dt = Date.now() - touchRef.current.t;
+      touchRef.current = null;
+      if (dt > SWIPE_MAX_MS) return;
+      if (Math.abs(dx) < SWIPE_MIN) return;
+      if (Math.abs(dy) > Math.abs(dx)) return; // vertical scroll, not swipe
+      if (dx < 0) go(1);  // swipe left = next
+      else go(-1);         // swipe right = prev
+    };
+    window.addEventListener('touchstart', onStart, { passive: true });
+    window.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', onStart);
+      window.removeEventListener('touchend', onEnd);
+    };
+  }, [go]);
+
   const Slide = SLIDES[i].Component;
 
   return (
@@ -74,7 +104,9 @@ export default function Deck() {
         </div>
       </div>
 
-      <Slide />
+      <div style="flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch">
+        <Slide />
+      </div>
 
       <div class="p-nav">
         <button

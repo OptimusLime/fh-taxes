@@ -678,9 +678,9 @@ export const SLIDES: SlideDef[] = [
   { id: '09-schools',       title: "Invest. Don't cut.",     accent: 'leaf',  Component: Slide09Schools },
   { id: '10-taxes',         title: 'Raise taxes. Fund growth.', accent: 'bloom', Component: Slide10Taxes },
   { id: '11-amazing',       title: "It's amazing",                 accent: 'petal', Component: Slide11Amazing },
-  { id: '12-bookends',      title: 'The Bookends',                 accent: 'leaf',  Component: Slide12Bookends },
-  { id: '13-festival',      title: 'Shut down Fair Haven Road',    accent: 'bloom', Component: Slide13Festival },
-  { id: '14-volunteers',    title: 'More spaces, more volunteers', accent: 'leaf',  Component: Slide14Volunteers },
+  { id: '12-volunteers',    title: 'More spaces, more volunteers', accent: 'leaf',  Component: Slide14Volunteers },
+  { id: '13-bookends',      title: 'The Bookends',                 accent: 'leaf',  Component: Slide12Bookends },
+  { id: '14-festival',      title: 'Shut down Fair Haven Road',    accent: 'bloom', Component: Slide13Festival },
   { id: '15-door',          title: 'Builders / cynics',            accent: 'plum',  Component: Slide15TheDoor },
   { id: '16-closing',       title: 'Bloom in the dark',            accent: 'petal', Component: Slide16Closing },
 ];

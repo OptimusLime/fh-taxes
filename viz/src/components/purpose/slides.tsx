@@ -353,7 +353,7 @@ function Slide09Schools() {
       <div class="p-eyebrow">The next ten years · 1 of 4</div>
       <div class="p-row">
         <div class="p-col" style="justify-content:center;flex:1.2">
-          <h2 class="p-title">Invest.<br />Don't austerity.</h2>
+          <h2 class="p-title">Invest.<br />Don't cut.</h2>
           <p class="p-body">
             When other towns pull back, we <strong>quadruple down</strong> on the
             public school. Montessori-forward in the early grades. Accelerated
@@ -675,7 +675,7 @@ export const SLIDES: SlideDef[] = [
   { id: '06-2009',          title: 'Be 2009 buyers',               accent: 'leaf',  Component: Slide06_2009 },
   { id: '07-flower-power',  title: 'Flower Power has returned',    accent: 'petal', Component: Slide07FlowerPower },
   { id: '08-who-lives',     title: '50 / 50',                      accent: 'sky',   Component: Slide08WhoLives },
-  { id: '09-schools',       title: "Invest. Don't austerity.",     accent: 'leaf',  Component: Slide09Schools },
+  { id: '09-schools',       title: "Invest. Don't cut.",     accent: 'leaf',  Component: Slide09Schools },
   { id: '10-taxes',         title: 'Raise taxes. Aim for surplus.', accent: 'bloom', Component: Slide10Taxes },
   { id: '11-amazing',       title: "It's amazing",                 accent: 'petal', Component: Slide11Amazing },
   { id: '12-bookends',      title: 'The Bookends',                 accent: 'leaf',  Component: Slide12Bookends },

@@ -104,7 +104,7 @@ export default function Deck() {
         </div>
       </div>
 
-      <div style="flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch">
+      <div style="flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column">
         <Slide />
       </div>
 

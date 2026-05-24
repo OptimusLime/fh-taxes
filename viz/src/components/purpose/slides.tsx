@@ -224,12 +224,14 @@ function Slide05Brecht() {
   return (
     <section class="p-slide" style={accentStyle('plum')}>
       <div class="p-eyebrow">Borrowed wisdom</div>
-      <div class="p-row" style="align-items:center;justify-content:center">
-        <div style="max-width:30ch">
-          <p class="p-quote">
-            "In the dark times,<br />will there also be singing?<br /><br />
+      <div class="p-row" style="align-items:center;justify-content:center;flex:1">
+        <div style="max-width:38ch">
+          <p style="font-family:var(--p-font-display);font-size:var(--p-size-quote);line-height:1.25;letter-spacing:var(--p-track-tight);margin:0">
+            "In the dark times, will there also be singing?
+          </p>
+          <p style="font-family:var(--p-font-display);font-size:var(--p-size-quote);line-height:1.25;letter-spacing:var(--p-track-tight);margin:1.2rem 0 0">
             Yes. There will also be singing.<br />
-            <span style="background:var(--p-bloom);padding:0 6px">About the dark times.</span>"
+            <span style="background:var(--p-bloom);padding:0.1rem 0.4rem">About the dark times.</span>"
           </p>
           <p class="p-attribution">— Bertolt Brecht, 1939</p>
         </div>

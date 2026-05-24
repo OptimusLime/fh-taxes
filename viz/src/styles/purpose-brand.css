@@ -88,11 +88,11 @@
 
 .p-slide {
   flex: 1 1 0;
+  min-height: 100%;
   padding: var(--p-pad);
   display: flex; flex-direction: column;
   border-top: var(--p-accent-bar-h) solid var(--p-accent, var(--p-petal));
   overflow: hidden;
-  min-height: 0;
   gap: var(--p-gap);
   position: relative;
 }
@@ -193,6 +193,7 @@
   gap: 0;
   flex: 1;
   align-items: stretch;
+  min-height: 100%;
 }
 .p-grid-2 > * {
   padding: var(--p-pad);

@@ -286,16 +286,14 @@ function Slide06_2009() {
 function Slide07FlowerPower() {
   return (
     <section class="p-slide" style={accentStyle('petal')}>
-      <div class="p-row" style="align-items:stretch">
-        <div class="p-col" style="justify-content:center;flex:1.1">
-          <div class="p-tag" style="background:var(--p-bloom)">Meme break</div>
+      <div class="p-row" style="align-items:center;justify-content:center">
+        <div class="p-col" style="justify-content:center;align-items:flex-start">
           <h2 class="p-hero" style="font-size:clamp(2.5rem,6vw,5rem)">
-            Somehow,<br />
             <span style="background:var(--p-bloom);padding:0 8px">Flower Power</span><br />
             has returned.
           </h2>
         </div>
-        <div class="p-col" style="justify-content:center;align-items:center;gap:1rem">
+        <div class="p-col" style="justify-content:center;align-items:center">
           {/* Flower crown arrangement */}
           <svg viewBox="0 0 200 120" style="width:100%;max-width:240px;height:auto">
             {[
@@ -310,7 +308,6 @@ function Slide07FlowerPower() {
             ))}
             <path d="M25,85 Q100,95 175,85" fill="none" stroke="var(--p-ink)" stroke-width="3" stroke-linecap="round" />
           </svg>
-          <ImageSlot label="Palpatine 'somehow returned' - drop your own image" />
         </div>
       </div>
     </section>

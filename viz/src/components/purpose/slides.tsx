@@ -396,7 +396,7 @@ function Slide10Taxes() {
       <div class="p-eyebrow">The next ten years · 2 of 4</div>
       <div class="p-row" style="align-items:stretch">
         <div class="p-col" style="justify-content:center;flex:1.3">
-          <h2 class="p-title">Raise taxes.<br />Aim for a surplus.</h2>
+          <h2 class="p-title">Raise taxes.<br />Fund growth.</h2>
           <p class="p-body">
             Schools determine asset values. Equalize assessments first. Fix
             the historical inaccuracies. Then fund the future.
@@ -407,9 +407,9 @@ function Slide10Taxes() {
           </p>
         </div>
         <div class="p-panel" style="background:var(--p-paper);max-width:22rem;justify-content:center;gap:1rem">
-          <div class="p-tag" style="background:var(--p-bloom)">The line</div>
+          <div class="p-tag" style="background:var(--p-bloom)">The ask</div>
           <p class="p-quote" style="font-size:clamp(1.2rem,2.4vw,1.8rem)">
-            Not a shortfall.<br />A surplus.
+            Close the gap.<br />Then build ahead.
           </p>
           {/* Arrow up glyph */}
           <svg viewBox="0 0 60 60" style="width:60px;height:60px">
@@ -676,7 +676,7 @@ export const SLIDES: SlideDef[] = [
   { id: '07-flower-power',  title: 'Flower Power has returned',    accent: 'petal', Component: Slide07FlowerPower },
   { id: '08-who-lives',     title: '50 / 50',                      accent: 'sky',   Component: Slide08WhoLives },
   { id: '09-schools',       title: "Invest. Don't cut.",     accent: 'leaf',  Component: Slide09Schools },
-  { id: '10-taxes',         title: 'Raise taxes. Aim for surplus.', accent: 'bloom', Component: Slide10Taxes },
+  { id: '10-taxes',         title: 'Raise taxes. Fund growth.', accent: 'bloom', Component: Slide10Taxes },
   { id: '11-amazing',       title: "It's amazing",                 accent: 'petal', Component: Slide11Amazing },
   { id: '12-bookends',      title: 'The Bookends',                 accent: 'leaf',  Component: Slide12Bookends },
   { id: '13-festival',      title: 'Shut down Fair Haven Road',    accent: 'bloom', Component: Slide13Festival },

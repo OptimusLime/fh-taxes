@@ -398,7 +398,7 @@ function Slide10Taxes() {
         <div class="p-col" style="justify-content:center;flex:1.3">
           <h2 class="p-title">Raise taxes.<br />Aim for a surplus.</h2>
           <p class="p-body">
-            Schools determine asset values. Equalize assessments first — fix
+            Schools determine asset values. Equalize assessments first. Fix
             the historical inaccuracies. Then fund the future.
           </p>
           <p class="p-body">

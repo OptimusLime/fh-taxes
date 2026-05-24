@@ -671,7 +671,7 @@ export const SLIDES: SlideDef[] = [
   { id: '02-mood',          title: "Everyone's sour",              accent: 'blush', Component: Slide02Mood },
   { id: '03-two-views',     title: 'Two views',                    accent: 'sky',   Component: Slide03TwoViews },
   { id: '04-optimism',      title: 'Optimism pays',                accent: 'bloom', Component: Slide04OptimismPays },
-  { id: '05-brecht',        title: 'Music in the dark',            accent: 'plum',  Component: Slide05Brecht },
+  // { id: '05-brecht',        title: 'Music in the dark',            accent: 'plum',  Component: Slide05Brecht },
   { id: '06-2009',          title: 'Be 2009 buyers',               accent: 'leaf',  Component: Slide06_2009 },
   { id: '07-flower-power',  title: 'Flower Power has returned',    accent: 'petal', Component: Slide07FlowerPower },
   { id: '08-who-lives',     title: '50 / 50',                      accent: 'sky',   Component: Slide08WhoLives },

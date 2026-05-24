@@ -288,10 +288,11 @@ function Slide07FlowerPower() {
     <section class="p-slide" style={accentStyle('petal')}>
       <div class="p-row" style="align-items:center;justify-content:center">
         <div class="p-col" style="justify-content:center;align-items:flex-start">
-          <h2 class="p-hero" style="font-size:clamp(2.5rem,6vw,5rem)">
-            <span style="background:var(--p-bloom);padding:0 8px">Flower Power</span><br />
-            has returned.
-          </h2>
+          <h2 class="p-hero" style="font-size:clamp(2.5rem,6vw,5rem)"><span style="background:var(--p-bloom);padding:0 8px">Flower Power</span><br />has returned.</h2>
+          <p class="p-body" style="margin-top:0.8rem">
+            Wildflowers along Fair Haven Road. Blooming each spring. The town
+            grows from the ground up.
+          </p>
         </div>
         <div class="p-col" style="justify-content:center;align-items:center">
           {/* Flower crown arrangement */}

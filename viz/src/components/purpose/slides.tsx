@@ -556,7 +556,7 @@ function Slide14Volunteers() {
             "A society grows great when its people plant seeds for trees whose
             shade they'll never sit in."
           </p>
-          <p class="p-attribution">— old proverb</p>
+          <p class="p-attribution">- old proverb</p>
         </div>
         <div class="p-col" style="justify-content:center;align-items:center">
           {/* Tree with seeds / planting metaphor */}
@@ -591,7 +591,7 @@ function Slide15TheDoor() {
           <h2 class="p-title">Welcome.</h2>
           <p class="p-body">
             If you feel the calling to make the places and people around you
-            better — you're home.
+            better, you're home.
           </p>
           <FlowerSVG size={64} color="var(--p-bloom)" />
         </div>

@@ -1,4 +1,4 @@
-.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson build-renovations build-cohort-history build-parcels-full viz-data viz-install viz-dev run-hedonic
+.PHONY: help install acquire acquire-njgin acquire-dlgs acquire-sr1a ingest ingest-njgin extract-dlgs ingest-sr1a reconcile validate all clean test build-geojson build-renovations build-cohort-history build-parcels-full viz-data viz-install viz-dev run-hedonic export-purpose
 
 PYTHON := uv run python
 TODAY := $(shell date +%Y-%m-%d)
@@ -96,3 +96,8 @@ viz-dev: viz-install
 # chart specs and the per-PIN estimated_true_value overlay.
 run-hedonic:
 	$(PYTHON) scripts/run_hedonic.py
+
+# Export the /purpose slide deck as a single self-contained HTML file.
+# Output: dist/fair-for-fair-haven.html (~68 KB)
+export-purpose:
+	bash scripts/export_purpose.sh

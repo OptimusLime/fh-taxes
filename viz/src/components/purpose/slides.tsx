@@ -147,7 +147,7 @@ function Slide02Mood() {
           <h2 class="p-hero">Everyone's<br />sour.</h2>
           <p class="p-body">
             Money is tight. The line points down. The country feels like the 70s.
-            And that feeling — that the line keeps pointing down forever — is the
+            That feeling, that the line keeps pointing down forever, is the
             feeling that gets people most wrong.
           </p>
         </div>
@@ -175,7 +175,7 @@ function Slide03TwoViews() {
           <div class="p-tag">View one</div>
           <h2 class="p-title">It all<br />crashes.</h2>
           <LineChart points={down} color="var(--p-ink)" w={240} h={120} />
-          <p class="p-body">The line points down — forever.</p>
+          <p class="p-body">The line points down. Forever.</p>
         </div>
         <div style={{ background: 'var(--p-leaf)' }}>
           <div class="p-tag">View two</div>
@@ -233,7 +233,7 @@ function Slide05Brecht() {
             Yes. There will also be singing.<br />
             <span style="background:var(--p-bloom);padding:0.1rem 0.4rem">About the dark times.</span>"
           </p>
-          <p class="p-attribution">— Bertolt Brecht, 1939</p>
+          <p class="p-attribution">- Bertolt Brecht, 1939</p>
         </div>
         <div style="margin-left:var(--p-gap);display:flex;flex-direction:column;gap:1rem;align-items:center">
           <FlowerSVG size={100} color="var(--p-plum)" />
@@ -267,7 +267,7 @@ function Slide06_2009() {
         </div>
         <div class="p-col" style="justify-content:center;align-items:center">
           <div class="p-panel" style="padding:1.2rem;align-items:center;gap:0.4rem">
-            <p style="font-family:var(--p-font-display);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--p-muted);margin:0">Home prices · 2006–2025</p>
+            <p style="font-family:var(--p-font-display);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--p-muted);margin:0">Home prices · 2006-2025</p>
             <LineChart points={homePrice} color="var(--p-ink)" fill="var(--p-leaf)" w={240} h={140} />
             <div style="display:flex;gap:1rem;font-size:0.72rem;font-family:var(--p-font-display);letter-spacing:0.06em">
               <span>← 2008 crash</span>
@@ -310,7 +310,7 @@ function Slide07FlowerPower() {
             ))}
             <path d="M25,85 Q100,95 175,85" fill="none" stroke="var(--p-ink)" stroke-width="3" stroke-linecap="round" />
           </svg>
-          <ImageSlot label="Palpatine 'somehow returned' — drop your own image" />
+          <ImageSlot label="Palpatine 'somehow returned' - drop your own image" />
         </div>
       </div>
     </section>
@@ -360,7 +360,7 @@ function Slide09Schools() {
             STEM by third. Best-in-class in Monmouth.
           </p>
           <p class="p-body" style="color:var(--p-muted)">
-            Lower per-pupil cost. Better outcomes. Takes 5–10 years.
+            Lower per-pupil cost. Better outcomes. Takes 5 to 10 years.
           </p>
         </div>
         <div class="p-col" style="justify-content:center;align-items:center">

@@ -68,7 +68,7 @@ export default function Deck() {
   return (
     <div class="p-stage">
       <div class="p-chrome">
-        <div class="p-chrome-title">Fair for Fairhaven · A Manifesto</div>
+        <div class="p-chrome-title">Fair for Fair Haven</div>
         <div class="p-chrome-counter">
           {String(i + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
         </div>
